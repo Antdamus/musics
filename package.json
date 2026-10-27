@@ -1,0 +1,14 @@
+{
+  "name": "fretwise",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Classical guitar sight-reading and full-fretboard practice",
+  "scripts": {
+    "test": "node --test tests/fretboard-music.test.mjs tests/fretboard-note-map.test.mjs tests/fretboard-guitar.test.mjs tests/fretboard-drums.test.mjs tests/fretboard-metronome.test.mjs tests/fretboard-browser.test.mjs",
+    "test:unit": "node --test tests/fretboard-music.test.mjs tests/fretboard-note-map.test.mjs tests/fretboard-guitar.test.mjs tests/fretboard-drums.test.mjs tests/fretboard-metronome.test.mjs",
+    "test:browser": "node --test tests/fretboard-browser.test.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.60.0"
+  }
+}
