@@ -143,6 +143,78 @@ test('timed score counts in, advances, pauses, resumes and completes without loo
   await page.locator('#play').click();await page.clock.runFor(8500);await expect(page.locator('#cue-message')).toHaveText('Phrase complete.');
   await expect(page.locator('#play')).toHaveText('▶ Play again');assert.equal(await page.locator('.sheet-note.miss').count(),7);
 });
+const lineNotes=(page,row)=>page.locator(`[data-score-line="${row}"] .sheet-note`).evaluateAll(notes=>notes.map(note=>note.innerHTML));
+
+for(const duration of [1,2,4])for(const width of [1440,390])test(`read-ahead lines retain their notes through phrase boundaries (${duration} beats, ${width}px)`,async t=>{
+  const page=await open(t,width);await page.clock.install();
+  await page.locator('#duration').selectOption(String(duration));await page.locator('#bpm').fill('120');await page.locator('#bpm').press('Tab');
+  const bottom=await lineNotes(page,1),viewBox=await page.locator('#sheet svg').getAttribute('viewBox');
+  await page.locator('#play').click();await page.clock.runFor(2100);
+  await expect(page.locator('[data-score-line="0"] .current')).toHaveCount(1);
+  await page.clock.runFor(4000);
+  await expect(page.locator('#score-description')).toContainText('Bars 3–6');
+  assert.deepEqual(await lineNotes(page,0),bottom);
+  await expect(page.locator('[data-score-line="0"] .current')).toHaveCount(1);
+  await expect(page.locator('[data-upcoming="true"]')).toHaveCount(8/duration);
+  await expect(page.locator('[data-upcoming="true"].current, [data-upcoming="true"].miss, [data-upcoming="true"].success')).toHaveCount(0);
+  const preview=await lineNotes(page,1);
+  // Pausing and resuming must preserve both the current line and its preview.
+  await page.locator('#play').click();await page.clock.runFor(4000);assert.deepEqual(await lineNotes(page,1),preview);
+  if(duration===4)await page.locator('.score-card').screenshot({path:new URL(`test-results/fretwise-rolling-${width}.png`,root).pathname.replace(/^\/(\w:)/,'$1')});
+  await page.locator('#play').click();await page.clock.runFor(4000);
+  await expect(page.locator('#score-description')).toContainText('Bars 5–8');
+  assert.deepEqual(await lineNotes(page,0),preview);
+  const nextBottom=await lineNotes(page,1);
+  await page.clock.runFor(4000);await expect(page.locator('#score-description')).toContainText('Bars 7–10');assert.deepEqual(await lineNotes(page,0),nextBottom);
+  await expect(page.locator('#sheet svg')).toHaveAttribute('viewBox',viewBox);
+  await expect(page.locator('[data-score-line="0"] .score-playhead')).toHaveAttribute('opacity','.55');
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  await page.locator('#restart').click();await expect(page.locator('#score-description')).toContainText('Bars 1–4');
+  await expect(page.locator('[data-upcoming="true"]')).toHaveCount(0);await expect(page.locator('.sheet-note.current')).toHaveAttribute('data-note-index','0');
+});
+
+test('wait mode rolls after the last answer and loop changes preserve the committed preview',async t=>{
+  const page=await open(t);await page.clock.install();await page.locator('#mode').selectOption('wait');await page.locator('#duration').selectOption('4');
+  await page.locator('#bpm').fill('120');await page.locator('#bpm').press('Tab');await page.locator('#hints').uncheck();
+  const bottom=await lineNotes(page,1);
+  await page.locator('#play').click();await page.clock.runFor(2200);
+  await page.locator('#got-it').click();await page.clock.runFor(400);await page.locator('#skip').click();
+  assert.deepEqual(await lineNotes(page,0),bottom);await expect(page.locator('#score-description')).toContainText('Bars 3–6');
+  const preview=await lineNotes(page,1);await page.clock.runFor(12000);assert.deepEqual(await lineNotes(page,1),preview);
+  await expect(page.locator('[data-score-line="0"] .current')).toHaveAttribute('data-note-index','2');
+  await page.locator('#loop').uncheck();await expect(page.locator('[data-score-line="1"]')).toHaveText('End of phrase');
+  await page.locator('#loop').check();assert.deepEqual(await lineNotes(page,1),preview);
+  await page.locator('#skip').click();await page.locator('#got-it').click();await page.clock.runFor(400);
+  await expect(page.locator('#score-description')).toContainText('Bars 5–8');assert.deepEqual(await lineNotes(page,0),preview);
+  assert.ok((await page.locator('.note-hint').allTextContents()).every(hint=>!hint));
+  await page.locator('#loop').uncheck();await page.locator('#skip').click();await page.locator('#skip').click();
+  await expect(page.locator('[data-score-line="1"]')).toHaveText('End of phrase');
+  await page.locator('#skip').click();await page.locator('#skip').click();
+  await expect(page.locator('#cue-message')).toHaveText('Phrase complete.');await expect(page.locator('.sheet-note')).toHaveCount(4);
+  await page.locator('#play').click();await expect(page.locator('#score-description')).toContainText('Bars 1–4');
+});
+
+test('automatic progression leaves already previewed pitches and strings intact',async t=>{
+  const page=await open(t);await page.addInitScript(()=>{
+    const notes=Object.fromEntries([48,60,72,84].map(midi=>[midi,{correct:2,attempts:2,last:0,passes:[{bpm:120,duration:2,hints:false,hits:2}]}]));
+    localStorage.setItem('fretwise.v1',JSON.stringify({settings:{bpm:120,hints:false,autoAdd:true},progress:{notes,positionUse:{},sessions:[]}}));
+  });await page.reload();await page.clock.install();
+  const cYs=await page.locator('.note-head').evaluateAll(heads=>heads.map(head=>Number(head.getAttribute('cy'))));
+  await page.locator('#play').click();await page.clock.runFor(2100);
+  let preview;
+  for(let note=0;note<8;note++){
+    if(note===4)preview=await lineNotes(page,1);
+    await page.locator('#got-it').click();await page.clock.runFor(1000);
+  }
+  await expect(page.locator('#pool-count')).toHaveText('2 of 7');
+  await expect(page.locator('#score-description')).toContainText('Bars 5–8');
+  assert.deepEqual(await lineNotes(page,0),preview);await expect(page.locator('#notice')).toContainText('phrase already previewed');
+  // The next uncommitted phrase must contain pitches outside the original C pool.
+  await page.clock.runFor(8000);
+  const ys=await page.locator('.note-head').evaluateAll(heads=>heads.map(head=>Number(head.getAttribute('cy'))));
+  assert.ok(ys.some(y=>!cYs.includes(y)));
+});
+
 test('wait mode advances only after correct input and can resume during success feedback',async t=>{
   const page=await open(t);await page.clock.install();await page.locator('#mode').selectOption('wait');await page.locator('#bpm').fill('180');await page.locator('#bpm').press('Tab');
   await page.locator('#play').click();await page.clock.runFor(1450);await page.clock.runFor(3000);assert.equal(await page.locator('.sheet-note.current').getAttribute('data-note-index'),'0');

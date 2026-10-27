@@ -10,6 +10,7 @@ if(!Array.isArray(progress.sessions))progress.sessions=[];
 if(!progress.notes||typeof progress.notes!=='object')progress.notes={};
 if(!progress.positionUse||typeof progress.positionUse!=='object')progress.positionUse={};
 let score=[],results=[],active=0,running=false,starting=false,finished=false,revealed=false,micOn=false,micPending=false;
+let upcomingScore=null,phraseNumber=0,displayedSystem=0;
 let position=-4,phaseTime=0,phaseOffset=-4,nextBeat=-4,raf=0,scheduler=0,runStarted=0,practiceMs=0,sessionSaved=false;
 let stats={correct:0,wrong:0,missed:0,streak:0,best:0,onTime:0,manual:0},cleanPasses=0,noticeTimeout,waitAdvance=0,trackURL=null;
 let micPitch=null,micSince=0,micOnset=0,micLatched=false,lastRms=0,lastAttack=0;
@@ -120,6 +121,7 @@ function updateRecommendation(){
   $('mastery-dots').querySelectorAll('i').forEach((el,i)=>el.classList.toggle('done',cleanPasses>i));
 }
 function newScore(){
+  upcomingScore=null;phraseNumber=0;
   clearTimeout(waitAdvance);score=makeScore(settings,Math.random,progress.positionUse);results=score.map(()=>null);active=0;finished=false;position=-4;phaseOffset=-4;revealed=false;
   $('phrase-title').textContent=settings.pool.length===1?`Meet ${pitchClassName(settings.pool[0])}, everywhere`:'A few notes. A little music.';
   $('scale-badge').textContent=`${ROOTS[settings.root]} ${SCALES[settings.scale].name.toLowerCase()}`;
@@ -144,44 +146,60 @@ async function hearGuitar(position,isCurrent=()=>true,onStatus=()=>{}){
 function changeGuitarSound(key,value){audio.stopGuitar();settings[key]=value;guitarStatus='Recordings load when you press Hear.';updateSoundControls();persist();}
 function renderScore(){
   if(!score.length){$('sheet').innerHTML='<div class="empty-score">No notes match this setup.<br>Widen your octave, string or fret range.</div>';return;}
-  const ys=score.map(n=>128-(spell(n.midi+12,settings).step-30)*7),marks=ys.map(stringMarkerY);
+  displayedSystem=finished?0:Math.floor(currentEvent().beat/8);
+  // Commit the next phrase before it is shown; never replace notes already previewed.
+  if(displayedSystem===1&&settings.loop&&!upcomingScore){
+    const usage={...progress.positionUse};
+    score.forEach((event,index)=>{if(!results[index]?.correct){const key=event.position.string+':'+event.position.fret;usage[key]=(usage[key]||0)+1;}});
+    upcomingScore=makeScore(settings,Math.random,usage);
+  }
+  // Size both lines for the selected neck range, so newly arriving pitches do not
+  // move the staff or the controls while the player is reading.
+  const ys=positions(settings,true).map(n=>128-(spell(n.midi+12,settings).step-30)*7),marks=ys.map(stringMarkerY);
   const hintYs=ys.map((y,i)=>marks[i]<y?marks[i]-16:marks[i]+25);
-  const contentTop=Math.min(60,...ys.map((y,i)=>Math.min(y-(score[i].duration<4&&y>=100?40:9),marks[i]-10,settings.hints?hintYs[i]-13:Infinity)));
-  const contentBottom=Math.max(162,...ys.map((y,i)=>Math.max(y+(score[i].duration<4&&y<100?40:9),marks[i]+10,settings.hints?hintYs[i]+3:-Infinity)));
+  const contentTop=Math.min(60,...ys.map((y,i)=>Math.min(y-(settings.duration<4&&y>=100?40:9),marks[i]-10,settings.hints?hintYs[i]-13:Infinity)));
+  const contentBottom=Math.max(162,...ys.map((y,i)=>Math.max(y+(settings.duration<4&&y<100?40:9),marks[i]+10,settings.hints?hintYs[i]+3:-Infinity)));
   const top=contentTop-26,bottom=contentBottom+12,height=bottom-top;
+  const firstBar=phraseNumber*4+displayedSystem*2+1,hasPreview=displayedSystem===0||settings.loop;
+  $('score-description').textContent=`Bars ${firstBar}–${firstBar+(hasPreview?3:1)} · 4/4 · ${settings.duration===1?'quarter':settings.duration===2?'half':'whole'} notes`;
   let svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 830 ${height*2+12}" aria-hidden="true">`;
-  for(let system=0;system<2;system++){
-    svg+=`<g transform="translate(0 ${system*height-top})">`;
+  const visibleNotes=[];
+  for(let row=0;row<2;row++){
+    const system=displayedSystem+row,isUpcoming=system===2,lineScore=isUpcoming?(settings.loop?upcomingScore:[]):score;
+    svg+=`<g data-score-line="${row}" data-start-bar="${firstBar+row*2}" transform="translate(0 ${row*height-top})">`;
+    if(!lineScore?.length){svg+=`<text x="415" y="100" text-anchor="middle" font-size="14" fill="#63705e">End of phrase</text></g>`;continue;}
     for(let y=72;y<=128;y+=14)svg+=`<line class="staff-line" x1="24" y1="${y}" x2="806" y2="${y}"/>`;
     svg+='<text x="31" y="132" font-size="80" fill="#364335" font-family="Segoe UI Symbol,serif">𝄞</text><text x="50" y="157" font-size="12" fill="#63705e">8</text>';
-    if(system===0)svg+='<text x="86" y="96" font-family="Georgia" font-size="26" fill="#364335">4</text><text x="86" y="122" font-family="Georgia" font-size="26" fill="#364335">4</text>';
+    if(row===0)svg+='<text x="86" y="96" font-family="Georgia" font-size="26" fill="#364335">4</text><text x="86" y="122" font-family="Georgia" font-size="26" fill="#364335">4</text>';
     for(let bar=0;bar<2;bar++){
-      const globalBar=system*2+bar,start=118+bar*344;
-      svg+=`<text x="${start}" y="${top+15}" font-size="10" fill="#9b9e91" font-family="Segoe UI">${globalBar+1}</text>`;
+      const localBar=(system%2)*2+bar,start=118+bar*344;
+      svg+=`<text x="${start}" y="${top+15}" font-size="10" fill="#9b9e91" font-family="Segoe UI">${firstBar+row*2+bar}</text>`;
       svg+=`<line x1="${start+344}" y1="72" x2="${start+344}" y2="128" stroke="#a5ad9d"/>`;
       const accState=new Map();
-      score.forEach((event,index)=>{
-        if(Math.floor(event.beat/4)!==globalBar)return;
-        const x=start+50+(event.beat%4)*(285/4),y=ys[index],n=spell(event.midi+12,settings),accKey=n.letter+n.oct;
+      lineScore.forEach((event,index)=>{
+        if(Math.floor(event.beat/4)!==localBar)return;
+        visibleNotes.push(event);
+        const x=start+50+(event.beat%4)*(285/4),n=spell(event.midi+12,settings),y=128-(n.step-30)*7,markY=stringMarkerY(y),hintY=markY<y?markY-16:markY+25,accKey=n.letter+n.oct;
         const change=(accState.get(accKey)||0)!==n.acc;accState.set(accKey,n.acc);
-        svg+=`<g class="sheet-note ${index===active?'current':''}" data-note-index="${index}"><rect class="focus-box" x="${x-30}" y="${contentTop-8}" width="61" height="${contentBottom-contentTop+16}" rx="12"/>`;
+        svg+=`<g class="sheet-note" data-note-index="${index}" data-upcoming="${isUpcoming}"><rect class="focus-box" x="${x-30}" y="${contentTop-8}" width="61" height="${contentBottom-contentTop+16}" rx="12"/>`;
         for(let ledger=142;ledger<=y+1;ledger+=14)svg+=`<line class="note-ink ledger" x1="${x-16}" y1="${ledger}" x2="${x+16}" y2="${ledger}"/>`;
         for(let ledger=58;ledger>=y-1;ledger-=14)svg+=`<line class="note-ink ledger" x1="${x-16}" y1="${ledger}" x2="${x+16}" y2="${ledger}"/>`;
         if(change)svg+=`<text class="note-ink" x="${x-29}" y="${y+8}" font-size="24" stroke-width="0" font-family="Segoe UI Symbol,serif">${n.acc===0?'♮':n.acc>0?'♯'.repeat(n.acc):'♭'.repeat(-n.acc)}</text>`;
         svg+=`<ellipse class="note-ink note-head ${event.duration>1?'open':''}" cx="${x}" cy="${y}" rx="${event.duration===4?12:10}" ry="6.7" transform="rotate(${event.duration===4?0:-18} ${x} ${y})" stroke-width="2.2"/>`;
         if(event.duration<4){const up=y>=100;svg+=`<line class="note-ink" x1="${x+(up?9:-9)}" y1="${y}" x2="${x+(up?9:-9)}" y2="${y+(up?-38:38)}" stroke-width="1.7"/>`;}
-        svg+=`<text class="note-hint" x="${x}" y="${hintYs[index]}" text-anchor="middle">${settings.hints?noteName(event.midi,settings):''}</text>`;
-        if(needsStringNumber(event.midi))svg+=`<g class="string-indication" aria-label="Required string ${event.position.string}"><circle cx="${x}" cy="${marks[index]}" r="9" fill="#fffef9" stroke="#67745f" stroke-width="1"/><text x="${x}" y="${marks[index]+4}" text-anchor="middle" font-size="12" font-weight="600" fill="#45533e">${event.position.string}</text></g>`;
+        svg+=`<text class="note-hint" x="${x}" y="${hintY}" text-anchor="middle">${settings.hints?noteName(event.midi,settings):''}</text>`;
+        if(needsStringNumber(event.midi))svg+=`<g class="string-indication" aria-label="Required string ${event.position.string}"><circle cx="${x}" cy="${markY}" r="9" fill="#fffef9" stroke="#67745f" stroke-width="1"/><text x="${x}" y="${markY+4}" text-anchor="middle" font-size="12" font-weight="600" fill="#45533e">${event.position.string}</text></g>`;
         svg+='</g>';
       });
     }svg+=`<line class="score-playhead" data-system="${system}" x1="0" x2="0" y1="${top+20}" y2="${bottom}" stroke="#c95d3e" stroke-width="1.4" opacity="0"/></g>`;
   }
   $('sheet').innerHTML=svg+'</svg>';
-  $('sheet').setAttribute('aria-label',`Four bars of 4/4 guitar music, ${settings.duration} beats per note. ${settings.hints?score.map(n=>noteName(n.midi,settings)).join(', '):'Note names hidden for sight reading.'} Circled numbers indicate strings when a pitch has multiple locations on the guitar.`);
+  $('sheet').setAttribute('aria-label',`Bars ${firstBar} to ${firstBar+(hasPreview?3:1)} of 4/4 guitar music, ${settings.duration} beats per note. ${finished?'Completed phrase.':'Play the top line; read ahead on the bottom line.'} ${settings.hints?visibleNotes.map(n=>noteName(n.midi,settings)).join(', '):'Note names hidden for sight reading.'} Circled numbers indicate strings when a pitch has multiple locations on the guitar.`);
   updateScoreMarks();
+  updatePlayhead();
 }
 function updateScoreMarks(){
-  $('sheet').querySelectorAll('[data-note-index]').forEach(el=>{const i=Number(el.dataset.noteIndex);el.classList.toggle('current',i===active&&!finished);el.classList.toggle('success',results[i]?.correct===true);el.classList.toggle('miss',results[i]?.correct===false);});
+  $('sheet').querySelectorAll('[data-note-index]').forEach(el=>{const i=Number(el.dataset.noteIndex),currentPhrase=el.dataset.upcoming!=='true';el.classList.toggle('current',currentPhrase&&i===active&&!finished);el.classList.toggle('success',currentPhrase&&results[i]?.correct===true);el.classList.toggle('miss',currentPhrase&&results[i]?.correct===false);});
 }
 function updatePlayhead(){
   const beat=settings.mode==='wait'?currentEvent()?.beat:position;
@@ -222,6 +240,7 @@ function renderFretboard(){
 function showCurrent(){
   const event=currentEvent();
   if(!event){$('current-pitch').textContent='—';return;}
+  if(!finished&&Math.floor(event.beat/8)!==displayedSystem)renderScore();
   const n=spell(event.midi,settings),name=n.name.replace(/-?\d+$/,'');
   $('current-pitch').innerHTML=settings.hints||revealed?`${name}<span>${n.oct}</span>`:'<span>Read ♩</span>';
   $('cue-label').textContent=position<0?'NEXT · SOUNDING PITCH':'NOW · SOUNDING PITCH';
@@ -301,12 +320,12 @@ function completePhrase(){
   cleanPasses=clean?cleanPasses+1:0;
   if(clean){for(const midi of new Set(score.map(n=>n.midi))){const n=progress.notes[midi];n.passes.push({bpm:settings.bpm,duration:settings.duration,hints:false,hits:score.filter(e=>e.midi===midi).length,at:Date.now(),source:micOn?'microphone':'self-check'});n.passes=n.passes.slice(-30);}notice('Clean pass at your target tempo. Nice work.');}
   persist();const rec=recommendation(settings,progress);
-  if(rec.ready&&settings.autoAdd&&rec.next!==null){settings.pool.push(rec.next);notice(`${pitchClassName(rec.next)} added in every selected octave. Slow down anytime.`);cleanPasses=0;syncControls();persist();}
-  if(!settings.loop){pause();finished=true;position=16;active=score.length-1;updateScoreMarks();$('play').innerHTML='▶ <span>Play again</span>';setCue('Phrase complete.',rec.ready?'Ready to add the recommended next note.':'Try it again, or adjust the tempo.');updateRecommendation();return;}
+  if(rec.ready&&settings.autoAdd&&rec.next!==null){settings.pool.push(rec.next);notice(`${pitchClassName(rec.next)} added in every selected octave.${upcomingScore&&settings.loop?' It will follow the phrase already previewed.':' Slow down anytime.'}`);cleanPasses=0;syncControls();persist();}
+  if(!settings.loop){pause();finished=true;position=16;active=score.length-1;renderScore();$('play').innerHTML='▶ <span>Play again</span>';setCue('Phrase complete.',rec.ready?'Ready to add the recommended next note.':'Try it again, or adjust the tempo.');updateRecommendation();return;}
   // Continue on the same beat grid, without a new count-in or drift between phrases.
   const overflow=settings.mode==='timed'?Math.max(0,position-16):0;
   if(settings.mode==='wait')audio.stopVoices();
-  score=makeScore(settings,Math.random,progress.positionUse);results=score.map(()=>null);active=0;revealed=false;phaseTime=performance.now();phaseOffset=overflow;position=overflow;nextBeat=settings.mode==='timed'?Math.max(0,nextBeat-16):0;
+  score=upcomingScore||makeScore(settings,Math.random,progress.positionUse);upcomingScore=null;phraseNumber++;results=score.map(()=>null);active=0;revealed=false;phaseTime=performance.now();phaseOffset=overflow;position=overflow;nextBeat=settings.mode==='timed'?Math.max(0,nextBeat-16):0;
   renderScore();showCurrent();updateRecommendation();scheduleAudio();raf=requestAnimationFrame(tick);
 }
 function updateStats(){
@@ -373,7 +392,7 @@ $('mode').onchange=()=>{settings.mode=$('mode').value;changeSetup();};
 for(const [id,amount] of [['bpm-up',5],['bpm-down',-5]])$(id).onclick=()=>{settings.bpm+=amount;changeSetup();};
 $('hints').onchange=()=>{settings.hints=$('hints').checked;changeSetup();};
 $('auto-add').onchange=()=>{settings.autoAdd=$('auto-add').checked;persist();};
-$('loop').onchange=()=>{settings.loop=$('loop').checked;persist();};
+$('loop').onchange=()=>{settings.loop=$('loop').checked;renderScore();persist();};
 $('metronome').onchange=()=>{settings.metronome=$('metronome').checked;if(!settings.metronome&&position>=0)audio.metronome?.stop();persist();};
 $('metronome-sound').onchange=()=>{pause();settings.metronomeSound=$('metronome-sound').value;updateSoundControls();persist();};
 $('metronome-volume').oninput=()=>{settings.metronomeVolume=Number($('metronome-volume').value);audio.metronome?.setVolume(settings.metronomeVolume);updateSoundControls();persist();};
