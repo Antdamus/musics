@@ -1,10 +1,11 @@
-import {frequency,detectPitch} from './music.mjs?v=5';
+import {frequency,detectPitch} from './music.mjs?v=7';
+import {RecordedBacking,recordedBacking} from './backing.mjs?v=1';
 import {AcousticKit} from './drums.mjs?v=1';
 import {PendulumMetronome} from './metronome.mjs?v=1';
 import {SampledGuitar} from './guitar.mjs?v=1';
 export class StudioAudio {
   context=null;voices=new Set();stream=null;analyser=null;micTimer=null;micGeneration=0;muted=false;guitarGeneration=0;
-  async init(){if(!this.context){const C=window.AudioContext||window.webkitAudioContext;if(!C)throw Error('Audio is not supported in this browser.');this.context=new C();this.master=this.context.createGain();this.master.gain.value=.35;this.master.connect(this.context.destination);this.drums=new AcousticKit(this.context,this.master);this.metronome=new PendulumMetronome(this.context,this.master);this.guitar=new SampledGuitar(this.context,this.master);}await this.context.resume();return this.context;}
+  async init(){if(!this.context){const C=window.AudioContext||window.webkitAudioContext;if(!C)throw Error('Audio is not supported in this browser.');this.context=new C();this.master=this.context.createGain();this.master.gain.value=.35;this.master.connect(this.context.destination);this.drums=new AcousticKit(this.context,this.master);this.metronome=new PendulumMetronome(this.context,this.master);this.guitar=new SampledGuitar(this.context,this.master);this.backing=new RecordedBacking(this.context,this.master);}await this.context.resume();return this.context;}
   async loadDrums(){await this.init();await this.drums.load();}
   async loadMetronome(){await this.init();await this.metronome.load();}
   stopGuitar(){this.guitarGeneration++;this.guitar?.stop();}
@@ -27,17 +28,13 @@ export class StudioAudio {
   beat(time,beat,s){
     if(!this.muted&&(s.metronome||beat<0))this.metronome?.beat(time,beat,s);
     if(!this.muted&&beat>=0&&s.drums!=='off')this.drums?.beat(time,beat,s);
-    if(beat<0||s.backing==='off'||s.backing==='upload')return;
+    if(this.muted||beat<0||s.backing==='off'||s.backing==='upload')return;
+    if(recordedBacking(s.backing)){this.backing?.beat(time,beat,s);return;}
     const duration=60/s.bpm,root=36+s.root;
     if(s.backing==='drone'&&beat%4===0){this.tone(root,time,duration*3.8,.16,'sine');this.tone(root+7,time,duration*3.8,.07,'sine');}
-    if(s.backing==='groove'){
-      // Tonic + fifth works with major, minor and minor pentatonic note pools.
-      this.tone(root+(beat%4===2?7:0),time,duration*.7,.28,'triangle');
-      if(beat%2===1)this.tone(78,time,.035,.045,'triangle');
-      if(beat%4===0){this.tone(root+12,time,duration*3,.065,'sine');this.tone(root+19,time,duration*3,.045,'sine');}
-    }
   }
-  stopVoices(){this.stopGuitar();for(const voice of this.voices){try{voice.stop();}catch{}}this.voices.clear();this.drums?.stop();this.metronome?.stop();}
+  stopBacking(){this.backing?.stop();for(const voice of this.voices){try{voice.stop();}catch{}}this.voices.clear();}
+  stopVoices(){this.stopGuitar();this.stopBacking();this.drums?.stop();this.metronome?.stop();}
   async startMic(onPitch){
     const generation=++this.micGeneration;
     if(!navigator.mediaDevices?.getUserMedia)throw Error('Microphone needs HTTPS or localhost and a supported browser. Manual practice still works.');

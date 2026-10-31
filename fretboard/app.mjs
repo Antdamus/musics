@@ -1,12 +1,13 @@
-import {TUNING,ROOTS,SCALES,DEFAULTS,mod,frequency,octave,spell,noteName,positions,makeScore,scalePCs,sanitizeSettings,pitchMatch,timingGrade,recommendation,masteryFor} from './music.mjs?v=6';
-import {StudioAudio} from './audio.mjs?v=5';
-import {createNoteMap} from './note-map.mjs?v=4';
+import {TUNING,ROOTS,SCALES,DEFAULTS,mod,frequency,octave,spell,noteName,positions,makeScore,scalePCs,sanitizeSettings,pitchMatch,timingGrade,recommendation,masteryFor} from './music.mjs?v=7';
+import {recordedBacking,progression} from './backing.mjs?v=1';
+import {StudioAudio} from './audio.mjs?v=6';
+import {createNoteMap} from './note-map.mjs?v=5';
 import {GUITAR_TOUCHES,guitarVoiceLabel} from './guitar.mjs?v=1';
 import {needsStringNumber,stringMarkerY} from './notation.mjs?v=2';
 import {createClient} from './supabase-client.mjs?v=1';
 import {ACCOUNT_CONFIG} from './account-config.mjs?v=1';
-import {ProfileStore} from './profile-store.mjs?v=3';
-import {cleanData,same} from './profile-data.mjs?v=3';
+import {ProfileStore} from './profile-store.mjs?v=4';
+import {cleanData,same} from './profile-data.mjs?v=4';
 import {createAccountUI} from './accounts.mjs?v=1';
 import {addActiveTime,dayBucket,dayKey,mergeSessions} from './practice-history.mjs?v=1';
 import {createHistoryView} from './history-view.mjs?v=1';
@@ -29,6 +30,7 @@ let sessionId=null,sessionAt=0,sessionVersion=0,sessionLastMs=0,sessionLastAt=0,
 let stats={correct:0,wrong:0,missed:0,streak:0,best:0,onTime:0,manual:0},cleanPasses=0,noticeTimeout,waitAdvance=0,trackURL=null;
 let micPitch=null,micSince=0,micOnset=0,micLatched=false,lastRms=0,lastAttack=0;
 let metronomeState='idle',metronomePreviewTimer=0;
+let backingLoad=0,backingState='idle';
 let startGeneration=0,drumState='idle',previewTimer=0,previewGeneration=0;
 let guitarStatus='Recordings load when you press Hear.',guitarRequest=0;
 const secondsPerBeat=()=>60/settings.bpm;
@@ -40,6 +42,7 @@ const pitchClassName=pc=>spell(60+pc,settings).name.replace(/-?\d+$/,'');
 function persist(){profiles.save({settings,progress});}
 function applyProfile(data,{switching=false}={}){
   const changed=!same(settings,data.settings),reset=progress.resetAt!==data.progress.resetAt;settings=sanitizeSettings(data.settings);progress=data.progress;
+  if(changed||switching||reset){stopPreview();backingState='idle';}
   if(switching||reset){
     resetSession();cleanPasses=0;historyView?.reset();
   }
@@ -76,11 +79,17 @@ function syncControls(){
   $('strings').innerHTML=TUNING.map((m,i)=>`<button type="button" data-string="${i+1}" class="${settings.strings.includes(i+1)?'selected':''}" aria-pressed="${settings.strings.includes(i+1)}" aria-label="String ${i+1}, ${noteName(m)}">${i+1} · ${ROOTS[mod(m)]}</button>`).join('');
   $('range-summary').textContent=`${settings.strings.length===6?'All strings':settings.strings.length+' strings'} · frets ${settings.minFret}–${settings.maxFret}`;
   $('upload-wrap').hidden=settings.backing!=='upload';$('user-track').volume=settings.volume/100;
-  $('backing-help').textContent=settings.scale==='chromatic'?'Chromatic notes can clash with a fixed key. Use just your guitar, or a track you choose.':'A tonic + fifth accompaniment follows your key and tempo.';
+  const sampled=recordedBacking(settings.backing);
+  $('backing-controls').hidden=!sampled;
+  $('backing-help').textContent=sampled?progression(settings).map(c=>c.name).join(' → ')+' · '+ROOTS[settings.root]+' '+SCALES[settings.scale].name.toLowerCase()+' · one chord per bar':settings.backing==='drone'?'A synthesized tonic and fifth hold the key.':settings.backing==='upload'?'Play along to a file from this device.':'Choose a recorded part to hear a four-bar accompaniment in your selected key and scale.';
   updateSoundControls();
   updateRecommendation();
 }
 function updateSoundControls(){
+  $('backing-volume').value=settings.backingVolume;$('backing-volume-value').textContent=settings.backingVolume+'%';
+  audio.backing?.setVolume(settings.backingVolume);
+  $('backing-preview').disabled=running||starting||!audible();
+  $('backing-status').textContent=!audible()?'Muted while the microphone listens. Enable headphones to hear backing.':backingState==='error'?'A recording could not load. Press Preview or Play to retry.':backingState==='loading'?'Loading instrument recordings…':backingState==='ready'?'Recordings ready.':'Recordings load when you press Preview or Play.';
   $('guitar-sound').value=settings.guitarSound;
   $('guitar-touch').innerHTML=GUITAR_TOUCHES[settings.guitarSound].map((label,i)=>`<option value="${i+1}">${label}</option>`).join('');$('guitar-touch').value=settings.guitarTouch;
   $('guitar-volume').value=settings.guitarVolume;$('guitar-volume-value').textContent=`${settings.guitarVolume}%`;
@@ -124,11 +133,39 @@ async function previewMetronome(){
   metronomePreviewTimer=setInterval(schedule,25);schedule();
 }
 function stopPreview(){
+  backingLoad++;if(backingState==='loading')backingState='idle';audio.backing?.stop();delete $('backing-preview').dataset.active;$('backing-preview').textContent='▶ Preview backing';
   audio.stopGuitar();
   previewGeneration++;clearInterval(previewTimer);previewTimer=0;clearInterval(metronomePreviewTimer);metronomePreviewTimer=0;audio.metronome?.stop();delete $('metronome-preview').dataset.loading;$('metronome-preview').textContent='▶ Preview metronome';delete $('drum-preview').dataset.loading;audio.drums?.stop();$('drum-preview').textContent='▶ Preview groove';
 }
+async function prepareBacking(){
+  const id=++backingLoad,current=()=>id===backingLoad,selected={...settings};
+  backingState='loading';updateSoundControls();
+  try{
+    await audio.init();if(!current())return false;
+    audio.setVolume(settings.volume);audio.backing.setVolume(settings.backingVolume);
+    if(!await audio.backing.prepare(selected,current)||!current())return false;
+    backingState='ready';updateSoundControls();return true;
+  }catch{if(current()){backingState='error';updateSoundControls();notice('Backing recording unavailable. You can still practice without it.');}return false;}
+}
+async function previewBacking(){
+  const button=$('backing-preview');
+  if(button.dataset.active){stopPreview();updateSoundControls();return;}
+  if(running||starting||!audible()||!recordedBacking(settings.backing))return;
+  stopPreview();const generation=previewGeneration;
+  button.dataset.active='true';button.textContent='Cancel preview';
+  const ready=await prepareBacking();if(generation!==previewGeneration)return;
+  if(!ready){stopPreview();return;}
+  button.textContent='■ Stop preview';
+  const begins=audio.context.currentTime+.075,period=secondsPerBeat();let beat=0;
+  const schedule=()=>{
+    const now=audio.context.currentTime;
+    if(!audible()||now>=begins+16*period){stopPreview();return;}
+    while(beat<16&&begins+beat*period<now+.12){if(begins+beat*period>=now-.04)audio.backing.beat(begins+beat*period,beat,settings);beat++;}
+  };
+  previewTimer=setInterval(schedule,25);schedule();
+}
 async function previewDrums(){
-  if(previewTimer||$('drum-preview').dataset.loading==='true'){stopPreview();delete $('drum-preview').dataset.loading;return;}
+  if($('drum-preview').textContent==='■ Stop preview'||$('drum-preview').dataset.loading==='true'){stopPreview();delete $('drum-preview').dataset.loading;return;}
   if(running||starting||!audible())return;stopPreview();const generation=previewGeneration;
   $('drum-preview').dataset.loading='true';$('drum-preview').textContent='Cancel preview';
   const ready=await prepareDrums();
@@ -307,6 +344,8 @@ async function start(){
   await prepareMetronome();
   if(generation!==startGeneration)return;
   if(settings.drums!=='off'&&!await prepareDrums()){if(generation===startGeneration)pause();return;}
+  if(generation!==startGeneration)return;
+  if(recordedBacking(settings.backing))await prepareBacking();
   if(generation!==startGeneration||document.hidden){if(generation===startGeneration)pause();return;}
   if(finished)newScore();
   if(!sessionId){sessionId=crypto.randomUUID();sessionAt=Date.now();}
@@ -444,7 +483,7 @@ function onPitch(detection){
   if(heard===currentEvent()?.midi&&!match.correct){$('heard-detail').textContent+=' · tune closer to the target';return;}
   micLatched=true;answer(heard,{at:micOnset});
 }
-function changeSetup(){pause();settings=sanitizeSettings(settings);cleanPasses=0;syncControls();newScore();persist();updateStats();}
+function changeSetup(){pause();backingState='idle';settings=sanitizeSettings(settings);cleanPasses=0;syncControls();newScore();persist();updateStats();}
 function toggleArray(key,value){const a=settings[key];if(a.includes(value)){if(a.length===1){notice('Keep at least one selected.');return;}settings[key]=a.filter(v=>v!==value);}else settings[key]=[...a,value];changeSetup();}
 function playUserTrack(){if(trackURL&&settings.backing==='upload'&&audible())$('user-track').play().catch(()=>notice('Tap Play again to allow your audio file to start.'));}
 $('play').onclick=()=>running||starting?pause():start();
@@ -478,7 +517,15 @@ $('guitar-volume').oninput=()=>{settings.guitarVolume=Number($('guitar-volume').
 $('headphones').onchange=()=>{settings.headphones=$('headphones').checked;routeAudio();persist();};
 $('goal').onchange=()=>{settings.goal=Number($('goal').value);updateStats();persist();};
 $('volume').oninput=()=>{settings.volume=Number($('volume').value);audio.setVolume(settings.volume);$('user-track').volume=settings.volume/100;persist();};
-$('backing').onchange=()=>{settings.backing=$('backing').value;audio.stopVoices();$('user-track').pause();syncControls();if(running&&position>=0)playUserTrack();persist();};
+$('backing').onchange=()=>{
+  if(starting||!running)pause();
+  backingLoad++;backingState='idle';audio.stopBacking();$('user-track').pause();
+  settings.backing=$('backing').value;syncControls();persist();
+  if(running&&recordedBacking(settings.backing))void prepareBacking();
+  else if(running&&position>=0)playUserTrack();
+};
+$('backing-volume').oninput=()=>{settings.backingVolume=Number($('backing-volume').value);audio.backing?.setVolume(settings.backingVolume);$('backing-volume-value').textContent=settings.backingVolume+'%';persist();};
+$('backing-preview').onclick=previewBacking;
 $('drums').onchange=()=>{pause();settings.drums=$('drums').value;updateSoundControls();persist();};
 $('drum-volume').oninput=()=>{settings.drumVolume=Number($('drum-volume').value);audio.drums?.setVolume(settings.drumVolume);updateSoundControls();persist();};
 $('drum-fills').onchange=()=>{settings.drumFills=$('drum-fills').checked;persist();};

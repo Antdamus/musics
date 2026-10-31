@@ -1,4 +1,4 @@
-import {sanitizeSettings} from './music.mjs?v=6';
+import {sanitizeSettings} from './music.mjs?v=7';
 import {mergeSessions} from './practice-history.mjs?v=1';
 
 const object=value=>value&&typeof value==='object'&&!Array.isArray(value)?value:{};

@@ -1,0 +1,169 @@
+{
+  "library": "Karoryfer Meatbass",
+  "revision": "ac9e859564bda286ab5ec672d00ff1aa2fef2895",
+  "license": "CC0-1.0",
+  "samples": [
+    {
+      "midi": 30,
+      "take": 1,
+      "file": "30-1.ogg",
+      "bytes": 25486,
+      "sha256": "218bb36b030129f29bb4f7e38a82d7367cd094c0d8271975e9a61d2b4402d737",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.meatbass/ac9e859564bda286ab5ec672d00ff1aa2fef2895/Samples/pizz/gb1_vl3_rr1.wav",
+      "originalSha256": "bf60279a41eee281ff045b5c11de65fcbde440fee5aaf09867b7803582e490c4"
+    },
+    {
+      "midi": 30,
+      "take": 2,
+      "file": "30-2.ogg",
+      "bytes": 27200,
+      "sha256": "78c26255350be1f95f498f703545c656d9d5d3d63d47d6a2daff0e143a507687",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.meatbass/ac9e859564bda286ab5ec672d00ff1aa2fef2895/Samples/pizz/gb1_vl3_rr2.wav",
+      "originalSha256": "c8c2e915c27b4917c1cf67c24dbdbff76618e10b7dc9bed5da6fd61c0c301e71"
+    },
+    {
+      "midi": 33,
+      "take": 1,
+      "file": "33-1.ogg",
+      "bytes": 23193,
+      "sha256": "d90a04cb5a6ef290eead054069313412c7c76178d814d9b1de058755c9a44afa",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.meatbass/ac9e859564bda286ab5ec672d00ff1aa2fef2895/Samples/pizz/a1_vl3_rr1.wav",
+      "originalSha256": "060f2fee87767e2a8b2e87cf194cc971634b07be6886a423108b2b84f5c76146"
+    },
+    {
+      "midi": 33,
+      "take": 2,
+      "file": "33-2.ogg",
+      "bytes": 23800,
+      "sha256": "419911d307828e527a46c510f264ca3ab96db82a414e11bfae70b2ab86f2389f",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.meatbass/ac9e859564bda286ab5ec672d00ff1aa2fef2895/Samples/pizz/a1_vl3_rr2.wav",
+      "originalSha256": "d806d682590ae79e34e874c40aa78807ea8ec0f221e36a1d85d7d18d616e4896"
+    },
+    {
+      "midi": 36,
+      "take": 1,
+      "file": "36-1.ogg",
+      "bytes": 22893,
+      "sha256": "8826e1552c8b95294f94050df08ea16af2459353e66b4ae947a0c7e77585a53d",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.meatbass/ac9e859564bda286ab5ec672d00ff1aa2fef2895/Samples/pizz/c2_vl3_rr1.wav",
+      "originalSha256": "511d55cfa51626a2c2531278a41484e5316c401928a8fbb741c67c3105a1d7c9"
+    },
+    {
+      "midi": 36,
+      "take": 2,
+      "file": "36-2.ogg",
+      "bytes": 23196,
+      "sha256": "66b1ea02e40ba70daaaefb3fed28324f92e34195b97c478a5d85e941bbf3fb73",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.meatbass/ac9e859564bda286ab5ec672d00ff1aa2fef2895/Samples/pizz/c2_vl3_rr2.wav",
+      "originalSha256": "76dc8c819197c8a98552b2ad3185893e653e03505e7297c3bab716916ff355ed"
+    },
+    {
+      "midi": 39,
+      "take": 1,
+      "file": "39-1.ogg",
+      "bytes": 26537,
+      "sha256": "a73ae11a4d0735c5f9332c7ee4afb76f15add05d8187db0ed184b2a02e2eab7b",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.meatbass/ac9e859564bda286ab5ec672d00ff1aa2fef2895/Samples/pizz/eb2_vl3_rr1.wav",
+      "originalSha256": "29e3214358f270a2a9b3af48a933888b8ccb37fe28329630137125198f76934d"
+    },
+    {
+      "midi": 39,
+      "take": 2,
+      "file": "39-2.ogg",
+      "bytes": 26362,
+      "sha256": "194b23038abbfe7d02658de6f80bd03e34152e8b0ce07844798f0b0d296efe6e",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.meatbass/ac9e859564bda286ab5ec672d00ff1aa2fef2895/Samples/pizz/eb2_vl3_rr2.wav",
+      "originalSha256": "48d589780d23f89cf56339c8ca26af96a928f98855113bb790adefe339825cf8"
+    },
+    {
+      "midi": 42,
+      "take": 1,
+      "file": "42-1.ogg",
+      "bytes": 22235,
+      "sha256": "7ab4987831094cafcd41dd3fe32a6485fc5f07bdbcf862572f68c4f0ce7f6425",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.meatbass/ac9e859564bda286ab5ec672d00ff1aa2fef2895/Samples/pizz/gb2_vl3_rr1.wav",
+      "originalSha256": "505ed4bfbab9fd7b15746f9997044a2c56c944028bb49498bd544018ab0affb2"
+    },
+    {
+      "midi": 42,
+      "take": 2,
+      "file": "42-2.ogg",
+      "bytes": 23289,
+      "sha256": "61c9cee26e55f5a36a9e655752d62a6f152577359b05ae339a8afb16b747ce2b",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.meatbass/ac9e859564bda286ab5ec672d00ff1aa2fef2895/Samples/pizz/gb2_vl3_rr2.wav",
+      "originalSha256": "ca4739c9f5433afe711deced81b92337d9b5b52aa143b5f1bef2e4e331a965bd"
+    },
+    {
+      "midi": 45,
+      "take": 1,
+      "file": "45-1.ogg",
+      "bytes": 18552,
+      "sha256": "2daf4874ca4eeabf4432b90821fc79994ebe56449f70a371ef27205d6c6c019d",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.meatbass/ac9e859564bda286ab5ec672d00ff1aa2fef2895/Samples/pizz/a2_vl3_rr1.wav",
+      "originalSha256": "8d2e94a4124f0cf9f223a1a74870f5ee45045092614285605d55066c9eadf103"
+    },
+    {
+      "midi": 45,
+      "take": 2,
+      "file": "45-2.ogg",
+      "bytes": 19186,
+      "sha256": "a248149fa0c969662448fd956b3774b33adb89f0a280a391b23db88def195757",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.meatbass/ac9e859564bda286ab5ec672d00ff1aa2fef2895/Samples/pizz/a2_vl3_rr2.wav",
+      "originalSha256": "6d1e0cafb334501f0d0795e287a56b05531802cbb8aae1d2b213ccf6241911e7"
+    },
+    {
+      "midi": 48,
+      "take": 1,
+      "file": "48-1.ogg",
+      "bytes": 17957,
+      "sha256": "f555d9fe3bcba33088de99d45c2c119b456b7182e00264c7f84dd810a35c9513",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.meatbass/ac9e859564bda286ab5ec672d00ff1aa2fef2895/Samples/pizz/c3_vl3_rr1.wav",
+      "originalSha256": "c1c194a2f0055fa9a283576c2c9c3a9e4502ff29a3c6b7714a0d7ca3f532c19f"
+    },
+    {
+      "midi": 48,
+      "take": 2,
+      "file": "48-2.ogg",
+      "bytes": 17273,
+      "sha256": "70910e520c6ed1930899b2ca3a324a042f03eab1dd9c5a5c5d19ecadfe9238d4",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.meatbass/ac9e859564bda286ab5ec672d00ff1aa2fef2895/Samples/pizz/c3_vl3_rr2.wav",
+      "originalSha256": "05628f489e1406c5bb8ee03c8ab24241c53b4666470ef467a39470c0fa98d30c"
+    },
+    {
+      "midi": 51,
+      "take": 1,
+      "file": "51-1.ogg",
+      "bytes": 18805,
+      "sha256": "0bc7735f7af1e87c48aec35678d4175dd53e4e20153a7fbe45bb015dc48c28a4",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.meatbass/ac9e859564bda286ab5ec672d00ff1aa2fef2895/Samples/pizz/eb3_vl3_rr1.wav",
+      "originalSha256": "8e86876cd768691872a4ecb250a6d271124f339d7a0f56f3b0e7c88c31450cd9"
+    },
+    {
+      "midi": 51,
+      "take": 2,
+      "file": "51-2.ogg",
+      "bytes": 18849,
+      "sha256": "fbaa1a753407f86163d9bb0ce31dee941cbdc19a99386da6f4778d8d3e663163",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.meatbass/ac9e859564bda286ab5ec672d00ff1aa2fef2895/Samples/pizz/eb3_vl3_rr2.wav",
+      "originalSha256": "18e57dc6152431c703e755cd44f14b84318e1643f43d9f75a3f50bddc68687e9"
+    },
+    {
+      "midi": 54,
+      "take": 1,
+      "file": "54-1.ogg",
+      "bytes": 20791,
+      "sha256": "55883403aff84cd23faffa3917e7ed3b0e2802f575bd6fd08d95b2cdfef58341",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.meatbass/ac9e859564bda286ab5ec672d00ff1aa2fef2895/Samples/pizz/gb3_vl3_rr1.wav",
+      "originalSha256": "58a60623aa3196c24446494131839cf68ef6b762c70f18a34591c506443c15a7"
+    },
+    {
+      "midi": 54,
+      "take": 2,
+      "file": "54-2.ogg",
+      "bytes": 20427,
+      "sha256": "2e9c2244771ca504314020eb4dc3c69081be371d4f7723862cb31d71c02638ff",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.meatbass/ac9e859564bda286ab5ec672d00ff1aa2fef2895/Samples/pizz/gb3_vl3_rr2.wav",
+      "originalSha256": "69c065f5ab3f75dd1c638aa083133c2f1998fb71a8f5565dbf68787c7d2065a0"
+    }
+  ]
+}

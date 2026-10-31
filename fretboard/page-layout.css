@@ -95,6 +95,12 @@ body:not(.practice-focused) .score-card>.answer-actions{padding:12px 22px 0;gap:
 .sound-panel .toggle-label{min-height:32px}
 .sound-panel .file-label input{font-size:12px;min-height:44px}
 .sound-tip{font-size:12px;line-height:1.7;color:var(--muted);margin:20px 0 0;padding-top:18px;border-top:1px solid var(--line)}
+.backing-room #backing-help{font-size:12px;color:var(--green)}
+.backing-room .volume-label{flex-wrap:wrap;margin:14px 0}
+.backing-room .volume-label output{margin-left:auto}
+.backing-room .volume-label input{flex-basis:100%}
+.backing-room .secondary{width:100%;font-size:12px}
+.backing-room #backing-status{font-size:11px;color:var(--muted)}
 .section-return{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-top:16px}
 .section-return>span{font-size:11px;color:var(--muted)}
 .section-return a{white-space:nowrap}

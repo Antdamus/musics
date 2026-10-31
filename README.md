@@ -4,6 +4,8 @@ Guitar sight-reading and fretboard practice with classical notation, exact octav
 
 **[Open Fretwise](https://antdamus.github.io/musics/)**
 
+For a backing band, select a key and note family in **Notes & goals**, then open **Sound → Backing accompaniment**. Choose recorded upright bass, nylon guitar, or both. Try **E · Phrygian dominant** with **Acoustic duo** to hear E → F → Dm → E. Preview plays four bars at the playback tempo without starting a practice session.
+
 This is the dedicated source repository for the **Music learning** project. The complete app, recordings, licenses, tests, and sample preparation tools were imported from the Fretwise work through `Antdamus/Invsto` commit `cb47a1f200917cc630bedb7b64469fd440004d79`.
 
 ## Run locally

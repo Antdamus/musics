@@ -3,10 +3,15 @@ export const ROOTS = ['C','D♭','D','E♭','E','F','F♯','G','A♭','A','B♭'
 export const SCALES = {
   major: {name:'Major', intervals:[0,2,4,5,7,9,11], degrees:[0,1,2,3,4,5,6]},
   minor: {name:'Natural minor', intervals:[0,2,3,5,7,8,10], degrees:[0,1,2,3,4,5,6]},
+  harmonicMinor: {name:'Harmonic minor', intervals:[0,2,3,5,7,8,11], degrees:[0,1,2,3,4,5,6]},
+  dorian: {name:'Dorian', intervals:[0,2,3,5,7,9,10], degrees:[0,1,2,3,4,5,6]},
+  phrygian: {name:'Phrygian', intervals:[0,1,3,5,7,8,10], degrees:[0,1,2,3,4,5,6]},
+  phrygianDominant: {name:'Phrygian dominant', intervals:[0,1,4,5,7,8,10], degrees:[0,1,2,3,4,5,6]},
+  mixolydian: {name:'Mixolydian', intervals:[0,2,4,5,7,9,10], degrees:[0,1,2,3,4,5,6]},
   pentatonic: {name:'Minor pentatonic', intervals:[0,3,5,7,10], degrees:[0,2,3,4,6]},
   chromatic: {name:'All 12 notes', intervals:[0,1,2,3,4,5,6,7,8,9,10,11]}
 };
-export const DEFAULTS = {root:0,scale:'major',pool:[0],octaves:[2,3,4,5,6],strings:[1,2,3,4,5,6],minFret:0,maxFret:21,bpm:60,duration:2,mode:'timed',hints:true,autoAdd:false,targetBpm:100,loop:true,metronome:true,headphones:false,backing:'off',volume:35,goal:5,drums:'off',drumVolume:65,drumFills:true,metronomeSound:'mechanical',metronomeVolume:75,metronomeAccent:true,guitarSound:'steel',guitarTouch:2,guitarVolume:75};
+export const DEFAULTS = {root:0,scale:'major',pool:[0],octaves:[2,3,4,5,6],strings:[1,2,3,4,5,6],minFret:0,maxFret:21,bpm:60,duration:2,mode:'timed',hints:true,autoAdd:false,targetBpm:100,loop:true,metronome:true,headphones:false,backing:'off',backingVolume:65,volume:35,goal:5,drums:'off',drumVolume:65,drumFills:true,metronomeSound:'mechanical',metronomeVolume:75,metronomeAccent:true,guitarSound:'steel',guitarTouch:2,guitarVolume:75};
 export const mod = (n,m=12) => ((n%m)+m)%m;
 export const frequency = midi => 440*2**((midi-69)/12);
 export const octave = midi => Math.floor(midi/12)-1;
@@ -100,7 +105,7 @@ export function detectPitch(samples,sampleRate){
 export function sanitizeSettings(value={}){
   const s={...DEFAULTS},num=(key,min,max)=>{const n=Number(value[key]);if(Number.isFinite(n))s[key]=Math.max(min,Math.min(max,n));};
   num('root',0,11);s.root=Math.round(s.root);
-  if(SCALES[value.scale])s.scale=value.scale;
+  if(Object.hasOwn(SCALES,value.scale))s.scale=value.scale;
   for(const [key,allowed] of [['pool',scalePCs(s)],['octaves',[2,3,4,5,6]],['strings',[1,2,3,4,5,6]]]){
     if(Array.isArray(value[key])){const a=[...new Set(value[key].filter(x=>allowed.includes(x)))];if(a.length)s[key]=a;}
   }
@@ -111,7 +116,8 @@ export function sanitizeSettings(value={}){
   if([1,2,3].includes(value.guitarTouch))s.guitarTouch=value.guitarTouch;
   if([1,2,4].includes(value.duration))s.duration=value.duration;
   if(['timed','wait'].includes(value.mode))s.mode=value.mode;
-  if(['off','drone','groove','upload'].includes(value.backing))s.backing=value.backing;
+  if(['off','drone','groove','nylon','duo','upload'].includes(value.backing))s.backing=value.backing;
+  num('backingVolume',0,100);
   if(['off','pop','rock','shuffle','halftime'].includes(value.drums))s.drums=value.drums;
   if(['mechanical','digital'].includes(value.metronomeSound))s.metronomeSound=value.metronomeSound;
   for(const k of ['hints','autoAdd','loop','metronome','headphones','drumFills','metronomeAccent'])if(typeof value[k]==='boolean')s[k]=value[k];

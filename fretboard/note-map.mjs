@@ -1,4 +1,4 @@
-import {TUNING,DEFAULTS,mod,spell,noteName,accidental,frequency} from './music.mjs?v=5';
+import {TUNING,DEFAULTS,mod,spell,noteName,accidental,frequency} from './music.mjs?v=7';
 import {GUITAR_TOUCHES,guitarVoiceLabel} from './guitar.mjs?v=1';
 import {needsStringNumber,stringMarkerY} from './notation.mjs?v=2';
 

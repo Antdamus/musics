@@ -5,7 +5,7 @@ import {test,before,after} from 'node:test';
 import {chromium,expect} from '@playwright/test';
 const root=new URL('../',import.meta.url);let server,browser,origin;
 before(async()=>{
-  server=createServer(async(req,res)=>{const path=decodeURIComponent(new URL(req.url,'http://local').pathname);if(!/^\/fretboard\/(?:[a-z.-]+|samples\/(?:(?:acoustic|metronome)\/[a-zA-Z0-9.-]+|guitar\/(?:steel|nylon)\/[a-zA-Z0-9.-]+))$/.test(path)){res.writeHead(404).end();return;}try{const body=await readFile(new URL('.'+path,root));res.setHeader('Content-Type',path.endsWith('.mjs')?'text/javascript':path.endsWith('.css')?'text/css':path.endsWith('.wav')?'audio/wav':path.endsWith('.ogg')?'audio/ogg':'text/html');res.end(body);}catch{res.writeHead(404).end();}});
+  server=createServer(async(req,res)=>{const path=decodeURIComponent(new URL(req.url,'http://local').pathname);if(!/^\/fretboard\/(?:[a-z.-]+|samples\/(?:(?:acoustic|metronome|bass)\/[a-zA-Z0-9.-]+|guitar\/(?:steel|nylon)\/[a-zA-Z0-9.-]+))$/.test(path)){res.writeHead(404).end();return;}try{const body=await readFile(new URL('.'+path,root));res.setHeader('Content-Type',path.endsWith('.mjs')?'text/javascript':path.endsWith('.css')?'text/css':path.endsWith('.wav')?'audio/wav':path.endsWith('.ogg')?'audio/ogg':'text/html');res.end(body);}catch{res.writeHead(404).end();}});
   await new Promise(r=>server.listen(0,'127.0.0.1',r));origin=`http://127.0.0.1:${server.address().port}`;
   browser=await chromium.launch();await mkdir(new URL('test-results/',root),{recursive:true});
 });
@@ -188,7 +188,7 @@ test('1 BPM uses minute-long beats while keeping the faster goal separate',async
   const page=await open(t);await page.clock.install();await page.locator('#bpm').fill('1');await page.locator('#bpm').press('Tab');
   await page.locator('#duration').selectOption('1');await page.locator('#goal').selectOption('0');
   await page.evaluate(async()=>{
-    const {StudioAudio}=await import('/fretboard/audio.mjs?v=5'),beat=StudioAudio.prototype.beat;window.slowBeats=[];
+    const {StudioAudio}=await import('/fretboard/audio.mjs?v=6'),beat=StudioAudio.prototype.beat;window.slowBeats=[];
     StudioAudio.prototype.beat=function(time,n,s){window.slowBeats.push({n,bpm:s.bpm,targetBpm:s.targetBpm});return beat.call(this,time,n,s);};
   });
   await page.locator('#play').click();await page.clock.fastForward(239000);await page.clock.runFor(100);
@@ -341,20 +341,63 @@ test('classical string instructions enforce the assigned location, even for the 
   await page.locator(`#fretboard [data-string="${string}"][data-fret="${frets[string]}"]`).click();await expect(page.locator('#correct')).toHaveText('1');
 });
 test('two clean unassisted passes record separate octave milestones and recommend another note',async t=>{
-  const page=await open(t);await page.clock.install();await page.locator('#bpm').fill('180');await page.locator('#bpm').press('Tab');await page.locator('#hints').uncheck();
-  await page.locator('#play').click();await page.clock.runFor(1400);
+  const page=await open(t);await page.clock.install({time:new Date('2026-01-01T12:00:00Z')});
+  // Each synthetic answer must land on its intended note, independent of browser click latency.
+  await page.clock.pauseAt(new Date('2026-01-01T12:00:05Z'));
+  await page.locator('#bpm').fill('180');await page.locator('#bpm').press('Tab');await page.locator('#hints').uncheck();
+  await page.locator('#play').click();await expect(page.locator('#play')).toContainText('Pause');await page.clock.runFor(1400);
   for(let pass=0;pass<2;pass++)for(let n=0;n<8;n++){
-    await page.locator('#got-it').click();await page.clock.runFor(n===7?670:667);
+    await expect(page.locator('.sheet-note.current')).toHaveAttribute('data-note-index',String(n));
+    await page.locator('#got-it').click();await expect(page.locator('#correct')).toHaveText(String(pass*8+n+1));await page.clock.runFor(n===7?670:667);
   }
   await page.locator('#play').click();await expect(page.locator('#mastery-label')).toHaveText('4 / 4 pitches at goal');await expect(page.locator('#mastery-help')).toContainText('Ready for another note');
   const data=await page.evaluate(()=>JSON.parse(localStorage.getItem('fretwise.v1')));for(const midi of [48,60,72,84])assert.ok(data.progress.notes[midi].passes.length>=2);
   await page.locator('#add-note').click();await expect(page.locator('#pool-count')).toHaveText('2 of 7');await expect(page.locator('#mastery-label')).not.toHaveText('8 / 8 pitches at goal');
 });
-test('generated backing, local audio selection, session timer and history work together',async t=>{
-  const page=await open(t);await page.clock.install();await page.locator('#backing').selectOption('groove');await page.locator('#goal').selectOption('3');await page.locator('#play').click();await page.clock.runFor(4500);
+test('recorded backing, local audio selection, session timer and history work together',async t=>{
+  const page=await open(t);await page.clock.install();await page.locator('#backing').selectOption('groove');await page.locator('#goal').selectOption('3');await page.locator('#play').click();await expect(page.locator('#play')).toContainText('Pause');await page.clock.runFor(4500);
   await page.locator('#got-it').click();await page.locator('#finish').click();await expect(page.locator('#summary-dialog')).toBeVisible();await expect(page.locator('#history-copy')).toContainText('1 saved session');
   await page.getByRole('button',{name:'Back to the fretboard'}).click();await page.locator('#backing').selectOption('upload');await expect(page.locator('#upload-wrap')).toBeVisible();
   await page.locator('#audio-file').setInputFiles({name:'practice.wav',mimeType:'audio/wav',buffer:Buffer.alloc(44)});await expect(page.locator('#audio-name')).toHaveText('practice.wav');
+});
+
+test('modal backing preview loads just its real instruments, saves settings and does not score practice',async t=>{
+  const page=await open(t,390),files=new Set();page.on('request',r=>{if(r.url().endsWith('.ogg'))files.add(r.url());});
+  await page.locator('#root').selectOption('4');await page.locator('#scale').selectOption('phrygianDominant');await page.locator('#backing').selectOption('duo');
+  await expect(page.locator('#backing-help')).toContainText('E → F → Dm → E');await expect(page.locator('#pool-count')).toHaveText('1 of 7');
+  assert.equal(files.size,0);await page.locator('#backing-volume').fill('43');await page.locator('#backing-preview').click();
+  await expect(page.locator('#backing-preview')).toHaveText('■ Stop preview');assert.ok([...files].some(f=>f.includes('/bass/')));assert.ok([...files].some(f=>f.includes('/guitar/nylon/')));
+  await page.locator('#backing-preview').click();await expect(page.locator('#clock')).toHaveText('00:00');await expect(page.locator('#correct')).toHaveText('0');
+  await page.reload();await expect(page.locator('#scale')).toHaveValue('phrygianDominant');await expect(page.locator('#backing')).toHaveValue('duo');await expect(page.locator('#backing-volume')).toHaveValue('43');
+  await page.locator('#map-open').click();await expect(page.locator('#note-map-dialog')).toBeVisible();await page.keyboard.press('Escape');
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+});
+
+test('recorded backing is silent on count-in and mic mute, rings at the beat, then stops on cancel',async t=>{
+  const page=await open(t);
+  const {energies,peak}=await page.evaluate(async()=>{
+    const {RecordedBacking}=await import('/fretboard/backing.mjs?v=1'),{StudioAudio}=await import('/fretboard/audio.mjs?v=6');
+    const ctx=new OfflineAudioContext(1,48000*3,48000),audio=new StudioAudio(),part=audio.backing=new RecordedBacking(ctx,ctx.destination);
+    const s={bpm:120,scale:'phrygianDominant',root:4,backing:'duo',metronome:false,drums:'off'};
+    await part.prepare(s,()=>true);part.setVolume(65);audio.beat(0,-1,s);audio.muted=true;audio.beat(.5,0,s);audio.muted=false;
+    audio.beat(1,0,s);audio.beat(1.5,1,s);audio.beat(2,2,s);
+    const resume=ctx.suspend(1.8).then(()=>{part.stop();return ctx.resume();});
+    const rendered=await ctx.startRendering();await resume;const data=rendered.getChannelData(0);
+    const energies=[0,.5,1,1.5,2.1].map(t=>{let sum=0;for(let i=Math.floor(t*48000);i<Math.floor((t+.23)*48000);i++)sum+=data[i]**2;return sum;});
+    return {energies,peak:data.reduce((p,v)=>Math.max(p,Math.abs(v)),0)};
+  });
+  assert.equal(energies[0],0);assert.equal(energies[1],0);assert.ok(energies[2]>1);assert.ok(energies[3]>1);assert.equal(energies[4],0);assert.ok(peak<1);
+});
+
+test('a failed or cancelled sample download never starts a late accompaniment preview',async t=>{
+  const page=await open(t);await page.locator('#backing').selectOption('groove');await page.route('**/samples/bass/*.ogg',r=>r.abort());
+  await page.locator('#backing-preview').click();await expect(page.locator('#backing-status')).toContainText('could not load');await expect(page.locator('#play')).toBeEnabled();
+  await page.unroute('**/samples/bass/*.ogg');let release,arrived;const gate=new Promise(r=>release=r),request=new Promise(r=>arrived=r);
+  await page.route('**/samples/bass/*.ogg',async route=>{arrived();await gate;await route.continue();});
+  await page.evaluate(async()=>{const {RecordedBacking}=await import('/fretboard/backing.mjs?v=1');window.lateBeats=0;const old=RecordedBacking.prototype.beat;RecordedBacking.prototype.beat=function(...a){window.lateBeats++;return old.apply(this,a);};});
+  await page.locator('#backing-preview').click();await request;await page.locator('#backing').selectOption('off');release();await page.unrouteAll({behavior:'wait'});
+  await page.locator('#backing').selectOption('groove');await expect(page.locator('#backing-preview')).toHaveText('▶ Preview backing');assert.equal(await page.evaluate(()=>window.lateBeats),0);
+  await page.locator('#backing-preview').click();await expect(page.locator('#backing-preview')).toHaveText('■ Stop preview');await page.locator('#backing-preview').click();
 });
 
 test('practice autosaves, pause excludes idle time, resume updates one session, and reload saves unfinished time',async t=>{
@@ -448,7 +491,7 @@ test('canceling playback while the kit loads cannot start the score later',async
 test('sample engine renders actual audio, alternates takes, chokes hats and mutes microphone playback',async t=>{
   const page=await open(t);
   const rendered=await page.evaluate(async()=>{
-    const {AcousticKit}=await import('/fretboard/drums.mjs?v=1'),{StudioAudio}=await import('/fretboard/audio.mjs?v=5');
+    const {AcousticKit}=await import('/fretboard/drums.mjs?v=1'),{StudioAudio}=await import('/fretboard/audio.mjs?v=6');
     const context=new OfflineAudioContext(2,44100*2,44100),kit=new AcousticKit(context,context.destination);await kit.load();
     kit.hit('openhat',.05,.8);const open=[...kit.voices][0];kit.hit('hat',.3,.8);kit.hit('hat',.6,.8);kit.hit('kick',.1,.8);kit.hit('kick',1,.8);
     const kickBuffers=[...kit.voices].filter(v=>v.piece==='kick').map(v=>v.source.buffer);const alternates=kickBuffers[0]!==kickBuffers[1],chokedAt=open.chokedAt;
@@ -481,7 +524,7 @@ test('metronome download failure uses a disclosed digital fallback and preview c
 test('recorded metronome alternates tick and tock, accents beat one and obeys mute/count-in rules',async t=>{
   const page=await open(t);
   const result=await page.evaluate(async()=>{
-    const {PendulumMetronome}=await import('/fretboard/metronome.mjs?v=1'),{StudioAudio}=await import('/fretboard/audio.mjs?v=5');
+    const {PendulumMetronome}=await import('/fretboard/metronome.mjs?v=1'),{StudioAudio}=await import('/fretboard/audio.mjs?v=6');
     const context=new OfflineAudioContext(1,48000*3,48000),m=new PendulumMetronome(context,context.destination);await m.load();
     const settings={metronomeSound:'mechanical',metronomeVolume:75,metronomeAccent:true,metronome:false,drums:'off',backing:'off'};
     for(let n=0;n<4;n++)m.beat(.1+n*.5,n,settings);
