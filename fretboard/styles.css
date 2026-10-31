@@ -7,6 +7,33 @@
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 .sheet-scroll svg{max-height:none}.mastery-box>.toggle-label{justify-content:flex-start}.string-indication{pointer-events:none}.score-playhead{pointer-events:none}
 .tempo-control>small{display:block;max-width:145px;font-size:10px;line-height:1.4;color:#63705e}.mastery-box>label[for=target-bpm]{gap:8px}.mastery-box>label[for=target-bpm]>span{white-space:nowrap}
+.score-tools{display:flex;flex-direction:column;align-items:flex-end;gap:8px}.score-tools button{min-height:44px;white-space:nowrap}.practice-header,#practice-checks{display:none}
+@media(max-width:600px),(max-width:1000px) and (max-height:500px){
+  .sheet-scroll{overflow:visible}.sheet-scroll #sheet{min-width:0;padding:4px 6px 0}.sheet-scroll svg{min-height:0}
+  .score-card .card-top{padding:16px 14px 12px}.score-card .card-top h2{font-size:21px}.score-card .score-toolbar{margin:0 14px;gap:8px}
+  .sheet-note .note-ink{fill:#65705f;stroke:#65705f}.sheet-note text.note-hint{fill:#63705e}
+}
+body.practice-focused{overflow:hidden}
+.practice-focused>.topbar,.practice-focused main>.intro,.practice-focused .settings-card,.practice-focused .practice-column>:not(.score-card),.practice-focused .journey,.practice-focused footer{display:none}
+.practice-focused .score-card{position:fixed;inset:0;z-index:10;height:100dvh;border:0;border-radius:0;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:flex;flex-direction:column}
+.practice-focused .score-card>.card-top,.practice-focused .score-toolbar,.practice-focused .now-strip,.practice-focused .score-footer{display:none}
+.practice-focused .practice-header{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:48px;padding:2px 10px;border-bottom:1px solid var(--line);flex:none}
+.practice-header button{min-height:44px;flex:none;font-size:12px}.practice-header span{font-size:12px;text-align:right;line-height:1.3}
+.practice-focused .sheet-scroll{flex:1;min-height:0;overflow:hidden;display:flex}
+.practice-focused .sheet-scroll #sheet{width:100%;min-width:0;height:100%;padding:2px 6px}
+.practice-focused .sheet-scroll svg{width:100%;height:100%;min-height:0;max-height:none}
+.practice-focused .transport{flex:none;display:grid;grid-template-columns:minmax(80px,1fr) 44px minmax(140px,1fr);gap:6px 8px;padding:6px 10px}
+.practice-focused #play{padding:8px;font-size:12px}.practice-focused #restart{width:44px;height:44px}
+.practice-focused #new-phrase,.practice-focused .tempo-control>small,.practice-focused #practice-checks kbd{display:none}
+.practice-focused .tempo-control{gap:0;align-self:center}.practice-focused .tempo-control>div{gap:0}.practice-focused .tempo-control button{width:44px;height:44px}.practice-focused .tempo-control label{letter-spacing:1px}
+.practice-focused #notice{z-index:20;bottom:calc(env(safe-area-inset-bottom) + 118px)}
+.practice-focused #practice-checks{grid-column:1/-1;display:flex;gap:8px}.practice-focused #practice-checks>button{flex:1;min-height:44px;font-size:13px;padding:6px 10px}
+@media print{.practice-header,.score-tools,#practice-checks{display:none!important}.practice-focused .score-card{position:static;height:auto;padding:0;display:block}.practice-focused .sheet-scroll #sheet,.practice-focused .sheet-scroll svg{height:auto}}
+@media(orientation:landscape) and (max-height:500px){
+  .practice-focused .practice-header{min-height:44px;padding:0 10px}.practice-focused .transport{display:flex;flex-wrap:nowrap;padding:3px 10px;gap:8px}
+  .practice-focused #play{min-width:100px}.practice-focused .tempo-control{margin-left:auto}
+  .practice-focused #practice-checks{flex:1;max-width:260px}.practice-focused #practice-checks>button{white-space:nowrap;font-size:12px;padding:6px}
+}
 .map-entry{display:block;width:100%;text-align:left;color:var(--green);font-size:11px;margin-top:3px}.fret-map-actions{display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.fret-map-actions #map-current{color:var(--green)}
 #note-map-dialog{max-width:1180px;padding:30px;max-height:calc(100dvh - 32px)}
 #note-map-dialog h2{margin:8px 0 10px;font-size:36px}#map-intro{margin:0 0 22px;max-width:650px;font-size:14px}

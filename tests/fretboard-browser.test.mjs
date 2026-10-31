@@ -13,7 +13,7 @@ after(async()=>{await browser?.close();await new Promise(r=>{server.close(r);ser
 async function open(t,width=1440){
   const context=await browser.newContext({viewport:{width,height:1100}});t.after(()=>context.close());
   const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));t.after(()=>assert.deepEqual(errors,[]));
-  await page.goto(origin+'/fretboard/index.html');await expect(page.locator('.sheet-note')).toHaveCount(8);return page;
+  await page.goto(origin+'/fretboard/index.html');await expect(page.locator('.sheet-note')).toHaveCount(width<=600?4:8);return page;
 }
 
 for(const width of [1440,390])test(`note map links every C octave to classical notation and physical locations at ${width}px`,async t=>{
@@ -181,31 +181,70 @@ test('timed score counts in, advances, pauses, resumes and completes without loo
 });
 const lineNotes=(page,row)=>page.locator(`[data-score-line="${row}"] .sheet-note`).evaluateAll(notes=>notes.map(note=>note.innerHTML));
 
+for(const [width,height] of [[320,568],[375,667],[390,844],[430,932],[844,390],[667,375]])test(`phone practice keeps both full music lines and controls visible at ${width}×${height}`,async t=>{
+  const page=await open(t);await page.setViewportSize({width,height});await page.clock.install();
+  await page.locator('#duration').selectOption('1');await page.locator('#bpm').fill('120');await page.locator('#bpm').press('Tab');
+  await page.locator('#play').click();await page.clock.runFor(2100);
+  await expect(page.locator('body')).toHaveClass('practice-focused');
+  const checkFit=async()=>{
+    const geometry=await page.evaluate(()=>{
+      const sheet=document.querySelector('.sheet-scroll').getBoundingClientRect(),selectors=['[data-score-line="0"]','[data-score-line="1"]','#play','#practice-close','#got-it','#skip'];
+      const fit=selectors.every(selector=>{const r=document.querySelector(selector).getBoundingClientRect();return r.x>=0&&r.y>=0&&r.right<=innerWidth+1&&r.bottom<=innerHeight+1;});
+      const notesFit=[...document.querySelectorAll('.sheet-note')].every(note=>{const r=note.getBoundingClientRect();return r.left>=sheet.left&&r.right<=sheet.right&&r.top>=sheet.top&&r.bottom<=sheet.bottom;});
+      return {fit,notesFit,overflow:document.querySelector('.sheet-scroll').scrollWidth>document.querySelector('.sheet-scroll').clientWidth,headWidth:document.querySelector('.note-head').getBoundingClientRect().width};
+    });
+    assert.equal(geometry.fit,true,JSON.stringify(geometry));assert.equal(geometry.notesFit,true,JSON.stringify(geometry));assert.equal(geometry.overflow,false);
+    return geometry;
+  };
+  const geometry=await checkFit();
+  const preview=await lineNotes(page,1);await page.locator('#got-it').click();await page.clock.runFor(2000);
+  assert.deepEqual(await lineNotes(page,0),preview);await checkFit();
+  await page.locator('#play').click();await page.screenshot({path:new URL(`test-results/fretwise-phone-practice-${width}x${height}.png`,root).pathname.replace(/^\/(\w:)/,'$1')});
+  assert.ok(geometry.headWidth>=9,`noteheads too small: ${JSON.stringify(geometry)}`);
+  await page.locator('#practice-close').click();await expect(page.locator('body')).not.toHaveClass('practice-focused');await expect(page.locator('.answer-actions #got-it')).toHaveCount(1);
+  await page.locator('#practice-open').click();await expect(page.locator('body')).toHaveClass('practice-focused');await page.keyboard.press('Escape');await expect(page.locator('body')).not.toHaveClass('practice-focused');
+});
+
+test('rotating the practice view preserves the current note and queued music',async t=>{
+  const page=await open(t,390);await page.setViewportSize({width:390,height:844});await page.clock.install();
+  await page.locator('#mode').selectOption('wait');await page.locator('#bpm').fill('180');await page.locator('#bpm').press('Tab');
+  await page.locator('#play').click();await page.clock.runFor(1450);
+  for(let i=0;i<6;i++)await page.locator('#skip').click();
+  const pitches=row=>page.locator(`[data-score-line="${row}"] .sheet-note`).evaluateAll(notes=>notes.map(note=>({pitch:note.querySelector('.note-hint').textContent,y:note.querySelector('.note-head').getAttribute('cy'),string:note.querySelector('.string-indication text')?.textContent})));
+  const preview=await pitches(1);await expect(page.locator('[data-upcoming="true"]')).toHaveCount(2);
+  await page.setViewportSize({width:844,height:390});await expect(page.locator('.current')).toHaveAttribute('data-note-index','6');assert.deepEqual(await pitches(1),preview);
+  await page.locator('#skip').click();await page.locator('#skip').click();assert.deepEqual(await pitches(0),preview);
+  await page.setViewportSize({width:1200,height:800});await expect(page.locator('#sheet')).toHaveAttribute('data-bars-per-line','2');await expect(page.locator('.current')).toHaveAttribute('data-note-index','0');
+  await page.locator('#practice-close').click();
+});
+
 for(const duration of [1,2,4])for(const width of [1440,390])test(`read-ahead lines retain their notes through phrase boundaries (${duration} beats, ${width}px)`,async t=>{
   const page=await open(t,width);await page.clock.install();
   await page.locator('#duration').selectOption(String(duration));await page.locator('#bpm').fill('120');await page.locator('#bpm').press('Tab');
+  const bars=width<=600?1:2,lineMs=bars*2000;
   const bottom=await lineNotes(page,1),viewBox=await page.locator('#sheet svg').getAttribute('viewBox');
   await page.locator('#play').click();await page.clock.runFor(2100);
   await expect(page.locator('[data-score-line="0"] .current')).toHaveCount(1);
-  await page.clock.runFor(4000);
-  await expect(page.locator('#score-description')).toContainText('Bars 3–6');
+  await page.clock.runFor(lineMs);
+  await expect(page.locator('#score-description')).toContainText(`Bars ${bars+1}–${bars*3}`);
   assert.deepEqual(await lineNotes(page,0),bottom);
   await expect(page.locator('[data-score-line="0"] .current')).toHaveCount(1);
-  await expect(page.locator('[data-upcoming="true"]')).toHaveCount(8/duration);
+  await expect(page.locator('[data-upcoming="true"]')).toHaveCount(bars===2?8/duration:0);
   await expect(page.locator('[data-upcoming="true"].current, [data-upcoming="true"].miss, [data-upcoming="true"].success')).toHaveCount(0);
   const preview=await lineNotes(page,1);
   // Pausing and resuming must preserve both the current line and its preview.
   await page.locator('#play').click();await page.clock.runFor(4000);assert.deepEqual(await lineNotes(page,1),preview);
   if(duration===4)await page.locator('.score-card').screenshot({path:new URL(`test-results/fretwise-rolling-${width}.png`,root).pathname.replace(/^\/(\w:)/,'$1')});
-  await page.locator('#play').click();await page.clock.runFor(4000);
-  await expect(page.locator('#score-description')).toContainText('Bars 5–8');
-  assert.deepEqual(await lineNotes(page,0),preview);
-  const nextBottom=await lineNotes(page,1);
-  await page.clock.runFor(4000);await expect(page.locator('#score-description')).toContainText('Bars 7–10');assert.deepEqual(await lineNotes(page,0),nextBottom);
+  await page.locator('#play').click();
+  let nextBottom=preview;
+  for(let line=2;line<=4/bars+1;line++){
+    await page.clock.runFor(lineMs);await expect(page.locator('#score-description')).toContainText(`Bars ${line*bars+1}–${(line+2)*bars}`);
+    assert.deepEqual(await lineNotes(page,0),nextBottom);nextBottom=await lineNotes(page,1);
+  }
   await expect(page.locator('#sheet svg')).toHaveAttribute('viewBox',viewBox);
   await expect(page.locator('[data-score-line="0"] .score-playhead')).toHaveAttribute('opacity','.55');
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
-  await page.locator('#restart').click();await expect(page.locator('#score-description')).toContainText('Bars 1–4');
+  await page.locator('#restart').click();await expect(page.locator('#score-description')).toContainText(`Bars 1–${bars*2}`);
   await expect(page.locator('[data-upcoming="true"]')).toHaveCount(0);await expect(page.locator('.sheet-note.current')).toHaveAttribute('data-note-index','0');
 });
 
