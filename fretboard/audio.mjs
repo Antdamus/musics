@@ -1,5 +1,5 @@
-import {frequency,detectPitch} from './music.mjs?v=7';
-import {RecordedBacking,recordedBacking} from './backing.mjs?v=1';
+import {frequency,detectPitch} from './music.mjs?v=8';
+import {RecordedBacking,recordedBacking} from './backing.mjs?v=2';
 import {AcousticKit} from './drums.mjs?v=1';
 import {PendulumMetronome} from './metronome.mjs?v=1';
 import {SampledGuitar} from './guitar.mjs?v=1';

@@ -1,13 +1,13 @@
-import {TUNING,ROOTS,SCALES,DEFAULTS,mod,frequency,octave,spell,noteName,positions,makeScore,scalePCs,sanitizeSettings,pitchMatch,timingGrade,recommendation,masteryFor} from './music.mjs?v=7';
-import {recordedBacking,progression} from './backing.mjs?v=1';
-import {StudioAudio} from './audio.mjs?v=6';
+import {TUNING,ROOTS,SCALES,DEFAULTS,mod,frequency,octave,spell,noteName,positions,makeScore,scalePCs,sanitizeSettings,pitchMatch,timingGrade,recommendation,masteryFor} from './music.mjs?v=8';
+import {recordedBacking,progression} from './backing.mjs?v=2';
+import {StudioAudio} from './audio.mjs?v=7';
 import {createNoteMap} from './note-map.mjs?v=5';
 import {GUITAR_TOUCHES,guitarVoiceLabel} from './guitar.mjs?v=1';
 import {needsStringNumber,stringMarkerY} from './notation.mjs?v=2';
 import {createClient} from './supabase-client.mjs?v=1';
 import {ACCOUNT_CONFIG} from './account-config.mjs?v=1';
-import {ProfileStore} from './profile-store.mjs?v=4';
-import {cleanData,same} from './profile-data.mjs?v=4';
+import {ProfileStore} from './profile-store.mjs?v=5';
+import {cleanData,same} from './profile-data.mjs?v=5';
 import {createAccountUI} from './accounts.mjs?v=1';
 import {addActiveTime,dayBucket,dayKey,mergeSessions} from './practice-history.mjs?v=1';
 import {createHistoryView} from './history-view.mjs?v=1';
@@ -82,6 +82,8 @@ function syncControls(){
   const sampled=recordedBacking(settings.backing);
   $('backing-controls').hidden=!sampled;
   $('backing-help').textContent=sampled?progression(settings).map(c=>c.name).join(' → ')+' · '+ROOTS[settings.root]+' '+SCALES[settings.scale].name.toLowerCase()+' · one chord per bar':settings.backing==='drone'?'A synthesized tonic and fifth hold the key.':settings.backing==='upload'?'Play along to a file from this device.':'Choose a recorded part to hear a four-bar accompaniment in your selected key and scale.';
+  if(settings.backing==='saxTrio')$('backing-help').textContent+=' · Sax fills at the ends of bars 2 and 4.';
+  if(settings.backing==='pianoDuo')$('backing-help').textContent+=' · Soft grand-piano chords over plucked upright bass.';
   updateSoundControls();
   updateRecommendation();
 }

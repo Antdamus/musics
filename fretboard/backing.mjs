@@ -1,7 +1,7 @@
-import {SCALES,TUNING,mod,spell} from './music.mjs?v=7';
+import {SCALES,TUNING,mod,spell} from './music.mjs?v=8';
 import {guitarSample} from './guitar.mjs?v=1';
 
-export const recordedBacking=style=>['groove','nylon','duo'].includes(style);
+export const recordedBacking=style=>['groove','nylon','duo','saxTrio','pianoDuo'].includes(style);
 // Scale-degree roots for four-bar vamps. The chord tones come from the scale itself.
 const changes={major:[0,3,4,0],minor:[0,3,6,0],harmonicMinor:[0,3,4,0],dorian:[0,3,6,0],
   phrygian:[0,1,6,0],phrygianDominant:[0,1,6,0],mixolydian:[0,6,3,0]};
@@ -35,8 +35,9 @@ function voicing(pcs){
 }
 export function arrangement(s){
   const bars=progression(s),beats=Array.from({length:16},()=>[]),tonic=36+s.root-(s.root>6?12:0);
+  let previousKeys=null;
   bars.forEach(({pcs},bar)=>{
-    const start=bar*4,root=tonic+mod(pcs[0]-s.root+5)-5,grip=voicing(pcs);
+    const start=bar*4,root=tonic+mod(pcs[0]-s.root+5)-5;
     const bass=(beat,midi,length,level)=>{
       if(midi<29)midi+=12;
       const native=Math.max(30,Math.min(54,Math.round(midi/3)*3)),take=(bar+(beat===2?1:0))%2+1;
@@ -47,15 +48,44 @@ export function arrangement(s){
       if(bar===1)bass(3,tonic+mod(bars[2].pcs[0]-s.root+5)-5,.72,.54);
       if(bar===3)bass(3,root+mod(pcs[1]-pcs[0]),.72,.54);
     }
-    if(s.backing!=='groove'){
+    if(['nylon','duo','saxTrio'].includes(s.backing)){
+      const grip=voicing(pcs);
       const pluck=(beat,voice,offset,length,level,spread=0)=>{
         const {midi,string}=grip[voice],sample=guitarSample({kind:'nylon',string,midi,layer:1});
         beats[start+beat].push({midi,file:'guitar/'+sample.file,rate:sample.rate,length,level,offset,spread});
       };
       pluck(0,0,0,1.8,1.05);pluck(1,1,0,1.45,.82);pluck(1,2,.5,1.1,.9);
-      if(s.backing==='duo')for(let i=0;i<3;i++)pluck(2,i,0,1.45,.66,.014*i);
+      if(s.backing==='duo'||s.backing==='saxTrio')for(let i=0;i<3;i++)pluck(2,i,0,1.45,.66,.014*i);
       else pluck(2,0,0,1.7,.94);
       pluck(3,bar%2?1:2,0,.86,.83);
+    }
+    if(s.backing==='pianoDuo'){
+      // Keep common notes close between chords. The bass already supplies the root.
+      const shapes=pcs.map((pc,i)=>{
+        const low=53+mod(pc-53);
+        return Array.from({length:pcs.length},(_,j)=>low+mod(pcs[(i+j)%pcs.length]-pc));
+      });
+      const motion=shape=>shape.reduce((sum,n,i)=>sum+Math.abs(n-(previousKeys?.[i]??(57+4*i))),0);
+      const keys=shapes.sort((a,b)=>motion(a)-motion(b))[0];previousKeys=keys;
+      const chord=(beat,offset,notes,length,level)=>notes.forEach((midi,i)=>{
+        const native=Math.max(54,Math.min(74,2*Math.round(midi/2)));
+        beats[start+beat].push({midi,file:'piano/'+native+'-1.ogg',rate:2**((midi-native)/12),
+          offset,length,level:level*(i===notes.length-1?1:.85),spread:i*.008});
+      });
+      chord(0,0,keys,bar===3?3.6:2.15,.75);
+      if(bar<3)chord(2,.5,keys.slice(1),1.15,.55);
+    }
+    if(s.backing==='saxTrio'&&bar%2===1){
+      // A two-beat answer, resolving to the chord root. Leave the next bar to the player.
+      const home=55+mod(pcs[0]-55),high=home+mod(pcs[1]-pcs[0]);
+      let passing=high-1;
+      while(passing>home&&!SCALES[s.scale].intervals.includes(mod(passing-s.root)))passing--;
+      const sax=(beat,offset,midi,length,take,level)=>beats[start+beat].push({
+        midi,file:'sax/'+midi+'-'+take+'.ogg',rate:1,length,level,offset,spread:0
+      });
+      sax(2,bar===1?0:.25,high,bar===1?.45:.65,1,.95);
+      if(passing>home)sax(bar===1?2:3,bar===1?.5:0,passing,.4,2,.72);
+      sax(3,bar===1?0:.5,home,bar===1?.82:.46,bar===1?1:2,.88);
     }
   });
   return beats;
@@ -79,10 +109,10 @@ export class RecordedBacking{
           const response=await fetch(new URL('./samples/'+file,import.meta.url),{signal:ctl.signal});
           if(!response.ok)throw Error('Recording unavailable');
           const buffer=await this.context.decodeAudioData(await response.arrayBuffer());
-          // Match attack levels gently: the two instruments were recorded at different gains.
+          // Match attack levels gently; leave the horn behind the player's target note.
           const data=buffer.getChannelData(0),count=Math.min(data.length,Math.round(buffer.sampleRate*.22));
           let energy=0;for(let i=0;i<count;i++)energy+=data[i]*data[i];
-          const bass=file.startsWith('bass/'),targetRms=bass ? .14 : .105;
+          const bass=file.startsWith('bass/'),targetRms=bass ? .14 : file.startsWith('sax/') ? .095 : .105;
           const trim=Math.min(bass?1.15:5,Math.max(.35,targetRms/Math.sqrt(energy/count||1)));
           const sample={buffer,trim};
           this.cache.set(file,sample);while(this.cache.size>36)this.cache.delete(this.cache.keys().next().value);

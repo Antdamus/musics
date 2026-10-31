@@ -1,0 +1,350 @@
+{
+  "library": "Karoryfer Weresax",
+  "license": "CC0-1.0",
+  "revision": "a4d756b21d2a573aca0d840cce7e71ba5effd4c6",
+  "mapping": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Programs/alto_map_piano_condenser.sfz",
+  "samples": [
+    {
+      "midi": 55,
+      "take": 1,
+      "file": "55-1.ogg",
+      "bytes": 76385,
+      "sha256": "ed89de33ed869c418c70dd7be768f0b26debb492436c9e52416ed0f1b5103c6e",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/g2_p_rr1_cnd.wav",
+      "originalSha256": "6471310b34449df7f549586f5536403b0a192a30d8566417a5d313a7163a058d"
+    },
+    {
+      "midi": 55,
+      "take": 2,
+      "file": "55-2.ogg",
+      "bytes": 70231,
+      "sha256": "e475bb938c871ccc45a5b994548f585dcee0a303a754b09a49f35f28f8b824c6",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/g2_p_rr2_cnd.wav",
+      "originalSha256": "e2cd509d5227b88d3581388d5271a1000129b12a33146c24349060cdf8aee477"
+    },
+    {
+      "midi": 56,
+      "take": 1,
+      "file": "56-1.ogg",
+      "bytes": 82586,
+      "sha256": "b3affc0118bf164fb33400ddf5471fbaa16f90d8081aeb315c4f1338bc972ebb",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/ab2_p_rr1_cnd.wav",
+      "originalSha256": "21dc8e81c17677009c3aefa03a6136095fe6d86c0f0062db8de1cedb5eb5ffbe"
+    },
+    {
+      "midi": 56,
+      "take": 2,
+      "file": "56-2.ogg",
+      "bytes": 85785,
+      "sha256": "1d752c49bedcce684bcb25ba33ef5dd42e95d6c9821f61827683216be5a0e90b",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/ab2_p_rr2_cnd.wav",
+      "originalSha256": "d13ca0d7ca289baa86abe94de4923f1fa1f78e116c0cd3c9a7da9c9ee773e2b2"
+    },
+    {
+      "midi": 57,
+      "take": 1,
+      "file": "57-1.ogg",
+      "bytes": 76991,
+      "sha256": "7e14d669d1ca9cf256f6d62e41973f1f1e0ae13c038b825e4a5364311649729d",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/a2_p_rr1_cnd.wav",
+      "originalSha256": "f9767b5a8c8a493f0ed7c0aed7986d33cb1c015834c5f078784494963fc1f6c1"
+    },
+    {
+      "midi": 57,
+      "take": 2,
+      "file": "57-2.ogg",
+      "bytes": 82813,
+      "sha256": "8905e9d7eec7a55a321dec68a821b2c8f10670bfdd28c438c1b75ecf73efaef5",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/a2_p_rr2_cnd.wav",
+      "originalSha256": "ae1e3e7f6c8fa3bcaa71c3a80a6e5e31f18b3a66a76bf76f1bf2f78f34b47427"
+    },
+    {
+      "midi": 58,
+      "take": 1,
+      "file": "58-1.ogg",
+      "bytes": 80247,
+      "sha256": "0c6f0739a383fd9f26ddddfb75bee7be0b35ea178d600cbcb9fa39458f7e4a90",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/bb2_p_rr1_cnd.wav",
+      "originalSha256": "0d8e5fbc78267c6cfd6dcdcfbb1c1eff6267950669c1c6119b3790056ab29040"
+    },
+    {
+      "midi": 58,
+      "take": 2,
+      "file": "58-2.ogg",
+      "bytes": 76469,
+      "sha256": "c983cf40ab4e26637071e1c55ad96d59c6a0fed61290138721b8c3e12c573fa2",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/bb2_p_rr2_cnd.wav",
+      "originalSha256": "fb08f9521eba389e74f8c5bdb6bfb7efaf9e516498eae2881b0066750e8a95f4"
+    },
+    {
+      "midi": 59,
+      "take": 1,
+      "file": "59-1.ogg",
+      "bytes": 83839,
+      "sha256": "adecd91435fd2696065b46ed272ba934910475e303a057d6e36c9134a45b528f",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/b2_p_rr1_cnd.wav",
+      "originalSha256": "7e76fb83ee107b5a4b4ff5f509807c26243865d6c6572176427e64f3e91784ef"
+    },
+    {
+      "midi": 59,
+      "take": 2,
+      "file": "59-2.ogg",
+      "bytes": 84328,
+      "sha256": "6d8e79211cc0575fa51dc069420e67041bf960b8fb61c7da6ac6d4006a5fe782",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/b2_p_rr2_cnd.wav",
+      "originalSha256": "3684ef255f9a3d3405a8e6b313ff3008ba697c510d9be17165da5f95657f0412"
+    },
+    {
+      "midi": 60,
+      "take": 1,
+      "file": "60-1.ogg",
+      "bytes": 74544,
+      "sha256": "3924acda858bfe2710677979a7d90569a986700fc63b262548b163fa64f9236a",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/c3_p_rr1_cnd.wav",
+      "originalSha256": "03a948c74660d1725917245a39f202c71ee67facc345ffdfcacdc6dfbab3a733"
+    },
+    {
+      "midi": 60,
+      "take": 2,
+      "file": "60-2.ogg",
+      "bytes": 76531,
+      "sha256": "b6863c09155126eaf521ca271beddf69a6db4edf6cfc0573b865295f383710f4",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/c3_p_rr2_cnd.wav",
+      "originalSha256": "515c7b15e84c5c654446e30da58d512d708625ad39ab49b15b833f17b79ad94b"
+    },
+    {
+      "midi": 61,
+      "take": 1,
+      "file": "61-1.ogg",
+      "bytes": 64360,
+      "sha256": "eca1aa7a097987cb49a86ccc93f0dd4a78389e4b52e9ee5ae42ad685c23a817b",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/db3_p_rr1_cnd.wav",
+      "originalSha256": "33116c801c22ded4a93b3ca8aa8b66b803ff137eaa70d9e3e74638572b6ae64d"
+    },
+    {
+      "midi": 61,
+      "take": 2,
+      "file": "61-2.ogg",
+      "bytes": 69229,
+      "sha256": "cdf27b25359693e9f15d034234dabffa90278726d1d0c18f78227b6cd3744093",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/db3_p_rr2_cnd.wav",
+      "originalSha256": "9e83ede000be139cf447d14169042c61dfd69ded2123f0917078c81f6b668cb6"
+    },
+    {
+      "midi": 62,
+      "take": 1,
+      "file": "62-1.ogg",
+      "bytes": 84957,
+      "sha256": "bbc0f551e5e9a58ac001d054431a313eb00469a813639bcba57ecbe4704f1f58",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/d3_p_rr1_cnd.wav",
+      "originalSha256": "15dc73c49b87b8046361038f58172407287e41a7ff48f9c4f3af9d69d3e88f48"
+    },
+    {
+      "midi": 62,
+      "take": 2,
+      "file": "62-2.ogg",
+      "bytes": 86876,
+      "sha256": "a94929c253bcae8970c7c9ac33923a669170538ab886a4ee50ca34d8cc1977d1",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/d3_p_rr2_cnd.wav",
+      "originalSha256": "7e3062bf77211c123a53e88877300ca35f0a915f6d0d427a2f28286371fc916f"
+    },
+    {
+      "midi": 63,
+      "take": 1,
+      "file": "63-1.ogg",
+      "bytes": 82494,
+      "sha256": "9e89bbb575b8242fd05b7b601f55bbf1bc62460d6d5e3c6da49ad6631fc42684",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/eb3_p_rr1_cnd.wav",
+      "originalSha256": "9806cf3e354e5b1f2f044cb2fb435d2e34e5ba0ffd52471e170aacb3b873c1ae"
+    },
+    {
+      "midi": 63,
+      "take": 2,
+      "file": "63-2.ogg",
+      "bytes": 89345,
+      "sha256": "ed84999db88a70a57cf30dc8cd19e898586a092d88e8bb49fd7f89d6a5cae8e7",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/eb3_p_rr2_cnd.wav",
+      "originalSha256": "5ee48c75b74133586dc68ea7c8982a8fc833695b48bfb8ffe95a0e772600f00d"
+    },
+    {
+      "midi": 64,
+      "take": 1,
+      "file": "64-1.ogg",
+      "bytes": 64004,
+      "sha256": "c875b8479e5f644243a77a370fea4b66f39d7607a9bc478c68e76b2fffd801b5",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/e3_p_rr1_cnd.wav",
+      "originalSha256": "7986ab0d85a5e025535e8524a35b940665d3abe78df4dbf60a19aa91461e5088"
+    },
+    {
+      "midi": 64,
+      "take": 2,
+      "file": "64-2.ogg",
+      "bytes": 68955,
+      "sha256": "4262c2e4c1d371901fec9564876b27aaf3d1eb3d649b1fb30b954f2a64b63c64",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/e3_p_rr2_cnd.wav",
+      "originalSha256": "2d7aa94a3ea37376123e90ad603d37b9dbcd717333213b83d8d786fb9136716d"
+    },
+    {
+      "midi": 65,
+      "take": 1,
+      "file": "65-1.ogg",
+      "bytes": 74436,
+      "sha256": "761e1ca7b19e2555bc19bee214b55be6fb8c7b71836b19097aff2004ef17f02f",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/f3_p_rr1_cnd.wav",
+      "originalSha256": "ef082bd2aad895b3ff74acf5fd559013598f7d9735964ec095b79ecb3c46caf6"
+    },
+    {
+      "midi": 65,
+      "take": 2,
+      "file": "65-2.ogg",
+      "bytes": 76641,
+      "sha256": "055ecd1f23d3c1bb1924c726e3073966524f19c0c5c8d580c18cf0fc69f86e99",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/f3_p_rr2_cnd.wav",
+      "originalSha256": "2a8430b1ac7706050297b6da44ba93df50119a4f013234e57e93df5193438556"
+    },
+    {
+      "midi": 66,
+      "take": 1,
+      "file": "66-1.ogg",
+      "bytes": 71107,
+      "sha256": "2e788cb280d1a5e22b29657599dddfa9c5709e77dbb7fd26533e0244cbe6fe7d",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/gb3_p_rr1_cnd.wav",
+      "originalSha256": "8220f0ce76c129e05723146167348d387e62e4a6c5a16c1f885d6a3e0076a670"
+    },
+    {
+      "midi": 66,
+      "take": 2,
+      "file": "66-2.ogg",
+      "bytes": 75007,
+      "sha256": "197f75b6bd246f9f60b44e6596853fbfa33ab04cb1d189db085806fce576a93f",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/gb3_p_rr2_cnd.wav",
+      "originalSha256": "656a644f86d7dd7e9e74862d9fa0db82e91ef398730cec63e2f30740dd302a55"
+    },
+    {
+      "midi": 67,
+      "take": 1,
+      "file": "67-1.ogg",
+      "bytes": 76598,
+      "sha256": "b806cc2dee0686785f96785fa740eb55d058c125bc5324c3278ecb38487341f3",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/g3_p_rr1_cnd.wav",
+      "originalSha256": "41e8b08914dfcfa44df52546c80c501b749ccc170a04e113d5d5fabced9bdfa8"
+    },
+    {
+      "midi": 67,
+      "take": 2,
+      "file": "67-2.ogg",
+      "bytes": 73661,
+      "sha256": "53e67a97d9e1c4abe2c8651540068519245058dc083b8032c53b98c9f24e0242",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/g3_p_rr2_cnd.wav",
+      "originalSha256": "acb8808ae73590ff1f4494c2cbdebadcc8796bc265b2d27e501be7c83b109035"
+    },
+    {
+      "midi": 68,
+      "take": 1,
+      "file": "68-1.ogg",
+      "bytes": 83685,
+      "sha256": "9fa533695594907f5f9ee818345ed6668c97d0bd9497771665ce15f1b44b9c91",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/ab3_p_rr1_cnd.wav",
+      "originalSha256": "ff275ee2b0d2fab90ac827a11c04b6d782aa58b7b84573bda87a64a4688edd90"
+    },
+    {
+      "midi": 68,
+      "take": 2,
+      "file": "68-2.ogg",
+      "bytes": 75803,
+      "sha256": "adb42b2337304e9a2e2d47204eb3abaf2b8457154fa6e507a0352eb8443c8a63",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/ab3_p_rr2_cnd.wav",
+      "originalSha256": "f261cad7cba943f9b6d15c19a4f1f8d6fade846575132e98f363c2cc302c512f"
+    },
+    {
+      "midi": 69,
+      "take": 1,
+      "file": "69-1.ogg",
+      "bytes": 66521,
+      "sha256": "06d0c0f41294081b126d9d0e3a29dbd7e84de684690b917d5f9f4b892327f214",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/a3_p_rr1_cnd.wav",
+      "originalSha256": "acf50ea6ee806da0e58fe3c4c715d1dbf63467f7e48e1268ee8cff94bcf7949d"
+    },
+    {
+      "midi": 69,
+      "take": 2,
+      "file": "69-2.ogg",
+      "bytes": 78983,
+      "sha256": "fd8121dd1991edcb5494c3cf12b6e27346a2b397c2585cfd3db4a1bab17ffd40",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/a3_p_rr2_cnd.wav",
+      "originalSha256": "db71b766abcefde8c06d028384c0f8c2d398ab58d63ebbce602571113a74584c"
+    },
+    {
+      "midi": 70,
+      "take": 1,
+      "file": "70-1.ogg",
+      "bytes": 76956,
+      "sha256": "0a60018698bf7264d3047e596bd05acd6e2f8e6883da8efcf2a5821f75213855",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/bb3_p_rr1_cnd.wav",
+      "originalSha256": "d174acd0fdfa23ea91b024974ff898614ea78026ccdd809e92c35bbe13db99e9"
+    },
+    {
+      "midi": 70,
+      "take": 2,
+      "file": "70-2.ogg",
+      "bytes": 89405,
+      "sha256": "118ea96dbe5687bc87b021a63fd4e8640dc23b513473dff1340a5b3cca0c246b",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/bb3_p_rr2_cnd.wav",
+      "originalSha256": "97cb5755623b023c8c11b2ee0b44992280e89824bbb2048c58ce2593e2926a80"
+    },
+    {
+      "midi": 71,
+      "take": 1,
+      "file": "71-1.ogg",
+      "bytes": 80459,
+      "sha256": "2d3de770c2074c79f651c8269580ee3ec970377bce33ba5f751525ab2a90faeb",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/b3_p_rr1_cnd.wav",
+      "originalSha256": "c2096d29363b68a8ff544e6bc0ab8084780e5e04f589a62afa18b482afea5d5e"
+    },
+    {
+      "midi": 71,
+      "take": 2,
+      "file": "71-2.ogg",
+      "bytes": 85536,
+      "sha256": "6e194aabfb8a13cf9c3bc61d58704ca396440fad3c27f85444855083e6517ba9",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/b3_p_rr2_cnd.wav",
+      "originalSha256": "e775fcd32e9cc0e0fedafbc243b0e8de270dcd45aba2ad86fce23c70117be905"
+    },
+    {
+      "midi": 72,
+      "take": 1,
+      "file": "72-1.ogg",
+      "bytes": 91592,
+      "sha256": "753e01fb5dbbe804d5dc254a14c23de4cc53818749b7cc7360d785b40de97694",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/c4_p_rr1_cnd.wav",
+      "originalSha256": "cfde9898fb96c29307a1f317b05d8bea00fabab3f4f4a223bd1054f53e8862cf"
+    },
+    {
+      "midi": 72,
+      "take": 2,
+      "file": "72-2.ogg",
+      "bytes": 96105,
+      "sha256": "4e3fdf2a5a256c68e97a9b5b5a03ba4c2999c4b8f4ccdc1d6a57a9da907b0fa9",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/c4_p_rr2_cnd.wav",
+      "originalSha256": "4c52664969256fa093859887e224f27fde193ad8efa21914061583f0e1a58437"
+    },
+    {
+      "midi": 73,
+      "take": 1,
+      "file": "73-1.ogg",
+      "bytes": 67992,
+      "sha256": "ceb05ce999fe8f18f52411edc7e6522b5790f8371ed5da0c2ec0ac360e7a26c4",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/db4_p_rr1_cnd.wav",
+      "originalSha256": "24eed44f9c34ad63a3a44a05ead0e56794811fcd38a414cf4b326728c04edc07"
+    },
+    {
+      "midi": 73,
+      "take": 2,
+      "file": "73-2.ogg",
+      "bytes": 83791,
+      "sha256": "a73b5d1a9238caaf36517fdc6d43969520c10bac039e16ff63af05f636c6a676",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.weresax/a4d756b21d2a573aca0d840cce7e71ba5effd4c6/Samples/alto/db4_p_rr2_cnd.wav",
+      "originalSha256": "85b6d8c27aded03e519482edb5511e82410b3f4555fec0376ae24365e6dabaf5"
+    }
+  ]
+}

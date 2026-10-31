@@ -116,7 +116,7 @@ export function sanitizeSettings(value={}){
   if([1,2,3].includes(value.guitarTouch))s.guitarTouch=value.guitarTouch;
   if([1,2,4].includes(value.duration))s.duration=value.duration;
   if(['timed','wait'].includes(value.mode))s.mode=value.mode;
-  if(['off','drone','groove','nylon','duo','upload'].includes(value.backing))s.backing=value.backing;
+  if(['off','drone','groove','nylon','duo','saxTrio','pianoDuo','upload'].includes(value.backing))s.backing=value.backing;
   num('backingVolume',0,100);
   if(['off','pop','rock','shuffle','halftime'].includes(value.drums))s.drums=value.drums;
   if(['mechanical','digital'].includes(value.metronomeSound))s.metronomeSound=value.metronomeSound;

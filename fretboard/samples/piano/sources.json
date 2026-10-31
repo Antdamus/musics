@@ -1,0 +1,106 @@
+{
+  "library": "Versilian Community Sample Library · Steinway B",
+  "license": "CC0-1.0",
+  "revision": "c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e",
+  "samples": [
+    {
+      "midi": 54,
+      "take": 1,
+      "file": "54-1.ogg",
+      "bytes": 171085,
+      "sha256": "379eb5d4ebee5bc2564395f0249811c3eb19036d1438b16069b7f3c2d46b23ce",
+      "source": "https://raw.githubusercontent.com/sgossner/VCSL/c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e/Chordophones/Zithers/Grand%20Piano%2C%20Steinway%20B/Sus/JHPiano_Sus_Close_F%233_vl2_rr1.wav",
+      "originalSha256": "95a7f90813206645c7fa4a2b39703f1a74d7fd4d4db2992b8fd222da0fbb360d"
+    },
+    {
+      "midi": 56,
+      "take": 1,
+      "file": "56-1.ogg",
+      "bytes": 171702,
+      "sha256": "f09d83e6e06658e1c105a0465c6dc8cea3154de43a4b89e66a901fe0c3c732ca",
+      "source": "https://raw.githubusercontent.com/sgossner/VCSL/c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e/Chordophones/Zithers/Grand%20Piano%2C%20Steinway%20B/Sus/JHPiano_Sus_Close_G%233_vl2_rr1.wav",
+      "originalSha256": "e9f010da4ce3333e6f9ce05ee1d7b8498a5b321fcef684c196b3ec97f9b81415"
+    },
+    {
+      "midi": 58,
+      "take": 1,
+      "file": "58-1.ogg",
+      "bytes": 174101,
+      "sha256": "c20e7a853c37767cf3bd023f15b8370f63aa155dabbc5a254efe41a6da1ae355",
+      "source": "https://raw.githubusercontent.com/sgossner/VCSL/c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e/Chordophones/Zithers/Grand%20Piano%2C%20Steinway%20B/Sus/JHPiano_Sus_Close_A%233_vl2_rr1.wav",
+      "originalSha256": "fd825809d7b14e39ecd9c52804947ac79b2ecc7f6098048f8320a417d128bd1b"
+    },
+    {
+      "midi": 60,
+      "take": 1,
+      "file": "60-1.ogg",
+      "bytes": 176210,
+      "sha256": "317c1a51371f40ef64d47789412e65c27f1152005787681a53cbbb5440fa983d",
+      "source": "https://raw.githubusercontent.com/sgossner/VCSL/c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e/Chordophones/Zithers/Grand%20Piano%2C%20Steinway%20B/Sus/JHPiano_Sus_Close_C4_vl2_rr1.wav",
+      "originalSha256": "63a1eabb40bc288d310e68b399ffcd3558c41e628fe45733c120248efdff1e9d"
+    },
+    {
+      "midi": 62,
+      "take": 1,
+      "file": "62-1.ogg",
+      "bytes": 175505,
+      "sha256": "8955a07de91918c1d0d385d0507006ec8860179f1f94634567e5ff1b5d48620f",
+      "source": "https://raw.githubusercontent.com/sgossner/VCSL/c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e/Chordophones/Zithers/Grand%20Piano%2C%20Steinway%20B/Sus/JHPiano_Sus_Close_D4_vl2_rr1.wav",
+      "originalSha256": "645cd3f6f657659b8fb6fa78aff8bbb3e5003d82cdb02687078a861dd48fb913"
+    },
+    {
+      "midi": 64,
+      "take": 1,
+      "file": "64-1.ogg",
+      "bytes": 176962,
+      "sha256": "0244696a1abbf8823d268bf8e4c1537a29f2726a62ce3e2c7b5ea0f139ad8e42",
+      "source": "https://raw.githubusercontent.com/sgossner/VCSL/c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e/Chordophones/Zithers/Grand%20Piano%2C%20Steinway%20B/Sus/JHPiano_Sus_Close_E4_vl2_rr1.wav",
+      "originalSha256": "5f67a30325b3dc46123abc024616f4bc7f3e9b78e2a12112b2ca19f7c7dfa7e3"
+    },
+    {
+      "midi": 66,
+      "take": 1,
+      "file": "66-1.ogg",
+      "bytes": 175299,
+      "sha256": "eaaa42ef2934631760c3ae610933778fe99d39b464d8ecabd147600926e1eebd",
+      "source": "https://raw.githubusercontent.com/sgossner/VCSL/c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e/Chordophones/Zithers/Grand%20Piano%2C%20Steinway%20B/Sus/JHPiano_Sus_Close_F%234_vl2_rr1.wav",
+      "originalSha256": "0e55a62e4f21c9cf765785d598e6df4dd696f7703721bf916e7d23bb59b058c1"
+    },
+    {
+      "midi": 68,
+      "take": 1,
+      "file": "68-1.ogg",
+      "bytes": 178277,
+      "sha256": "05af21d65b5992ad69ed057c51d15eb1ccfaa0fbe0f8d9b6e97ac8826d12b171",
+      "source": "https://raw.githubusercontent.com/sgossner/VCSL/c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e/Chordophones/Zithers/Grand%20Piano%2C%20Steinway%20B/Sus/JHPiano_Sus_Close_G%234_vl2_rr1.wav",
+      "originalSha256": "67789ba22e2831a15ec967773b87ff3f659425effd8edd8862c4795ac6cf4fa1"
+    },
+    {
+      "midi": 70,
+      "take": 1,
+      "file": "70-1.ogg",
+      "bytes": 173392,
+      "sha256": "9fbddddd36f963dcf7eeee92fed8e8ec19822840cffed18e2185267a5f7ae9a6",
+      "source": "https://raw.githubusercontent.com/sgossner/VCSL/c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e/Chordophones/Zithers/Grand%20Piano%2C%20Steinway%20B/Sus/JHPiano_Sus_Close_A%234_vl2_rr1.wav",
+      "originalSha256": "90cd801d71632c66de69da4b7483e292264c734e0af24be9c48bcfb2b97b7ad8"
+    },
+    {
+      "midi": 72,
+      "take": 1,
+      "file": "72-1.ogg",
+      "bytes": 180355,
+      "sha256": "450b43765e3ade19ae116fc9479e0e98efacccc57e9eaf8ceb633bf46378ff12",
+      "source": "https://raw.githubusercontent.com/sgossner/VCSL/c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e/Chordophones/Zithers/Grand%20Piano%2C%20Steinway%20B/Sus/JHPiano_Sus_Close_C5_vl2_rr1.wav",
+      "originalSha256": "f53297008efdec0753c8eedd90a8f97d5d4363ffd897ce06b0dd48de009d1dae"
+    },
+    {
+      "midi": 74,
+      "take": 1,
+      "file": "74-1.ogg",
+      "bytes": 172007,
+      "sha256": "83f5223450b18e135a22c82bec2cce8d9bad5b8a9832cc790279dd44c842f227",
+      "source": "https://raw.githubusercontent.com/sgossner/VCSL/c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e/Chordophones/Zithers/Grand%20Piano%2C%20Steinway%20B/Sus/JHPiano_Sus_Close_D5_vl2_rr1.wav",
+      "originalSha256": "814072dc61808e5bab55c5973a9050df49fc11c770a7ac8cfdc801c674ae44aa"
+    }
+  ]
+}
