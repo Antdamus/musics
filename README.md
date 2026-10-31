@@ -14,7 +14,19 @@ Serve the repository with a static HTTP server, for example:
 python -m http.server 4173
 ```
 
-Open `http://localhost:4173/fretboard/`. The app needs no build step, backend, or runtime dependencies. Progress and settings are saved in browser localStorage.
+Open `http://localhost:4173/fretboard/`. The site is static with no build step. Guest progress stays in browser localStorage. Optional email/password accounts use a dedicated Supabase project to sync private progress and settings between devices. Each person chooses a display username and signs in with their own email.
+
+## Profiles
+
+Choose **Sign in → Create an account**, enter a username, email and password (at least 10 characters), and confirm the email. Use the same account on phone and computer. Sign out before another person uses the same browser. Existing guest history can be brought into an account explicitly from the profile dialog; it is never silently assigned to whoever logs in first.
+
+Changes save locally immediately, sync after a short delay, and refresh from the account every 15 seconds or when returning to the page. Remote setup changes wait until playback is paused. The profile shows whether work has synced or is waiting for a connection. Microphone audio and local backing files never leave the device. Playback BPM and target BPM remain separate settings.
+
+The public browser configuration is in `fretboard/account-config.mjs`; it contains only the public Supabase URL and anonymous client key. Administrative keys, SMTP credentials and database passwords must never be committed. The dedicated **Fretwise** project uses the Free plan; email confirmation and password recovery use custom SMTP, with Fretwise as the sender name. No inventory tables or inventory auth settings are modified.
+
+`supabase/migrations/20261031000000_practice_profiles.sql` defines ownership policies, revision-checked saves and idempotency receipts. It has been applied to the hosted project. Each row belongs to its authenticated user; anonymous access is denied. Save requests also verify the expected account to reject requests left over after account switching. Offline changes merge against the last synchronized base, preserving new attempts, passes and session summaries from both devices. Resetting a signed-in account clears its practice history across devices.
+
+The official Supabase client is pinned and bundled locally. After changing that dependency, run `npm run build:auth` and commit the generated module and license. The published site does not depend on a JavaScript CDN. Configure the hosted Auth site URL and allowed redirects to `https://antdamus.github.io/musics/fretboard/` (and its `index.html` entry). Auth emails must use a functioning custom SMTP service; Supabase's built-in test email delivery is not sufficient for public accounts.
 
 ## Verify
 
@@ -33,6 +45,7 @@ If Chromium is already installed in a custom Playwright cache, set `PLAYWRIGHT_B
 - `fretboard/`: the complete static app and detailed [practice documentation](fretboard/README.md).
 - `fretboard/samples/`: bundled guitar, drum, and metronome recordings, with licenses and source manifests.
 - `tests/`: music logic, sample integrity, and browser checks.
+- `supabase/migrations/`: private account storage and database policies.
 - `tools/prepare-fretboard-*.mjs`: reproducible sample preparation scripts. Rebuilding the drum subset also requires FFmpeg.
 
 GitHub Pages publishes the root of `main`; the root entry redirects to `fretboard/`. No build action or external audio service is required.

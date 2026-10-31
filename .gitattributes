@@ -1,0 +1,2 @@
+# Generated upstream bundle contains meaningful whitespace in string literals.
+fretboard/supabase-client.mjs text eol=lf -whitespace linguist-vendored=true

@@ -4,11 +4,16 @@
   "private": true,
   "description": "Classical guitar sight-reading and full-fretboard practice",
   "scripts": {
-    "test": "node --test tests/fretboard-music.test.mjs tests/fretboard-note-map.test.mjs tests/fretboard-guitar.test.mjs tests/fretboard-drums.test.mjs tests/fretboard-metronome.test.mjs tests/fretboard-browser.test.mjs",
-    "test:unit": "node --test tests/fretboard-music.test.mjs tests/fretboard-note-map.test.mjs tests/fretboard-guitar.test.mjs tests/fretboard-drums.test.mjs tests/fretboard-metronome.test.mjs",
-    "test:browser": "node --test tests/fretboard-browser.test.mjs"
+    "test": "node --test tests/fretboard-music.test.mjs tests/fretboard-note-map.test.mjs tests/fretboard-guitar.test.mjs tests/fretboard-drums.test.mjs tests/fretboard-metronome.test.mjs tests/fretboard-profiles.test.mjs tests/fretboard-browser.test.mjs tests/fretboard-accounts-browser.test.mjs",
+    "test:unit": "node --test tests/fretboard-music.test.mjs tests/fretboard-note-map.test.mjs tests/fretboard-guitar.test.mjs tests/fretboard-drums.test.mjs tests/fretboard-metronome.test.mjs tests/fretboard-profiles.test.mjs",
+    "test:browser": "node --test tests/fretboard-browser.test.mjs tests/fretboard-accounts-browser.test.mjs",
+    "build:auth": "node tools/build-auth-client.mjs"
   },
   "devDependencies": {
-    "@playwright/test": "1.60.0"
+    "@playwright/test": "1.60.0",
+    "esbuild": "0.28.2"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.118.0"
   }
 }
