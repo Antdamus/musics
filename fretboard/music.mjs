@@ -11,7 +11,7 @@ export const SCALES = {
   pentatonic: {name:'Minor pentatonic', intervals:[0,3,5,7,10], degrees:[0,2,3,4,6]},
   chromatic: {name:'All 12 notes', intervals:[0,1,2,3,4,5,6,7,8,9,10,11]}
 };
-export const DEFAULTS = {root:0,scale:'major',pool:[0],octaves:[2,3,4,5,6],strings:[1,2,3,4,5,6],minFret:0,maxFret:21,bpm:60,duration:2,mode:'timed',hints:true,autoAdd:false,targetBpm:100,loop:true,metronome:true,headphones:false,backing:'off',backingVolume:65,volume:35,goal:5,drums:'off',drumVolume:65,drumFills:true,metronomeSound:'mechanical',metronomeVolume:75,metronomeAccent:true,guitarSound:'steel',guitarTouch:2,guitarVolume:75};
+export const DEFAULTS = {root:0,scale:'major',pool:[0],octaves:[2,3,4,5,6],strings:[1,2,3,4,5,6],minFret:0,maxFret:21,bpm:60,duration:2,mode:'timed',hints:true,autoAdd:false,targetBpm:100,loop:true,metronome:true,headphones:false,backing:'off',rockPiano:false,rockViolin:false,backingVolume:65,volume:35,goal:5,drums:'off',drumVolume:65,drumFills:true,metronomeSound:'mechanical',metronomeVolume:75,metronomeAccent:true,guitarSound:'steel',guitarTouch:2,guitarVolume:75};
 export const mod = (n,m=12) => ((n%m)+m)%m;
 export const frequency = midi => 440*2**((midi-69)/12);
 export const octave = midi => Math.floor(midi/12)-1;
@@ -116,10 +116,10 @@ export function sanitizeSettings(value={}){
   if([1,2,3].includes(value.guitarTouch))s.guitarTouch=value.guitarTouch;
   if([1,2,4].includes(value.duration))s.duration=value.duration;
   if(['timed','wait'].includes(value.mode))s.mode=value.mode;
-  if(['off','drone','groove','nylon','duo','saxTrio','pianoDuo','upload'].includes(value.backing))s.backing=value.backing;
+  if(['off','drone','groove','nylon','duo','saxTrio','pianoDuo','electricRock','upload'].includes(value.backing))s.backing=value.backing;
   num('backingVolume',0,100);
   if(['off','pop','rock','shuffle','halftime'].includes(value.drums))s.drums=value.drums;
   if(['mechanical','digital'].includes(value.metronomeSound))s.metronomeSound=value.metronomeSound;
-  for(const k of ['hints','autoAdd','loop','metronome','headphones','drumFills','metronomeAccent'])if(typeof value[k]==='boolean')s[k]=value[k];
+  for(const k of ['hints','autoAdd','loop','metronome','headphones','drumFills','metronomeAccent','rockPiano','rockViolin'])if(typeof value[k]==='boolean')s[k]=value[k];
   return s;
 }

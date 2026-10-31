@@ -1,0 +1,188 @@
+{
+  "library": "Karoryfer Black And Blue Basses · Baby Blue",
+  "license": "CC0-1.0",
+  "revision": "6e7d674cdb41be7a54dbccb15472401ad01099b9",
+  "mapping": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.black-and-blue-basses/6e7d674cdb41be7a54dbccb15472401ad01099b9/Programs/maps/babyblue_reg_f_map.sfz",
+  "samples": [
+    {
+      "midi": 28,
+      "take": 1,
+      "file": "28-1.ogg",
+      "bytes": 35734,
+      "sha256": "bfc7563fa4c7ba5106bd9e6e102bf357959de3e440354aef6ae65203937ae7f5",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.black-and-blue-basses/6e7d674cdb41be7a54dbccb15472401ad01099b9/Samples/babyblue/reg/babyblue_e2_f_rr1.wav",
+      "originalSha256": "cd35d226e25efc2b019bc916005258a9de468cac39374eb92a9638032bbd02b7"
+    },
+    {
+      "midi": 28,
+      "take": 2,
+      "file": "28-2.ogg",
+      "bytes": 36436,
+      "sha256": "67f971bd6f83b2749604778127bba7608296735e36e1ad0b7398805c47146aa6",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.black-and-blue-basses/6e7d674cdb41be7a54dbccb15472401ad01099b9/Samples/babyblue/reg/babyblue_e2_f_rr2.wav",
+      "originalSha256": "664ce1fa5987c653fa34212ef543443738c07df1ba59899b070c01c3d1cbfe4d"
+    },
+    {
+      "midi": 30,
+      "take": 1,
+      "file": "30-1.ogg",
+      "bytes": 36129,
+      "sha256": "5e2e51b4be53b7aa7964d61a243aaff36bf547d05b7e3d1d8bce5060de5df2e0",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.black-and-blue-basses/6e7d674cdb41be7a54dbccb15472401ad01099b9/Samples/babyblue/reg/babyblue_gb2_f_rr1.wav",
+      "originalSha256": "9e79d0b7aa2e2ef4fb14091081be5ae36a18d60f0a5a4dd947c1d2e083921836"
+    },
+    {
+      "midi": 30,
+      "take": 2,
+      "file": "30-2.ogg",
+      "bytes": 35212,
+      "sha256": "a16fd657f2bf74ddd755cf504901c14e9545289794dc1b8d89e0b3099bc99448",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.black-and-blue-basses/6e7d674cdb41be7a54dbccb15472401ad01099b9/Samples/babyblue/reg/babyblue_gb2_f_rr2.wav",
+      "originalSha256": "f2e99e23ca71d6d7c6519d0b98a28127597a1bf714f45bc93dfe922c294e3db4"
+    },
+    {
+      "midi": 32,
+      "take": 1,
+      "file": "32-1.ogg",
+      "bytes": 41045,
+      "sha256": "1f94681165f666e3ffad0001831ed7832e4f09af7cb05175bfe6a0b82cb99d28",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.black-and-blue-basses/6e7d674cdb41be7a54dbccb15472401ad01099b9/Samples/babyblue/reg/babyblue_ab2_f_rr1.wav",
+      "originalSha256": "3c6171442aa710ab9306935506e722c47e93e9a963103320d97e85e1fcf7f7c8"
+    },
+    {
+      "midi": 32,
+      "take": 2,
+      "file": "32-2.ogg",
+      "bytes": 40311,
+      "sha256": "3f7924465af4ff48c1b01d90163ae84e5325ad15840fff2678f25fefb2ac5208",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.black-and-blue-basses/6e7d674cdb41be7a54dbccb15472401ad01099b9/Samples/babyblue/reg/babyblue_ab2_f_rr2.wav",
+      "originalSha256": "318fb7b78dcec483b84be15ee36a9826f44d8617873be6b590a2aac087c7d91f"
+    },
+    {
+      "midi": 34,
+      "take": 1,
+      "file": "34-1.ogg",
+      "bytes": 38491,
+      "sha256": "2b797300a3f5a4e15ec3a679a7d193e6268e2c5a085c8cd69b04213716ebad51",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.black-and-blue-basses/6e7d674cdb41be7a54dbccb15472401ad01099b9/Samples/babyblue/reg/babyblue_bb2_f_rr1.wav",
+      "originalSha256": "b2b1c544487826018c1ffb54c362b35ce2ee152a7e4f30f8fc142640aa7a8311"
+    },
+    {
+      "midi": 34,
+      "take": 2,
+      "file": "34-2.ogg",
+      "bytes": 39004,
+      "sha256": "c86f6a09160026c62ee428def8efa0a9949516e55f1f21473485a3754bc9a021",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.black-and-blue-basses/6e7d674cdb41be7a54dbccb15472401ad01099b9/Samples/babyblue/reg/babyblue_bb2_f_rr2.wav",
+      "originalSha256": "f2441edfbb9b08964ce76e394b8e481e068aa8b011be773094649f3e4332fd5c"
+    },
+    {
+      "midi": 36,
+      "take": 1,
+      "file": "36-1.ogg",
+      "bytes": 37996,
+      "sha256": "79f623993274c4c92ca4a4ac02e6190d1b9c9c5146f82e7dc24f6c190b4525ad",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.black-and-blue-basses/6e7d674cdb41be7a54dbccb15472401ad01099b9/Samples/babyblue/reg/babyblue_c3_f_rr1.wav",
+      "originalSha256": "8ff3ac63510b47755b4512a93f1dec254d871cae872392739e5f928d0465b795"
+    },
+    {
+      "midi": 36,
+      "take": 2,
+      "file": "36-2.ogg",
+      "bytes": 38115,
+      "sha256": "6e2baacb23d92a4b624926948e39c696e0112805fc86aecfc25d3a8dde4fbe6b",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.black-and-blue-basses/6e7d674cdb41be7a54dbccb15472401ad01099b9/Samples/babyblue/reg/babyblue_c3_f_rr2.wav",
+      "originalSha256": "7d3a1358ecb06d3655464aa6901ad2034d3c59f22c0380663ca4bb655079a0fe"
+    },
+    {
+      "midi": 38,
+      "take": 1,
+      "file": "38-1.ogg",
+      "bytes": 37174,
+      "sha256": "f267bf3ad26ebe5d08616a09af6392769eb1b5bb512e1ec68a1b28a37a8ba02a",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.black-and-blue-basses/6e7d674cdb41be7a54dbccb15472401ad01099b9/Samples/babyblue/reg/babyblue_d3_f_rr1.wav",
+      "originalSha256": "d2193ea76df073e4c36501105aceb8f4fd963fa332ea38871962877363487f74"
+    },
+    {
+      "midi": 38,
+      "take": 2,
+      "file": "38-2.ogg",
+      "bytes": 35609,
+      "sha256": "b48ea249a54a98ab055a91386f6caceb0f2c78524c6dca51cf591e0965709317",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.black-and-blue-basses/6e7d674cdb41be7a54dbccb15472401ad01099b9/Samples/babyblue/reg/babyblue_d3_f_rr2.wav",
+      "originalSha256": "89ddd85deefe072f075b416dbebbd8239d2ebcb1acdaaebb353dd4ee7c6d8058"
+    },
+    {
+      "midi": 40,
+      "take": 1,
+      "file": "40-1.ogg",
+      "bytes": 37240,
+      "sha256": "8b3f47952bf7b34fb96b236e5ba07db21e255cee0d621fa3bf5e25f22ea37bc0",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.black-and-blue-basses/6e7d674cdb41be7a54dbccb15472401ad01099b9/Samples/babyblue/reg/babyblue_e3_f_rr1.wav",
+      "originalSha256": "ea52bd771f1341cf38b196dae5260007a24dc9c97a6ca5cde71cc3c41ed53f3d"
+    },
+    {
+      "midi": 40,
+      "take": 2,
+      "file": "40-2.ogg",
+      "bytes": 37317,
+      "sha256": "f1569208977d18841d11dc3dd26454754b730c4f2cc9b99d0db0520ffd05f386",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.black-and-blue-basses/6e7d674cdb41be7a54dbccb15472401ad01099b9/Samples/babyblue/reg/babyblue_e3_f_rr2.wav",
+      "originalSha256": "0b4dfd14ff2e44bd94158a9b22d9fda65b12c294078524e3f1af3f94e5352171"
+    },
+    {
+      "midi": 42,
+      "take": 1,
+      "file": "42-1.ogg",
+      "bytes": 40834,
+      "sha256": "11825ed6b043efdcadc2aa4be137689e39468dc40771ba3094956f1e54845ec4",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.black-and-blue-basses/6e7d674cdb41be7a54dbccb15472401ad01099b9/Samples/babyblue/reg/babyblue_gb3_f_rr1.wav",
+      "originalSha256": "820c2bc1f410e50925a72de618f8da5aeeb7a168555194e934e780c23a2a89a0"
+    },
+    {
+      "midi": 42,
+      "take": 2,
+      "file": "42-2.ogg",
+      "bytes": 40480,
+      "sha256": "d9c541bb08f465a05a7f70fbc20f09658e5c4fca032197cf53f09c8a3a25215c",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.black-and-blue-basses/6e7d674cdb41be7a54dbccb15472401ad01099b9/Samples/babyblue/reg/babyblue_gb3_f_rr2.wav",
+      "originalSha256": "05bc5ada1a6a0921bfcf0e52af388c4710ff148951e07d0d6c802190e1645f62"
+    },
+    {
+      "midi": 44,
+      "take": 1,
+      "file": "44-1.ogg",
+      "bytes": 39044,
+      "sha256": "86e9b2eb9da91897172f050431d9e48fe3da7a229249eab842f756499c0dbe95",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.black-and-blue-basses/6e7d674cdb41be7a54dbccb15472401ad01099b9/Samples/babyblue/reg/babyblue_ab3_f_rr1.wav",
+      "originalSha256": "f9e6bbfee790ba65d042778f8ba7d9b7896c0c2d5f928c6796cb3bb6f07aadf5"
+    },
+    {
+      "midi": 44,
+      "take": 2,
+      "file": "44-2.ogg",
+      "bytes": 39575,
+      "sha256": "6a345d16bf815c3bccd78443de61b27d360f8653da49e9f21b0bb5c23a13e65e",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.black-and-blue-basses/6e7d674cdb41be7a54dbccb15472401ad01099b9/Samples/babyblue/reg/babyblue_ab3_f_rr2.wav",
+      "originalSha256": "9847df4980b47e351a837122bf191d53f741880a0c20742b68197d20ddcc0133"
+    },
+    {
+      "midi": 46,
+      "take": 1,
+      "file": "46-1.ogg",
+      "bytes": 39984,
+      "sha256": "14b6583110afd65ca88ca57d5e7899749d0206a247b66f7ea257c6218c41f88f",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.black-and-blue-basses/6e7d674cdb41be7a54dbccb15472401ad01099b9/Samples/babyblue/reg/babyblue_bb3_f_rr1.wav",
+      "originalSha256": "74e9607e3497065e8f47f50af065fd19e086d362e006e9c0d35a84c65c999b58"
+    },
+    {
+      "midi": 46,
+      "take": 2,
+      "file": "46-2.ogg",
+      "bytes": 40360,
+      "sha256": "5e1072265923fdc39963c01b9715c087e45991e9211090457b179cdcc548de57",
+      "source": "https://raw.githubusercontent.com/sfzinstruments/karoryfer.black-and-blue-basses/6e7d674cdb41be7a54dbccb15472401ad01099b9/Samples/babyblue/reg/babyblue_bb3_f_rr2.wav",
+      "originalSha256": "877110502e9c6ac6b50b9f6a80525ad27b5ea25d447902534ddd0ba6c2d06d6b"
+    }
+  ]
+}

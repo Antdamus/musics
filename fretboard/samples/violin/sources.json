@@ -1,0 +1,52 @@
+{
+  "library": "Versilian Chamber Orchestra 2 CE · Solo Violin",
+  "license": "CC0-1.0",
+  "revision": "440300901dfe9275fd84e0b7763af1f8443ae62e",
+  "samples": [
+    {
+      "midi": 67,
+      "take": 1,
+      "file": "67-1.ogg",
+      "bytes": 134820,
+      "sha256": "0c680f2d7c9434d279c898a6ebd799baf621da5be25c2399ff4ba8286b163259",
+      "source": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_G4_p.wav",
+      "originalSha256": "ad1ba8442a6b40919093c9c831a8171c7030f7e651fbe075ab87764665deef88"
+    },
+    {
+      "midi": 69,
+      "take": 1,
+      "file": "69-1.ogg",
+      "bytes": 136965,
+      "sha256": "6a4fe19c4a1de1253b4b5cf837d182ecb7eed20da0eafae103a2e2f925e11a8f",
+      "source": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_A4_p.wav",
+      "originalSha256": "0d05607b46b78690893006d5aa7923ac304c7fb497df1e96536dc88ac5ac487f"
+    },
+    {
+      "midi": 72,
+      "take": 1,
+      "file": "72-1.ogg",
+      "bytes": 140307,
+      "sha256": "5f41f55f33df2aa62d7cce58e6845fdea10f8520d11912779e1515b3e7647c24",
+      "source": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_C5_p.wav",
+      "originalSha256": "77a2133b5f97e1ec0edb759c0c552fc3efa7caf4ce1e0a4aa22625cf4c9da130"
+    },
+    {
+      "midi": 76,
+      "take": 1,
+      "file": "76-1.ogg",
+      "bytes": 135420,
+      "sha256": "b3ddc1c861b767e9194d3bfe739d4d22258b9c442d05d67b8d16c77cec63d401",
+      "source": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_E5_p.wav",
+      "originalSha256": "c60c3bcfc64ea00ebf8d97b16f2876c892393839a017a945c5e557359b6369a4"
+    },
+    {
+      "midi": 79,
+      "take": 1,
+      "file": "79-1.ogg",
+      "bytes": 137201,
+      "sha256": "e5b4b1f4ae3e3b3b2a1a272bdef56c99ff84812aafd03182a2254edf77941e01",
+      "source": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_G5_p.wav",
+      "originalSha256": "537df6072b0922a0231a6b3fad117e84bcaaa3e60ca68c665776a83c9bd9062d"
+    }
+  ]
+}

@@ -6,6 +6,8 @@ Guitar sight-reading and fretboard practice with classical notation, exact octav
 
 For a backing band, select a key and note family in **Notes & goals**, then open **Sound → Backing accompaniment**. Choose recorded upright bass, nylon guitar, an acoustic duo, **Sax trio**, or **Piano duo** for soft grand-piano chords and upright bass. In the trio, an alto sax plays short answers at the ends of bars 2 and 4 while the guitar exercise continues. Try **E · Phrygian dominant** with **Acoustic duo** to hear E → F → Dm → E. Preview plays four bars at the playback tempo without starting a practice session.
 
+Choose **Electric rock band** for overdriven rhythm guitar, picked electric bass and drums. Add **grand piano** or **solo violin** independently. **Preview backing** plays the band with your selected drummer. Choosing Electric rock band starts Straight rock if drums were off. Use **Drum groove** to change or mute the kit.
+
 This is the dedicated source repository for the **Music learning** project. The complete app, recordings, licenses, tests, and sample preparation tools were imported from the Fretwise work through `Antdamus/Invsto` commit `cb47a1f200917cc630bedb7b64469fd440004d79`.
 
 ## Run locally

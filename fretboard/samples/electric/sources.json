@@ -1,0 +1,152 @@
+{
+  "library": "FreePats Electric Guitar FSBS Dist1",
+  "license": "CC0-1.0",
+  "revision": "bbae17f0ad16f5edd7ec22178d181f3e3f6696fa",
+  "mapping": "https://raw.githubusercontent.com/freepats/electric-guitar-FSBS-dist1/bbae17f0ad16f5edd7ec22178d181f3e3f6696fa/EGuitarFSBS-dist1%20bridge%2020220911.sfz",
+  "samples": [
+    {
+      "midi": 40,
+      "take": 1,
+      "file": "40-1.ogg",
+      "bytes": 61056,
+      "sha256": "27f8032c273364db332ede3717d92a3d640ea2879fe1185045302acf27485690",
+      "source": "https://raw.githubusercontent.com/freepats/electric-guitar-FSBS-dist1/bbae17f0ad16f5edd7ec22178d181f3e3f6696fa/samples/bridge/E2_s1_01.flac",
+      "originalSha256": "d6a61b35d15aeb48661dfe3c6842f38f5538b5181a121fce1602cba4b1b8912a"
+    },
+    {
+      "midi": 40,
+      "take": 2,
+      "file": "40-2.ogg",
+      "bytes": 67037,
+      "sha256": "5a0c6e0b29fd877c68f6daa16eaafa85c65e12dec5da43e6924822794b9b8a94",
+      "source": "https://raw.githubusercontent.com/freepats/electric-guitar-FSBS-dist1/bbae17f0ad16f5edd7ec22178d181f3e3f6696fa/samples/bridge/E2_s1_02.flac",
+      "originalSha256": "ac2d7c65dd2e391db6700b8e2bfa0f6c2681ab520fe6f46e6874cd94677857f5"
+    },
+    {
+      "midi": 41,
+      "take": 1,
+      "file": "41-1.ogg",
+      "bytes": 64107,
+      "sha256": "62bd9137d4b794127f4513b91ced8a155539c1498c7b586e9da80095b104cb24",
+      "source": "https://raw.githubusercontent.com/freepats/electric-guitar-FSBS-dist1/bbae17f0ad16f5edd7ec22178d181f3e3f6696fa/samples/bridge/F2_s1_01.flac",
+      "originalSha256": "2dd87662ec02307221d4580e68763e03681b9c7ab94aa8ad8830b908e1d4e64c"
+    },
+    {
+      "midi": 41,
+      "take": 2,
+      "file": "41-2.ogg",
+      "bytes": 66274,
+      "sha256": "26fe966b2027e6103134c56900658f64d9fbb3f2885a705cd170f9c9d8ca3116",
+      "source": "https://raw.githubusercontent.com/freepats/electric-guitar-FSBS-dist1/bbae17f0ad16f5edd7ec22178d181f3e3f6696fa/samples/bridge/F2_s1_02.flac",
+      "originalSha256": "851d56e8debfb4d5b6a8a7dd58015574174a91e7cfb2a88e0dc1a544f7e7c975"
+    },
+    {
+      "midi": 45,
+      "take": 1,
+      "file": "45-1.ogg",
+      "bytes": 66594,
+      "sha256": "bf960e0ccf5631f6e62796bb639a4457e7b4988f0ce92b5ce3c7de3f4baa770a",
+      "source": "https://raw.githubusercontent.com/freepats/electric-guitar-FSBS-dist1/bbae17f0ad16f5edd7ec22178d181f3e3f6696fa/samples/bridge/A2_s2_01.flac",
+      "originalSha256": "719272d38ebb42c30945c406d4a9128120a52c14aeb17d4dbb97406c037097aa"
+    },
+    {
+      "midi": 45,
+      "take": 2,
+      "file": "45-2.ogg",
+      "bytes": 69943,
+      "sha256": "68c6814cb2d158acec3d017f63ea1aad0552322bb8c73c0a5e4226f5b92d757d",
+      "source": "https://raw.githubusercontent.com/freepats/electric-guitar-FSBS-dist1/bbae17f0ad16f5edd7ec22178d181f3e3f6696fa/samples/bridge/A2_s2_02.flac",
+      "originalSha256": "28c743c0fb8d26fae6108cc1e61483b5fed688964d121019b1db3e14586ea8ae"
+    },
+    {
+      "midi": 48,
+      "take": 1,
+      "file": "48-1.ogg",
+      "bytes": 77758,
+      "sha256": "51d0ecfedce60423473fac271b8cd96e2b2fa43e0ca2ae695c8e138facafdc96",
+      "source": "https://raw.githubusercontent.com/freepats/electric-guitar-FSBS-dist1/bbae17f0ad16f5edd7ec22178d181f3e3f6696fa/samples/bridge/C3_s2_01.flac",
+      "originalSha256": "222408f5cd55e6aaeba2eedaf93bb0e1f39ba305652cecdd67244eb0337cb1d5"
+    },
+    {
+      "midi": 48,
+      "take": 2,
+      "file": "48-2.ogg",
+      "bytes": 74552,
+      "sha256": "d5d03771662c981b20ea6e35de46406570f4d4e58ab661faba2f089a6edf5ce3",
+      "source": "https://raw.githubusercontent.com/freepats/electric-guitar-FSBS-dist1/bbae17f0ad16f5edd7ec22178d181f3e3f6696fa/samples/bridge/C3_s2_02.flac",
+      "originalSha256": "464f346756321099cc5bab2c5cbbc4b1fb1f8934244c92226b8e78c6db7e32ab"
+    },
+    {
+      "midi": 50,
+      "take": 1,
+      "file": "50-1.ogg",
+      "bytes": 78035,
+      "sha256": "b57a939ef4b85bb0c3fd31dbe063066a97c2004301a11edc0aba80094573c0dd",
+      "source": "https://raw.githubusercontent.com/freepats/electric-guitar-FSBS-dist1/bbae17f0ad16f5edd7ec22178d181f3e3f6696fa/samples/bridge/D3_s3_01.flac",
+      "originalSha256": "1cd86e6926c71e0a6ace7eb757a3a7b761a755b67628565aeeecf0cd05aedb25"
+    },
+    {
+      "midi": 50,
+      "take": 2,
+      "file": "50-2.ogg",
+      "bytes": 78682,
+      "sha256": "679cb347ed37443139690cc5ce5a2d13bd719f272bc8ef6bc048e0a48d4209a9",
+      "source": "https://raw.githubusercontent.com/freepats/electric-guitar-FSBS-dist1/bbae17f0ad16f5edd7ec22178d181f3e3f6696fa/samples/bridge/D3_s3_02.flac",
+      "originalSha256": "0ef8aa7580f0cf2309c19a5f3bce755a4d1b8230d68f44136a259490fd657220"
+    },
+    {
+      "midi": 52,
+      "take": 1,
+      "file": "52-1.ogg",
+      "bytes": 79660,
+      "sha256": "0e55e7b1fd8d77f4b80683871775178d7d0d6563739a29bb05250be1eca3cc61",
+      "source": "https://raw.githubusercontent.com/freepats/electric-guitar-FSBS-dist1/bbae17f0ad16f5edd7ec22178d181f3e3f6696fa/samples/bridge/E3_s3_01.flac",
+      "originalSha256": "52a2fe88df26aac06ec2aeece1f627d7034a6ceb5bd6d234f88a5c183b2fdde9"
+    },
+    {
+      "midi": 52,
+      "take": 2,
+      "file": "52-2.ogg",
+      "bytes": 78596,
+      "sha256": "84488c3bfbe808311e3c2752aed5614e8482e141cfeeb90dcc9a8321e7f44a2d",
+      "source": "https://raw.githubusercontent.com/freepats/electric-guitar-FSBS-dist1/bbae17f0ad16f5edd7ec22178d181f3e3f6696fa/samples/bridge/E3_s3_02.flac",
+      "originalSha256": "0df251fae232305688fc1701cc8af9968771bc4675a864550a2353247fccdc2b"
+    },
+    {
+      "midi": 55,
+      "take": 1,
+      "file": "55-1.ogg",
+      "bytes": 79859,
+      "sha256": "80edcc0404b2c3bd98ba9ef31c584b49c6ffeae02289f38716b08f7cbd240c42",
+      "source": "https://raw.githubusercontent.com/freepats/electric-guitar-FSBS-dist1/bbae17f0ad16f5edd7ec22178d181f3e3f6696fa/samples/bridge/G3_s4_01.flac",
+      "originalSha256": "02d57fc7f82b5efe5b4c27b8be163bac31ff0eec8817ba47e9285cc5812597b8"
+    },
+    {
+      "midi": 55,
+      "take": 2,
+      "file": "55-2.ogg",
+      "bytes": 79049,
+      "sha256": "6e26fcb6b910abc3969762aa3a51bef5fdb78b95e9ffd6748e6e7251d35aec85",
+      "source": "https://raw.githubusercontent.com/freepats/electric-guitar-FSBS-dist1/bbae17f0ad16f5edd7ec22178d181f3e3f6696fa/samples/bridge/G3_s4_02.flac",
+      "originalSha256": "61aa9f6e6931ca240209c7ed7dc900a40c7e4afa8795aa2160e47006cfd19b62"
+    },
+    {
+      "midi": 59,
+      "take": 1,
+      "file": "59-1.ogg",
+      "bytes": 80676,
+      "sha256": "22eef40045c9f93fa59ff8a463a9162ef417cc717c70bd64de5089f852232679",
+      "source": "https://raw.githubusercontent.com/freepats/electric-guitar-FSBS-dist1/bbae17f0ad16f5edd7ec22178d181f3e3f6696fa/samples/bridge/B3_s5_01.flac",
+      "originalSha256": "4456d0cdfb64c3e6bbc20291e95c5fc64532e6f530656c5d7318e8346b36348b"
+    },
+    {
+      "midi": 59,
+      "take": 2,
+      "file": "59-2.ogg",
+      "bytes": 78601,
+      "sha256": "e90a9465589d7dcda9afd6586945ac74b6fd25d022e9684ca0c0106c15ae0799",
+      "source": "https://raw.githubusercontent.com/freepats/electric-guitar-FSBS-dist1/bbae17f0ad16f5edd7ec22178d181f3e3f6696fa/samples/bridge/B3_s5_02.flac",
+      "originalSha256": "e8500fa786e5c33ee4ead0488d5129902844fbc5822a783b88d235233d1cb384"
+    }
+  ]
+}

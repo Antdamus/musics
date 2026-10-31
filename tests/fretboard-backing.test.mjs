@@ -5,6 +5,39 @@ import {createHash} from 'node:crypto';
 import {arrangement,progression} from '../fretboard/backing.mjs';
 import {ROOTS,SCALES,sanitizeSettings,scalePCs,spell} from '../fretboard/music.mjs';
 
+test('electric rock stays in scale, uses recorded pitches and allows each extra band member independently',()=>{
+  const base=new URL('../fretboard/samples/',import.meta.url),recordings=new Map();
+  for(const instrument of ['electric','rockbass','piano','violin']){
+    const library=JSON.parse(readFileSync(new URL(instrument+'/sources.json',base)));
+    assert.equal(library.license,'CC0-1.0');
+    for(const sample of library.samples){
+      const file=instrument+'/'+sample.file,bytes=readFileSync(new URL(file,base));
+      assert.equal(createHash('sha256').update(bytes).digest('hex'),sample.sha256);
+      recordings.set(file,sample.midi);
+    }
+  }
+  for(const scale of Object.keys(SCALES))for(const root of ROOTS.keys()){
+    const bare=sanitizeSettings({scale,root,backing:'electricRock'}),rhythm=arrangement(bare);
+    assert.equal(bare.backing,'electricRock');assert.equal(bare.rockPiano,false);assert.equal(bare.rockViolin,false);
+    for(const rockPiano of [false,true])for(const rockViolin of [false,true]){
+      const s=sanitizeSettings({...bare,rockPiano,rockViolin}),beats=arrangement(s),notes=beats.flat(),pcs=scalePCs(s);
+      const kinds=['electric','rockbass',...(rockPiano?['piano']:[]),...(rockViolin?['violin']:[])];
+      assert.deepEqual(new Set(notes.map(n=>n.file.split('/')[0])),new Set(kinds));
+      assert.deepEqual(beats.map(events=>events.filter(e=>/^(electric|rockbass)\//.test(e.file))),rhythm);
+      for(const e of notes){
+        const native=recordings.get(e.file);assert.ok(Number.isFinite(native));
+        assert.ok(pcs.includes(e.midi%12));assert.ok(Math.abs(native-e.midi)<=2);assert.equal(e.rate,2**((e.midi-native)/12));
+        assert.ok(e.offset>=0&&e.offset<1&&e.length>0);
+      }
+      assert.equal(beats[11].find(e=>e.file.startsWith('rockbass/')).midi%12,progression(s)[3].pcs[1]);
+      for(const start of [0,4,8,12]){
+        const guitar=beats[start].find(e=>e.file.startsWith('electric/')),bass=beats[start].find(e=>e.file.startsWith('rockbass/'));
+        assert.equal(guitar.midi-bass.midi,12);assert.equal(guitar.midi%12,progression(s)[start/4].pcs[0]);
+      }
+    }
+  }
+});
+
 test('Phrygian dominant includes its flat second and major third in both the notation and duet',()=>{
   const s=sanitizeSettings({root:4,scale:'phrygianDominant',pool:[4],backing:'duo',backingVolume:44});
   assert.deepEqual(s.pool,[4]);assert.equal(s.backingVolume,44);

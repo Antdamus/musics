@@ -1,7 +1,7 @@
-import {SCALES,TUNING,mod,spell} from './music.mjs?v=8';
+import {SCALES,TUNING,mod,spell} from './music.mjs?v=9';
 import {guitarSample} from './guitar.mjs?v=1';
 
-export const recordedBacking=style=>['groove','nylon','duo','saxTrio','pianoDuo'].includes(style);
+export const recordedBacking=style=>['groove','nylon','duo','saxTrio','pianoDuo','electricRock'].includes(style);
 // Scale-degree roots for four-bar vamps. The chord tones come from the scale itself.
 const changes={major:[0,3,4,0],minor:[0,3,6,0],harmonicMinor:[0,3,4,0],dorian:[0,3,6,0],
   phrygian:[0,1,6,0],phrygianDominant:[0,1,6,0],mixolydian:[0,6,3,0]};
@@ -33,6 +33,38 @@ function voicing(pcs){
   }
   return best;
 }
+const electricKeys=[40,41,45,48,50,52,55,59],violinKeys=[67,69,72,76,79];
+const closest=(keys,midi)=>keys.reduce((best,key)=>Math.abs(key-midi)<Math.abs(best-midi)?key:best);
+
+function addRockBar(beats,bar,bars,settings){
+  const {pcs}=bars[bar],root=40+mod(pcs[0]-40),bass=root-12;
+  const hasFifth=SCALES[settings.scale].intervals.includes(mod(pcs[0]+7-settings.root));
+  const add=(instrument,native,midi,beat,offset,length,take,level,spread=0)=>{
+    beats[bar*4+beat].push({midi,file:instrument+'/'+native+'-'+take+'.ogg',rate:2**((midi-native)/12),offset,length,level,spread});
+  };
+  const pick=(beat,offset,length,take,level)=>add('electric',closest(electricKeys,root),root,beat,offset,length,take,level);
+  const strum=(beat,offset,length,take,level)=>{
+    pick(beat,offset,length,take,level);
+    if(hasFifth)add('electric',closest(electricKeys,root+7),root+7,beat,offset,length,take,level*.75,.009);
+  };
+  const pluck=(beat,offset,midi,length,take,level)=>add('rockbass',2*Math.round(midi/2),midi,beat,offset,length,take,level);
+  // Longer chord accents alternate with short picked eighths. Let the final chord ring.
+  strum(0,0,.86,1,.8);pick(1,0,.32,2,.6);pick(1,.5,.36,1,.65);
+  strum(2,0,bar===3?1.8:.8,2,.87);
+  if(bar<3){pick(3,0,.32,1,.59);strum(3,.5,.39,2,.66);}
+  pluck(0,0,bass,1.36,1,.88);pluck(1,.5,bass,.4,2,.68);
+  pluck(2,0,bass+(hasFifth&&bar<3?7:0),bar===3?1.8:1.25,2,.8);
+  if(bar<3){
+    // Before the last downbeat, outline the tonic chord's color (e.g. G versus G♯ over E).
+    const next=bars[bar+1].pcs,pickup=next[bar===2?1:0];
+    pluck(3,.5,28+mod(pickup-28),.43,1,.65);
+  }
+  if(settings.rockViolin&&bar%2===1){
+    const target=67+mod(pcs[bar===3?0:1]-67);
+    add('violin',closest(violinKeys,target),target,1,0,2.6,1,.78);
+  }
+}
+
 export function arrangement(s){
   const bars=progression(s),beats=Array.from({length:16},()=>[]),tonic=36+s.root-(s.root>6?12:0);
   let previousKeys=null;
@@ -43,7 +75,8 @@ export function arrangement(s){
       const native=Math.max(30,Math.min(54,Math.round(midi/3)*3)),take=(bar+(beat===2?1:0))%2+1;
       beats[start+beat].push({midi,file:'bass/'+native+'-'+take+'.ogg',rate:2**((midi-native)/12),length,level,offset:0,spread:0});
     };
-    if(s.backing!=='nylon'){
+    if(s.backing==='electricRock')addRockBar(beats,bar,bars,s);
+    else if(s.backing!=='nylon'){
       bass(0,root,1.65,.85);bass(2,root+mod(pcs.at(-1)-pcs[0]),bar%2?.78:1.65,.66);
       if(bar===1)bass(3,tonic+mod(bars[2].pcs[0]-s.root+5)-5,.72,.54);
       if(bar===3)bass(3,root+mod(pcs[1]-pcs[0]),.72,.54);
@@ -59,7 +92,7 @@ export function arrangement(s){
       else pluck(2,0,0,1.7,.94);
       pluck(3,bar%2?1:2,0,.86,.83);
     }
-    if(s.backing==='pianoDuo'){
+    if(s.backing==='pianoDuo'||(s.backing==='electricRock'&&s.rockPiano)){
       // Keep common notes close between chords. The bass already supplies the root.
       const shapes=pcs.map((pc,i)=>{
         const low=53+mod(pc-53);
@@ -72,8 +105,13 @@ export function arrangement(s){
         beats[start+beat].push({midi,file:'piano/'+native+'-1.ogg',rate:2**((midi-native)/12),
           offset,length,level:level*(i===notes.length-1?1:.85),spread:i*.008});
       });
-      chord(0,0,keys,bar===3?3.6:2.15,.75);
-      if(bar<3)chord(2,.5,keys.slice(1),1.15,.55);
+      if(s.backing==='electricRock'){
+        chord(0,.5,keys,bar===3?2.8:1.7,.46);
+        if(bar<3)chord(2,.5,keys.slice(1),.92,.39);
+      }else{
+        chord(0,0,keys,bar===3?3.6:2.15,.75);
+        if(bar<3)chord(2,.5,keys.slice(1),1.15,.55);
+      }
     }
     if(s.backing==='saxTrio'&&bar%2===1){
       // A two-beat answer, resolving to the chord root. Leave the next bar to the player.
@@ -91,7 +129,7 @@ export function arrangement(s){
   return beats;
 }
 
-const key=s=>[s.backing,s.root,s.scale].join(':');
+const key=s=>[s.backing,s.root,s.scale,...(s.backing==='electricRock'?[!!s.rockPiano,!!s.rockViolin]:[])].join(':');
 export class RecordedBacking{
   cache=new Map();pending=new Map();voices=new Set();plan=null;
   constructor(context,destination){
@@ -109,10 +147,10 @@ export class RecordedBacking{
           const response=await fetch(new URL('./samples/'+file,import.meta.url),{signal:ctl.signal});
           if(!response.ok)throw Error('Recording unavailable');
           const buffer=await this.context.decodeAudioData(await response.arrayBuffer());
-          // Match attack levels gently; leave the horn behind the player's target note.
+          // Match attack levels gently so the backing leaves room for the player.
           const data=buffer.getChannelData(0),count=Math.min(data.length,Math.round(buffer.sampleRate*.22));
           let energy=0;for(let i=0;i<count;i++)energy+=data[i]*data[i];
-          const bass=file.startsWith('bass/'),targetRms=bass ? .14 : file.startsWith('sax/') ? .095 : .105;
+          const bass=file.startsWith('bass/')||file.startsWith('rockbass/'),targetRms=bass ? .14 : file.startsWith('sax/')||file.startsWith('violin/') ? .095 : .105;
           const trim=Math.min(bass?1.15:5,Math.max(.35,targetRms/Math.sqrt(energy/count||1)));
           const sample={buffer,trim};
           this.cache.set(file,sample);while(this.cache.size>36)this.cache.delete(this.cache.keys().next().value);

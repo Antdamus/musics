@@ -1,13 +1,13 @@
-import {TUNING,ROOTS,SCALES,DEFAULTS,mod,frequency,octave,spell,noteName,positions,makeScore,scalePCs,sanitizeSettings,pitchMatch,timingGrade,recommendation,masteryFor} from './music.mjs?v=8';
-import {recordedBacking,progression} from './backing.mjs?v=2';
-import {StudioAudio} from './audio.mjs?v=7';
+import {TUNING,ROOTS,SCALES,DEFAULTS,mod,frequency,octave,spell,noteName,positions,makeScore,scalePCs,sanitizeSettings,pitchMatch,timingGrade,recommendation,masteryFor} from './music.mjs?v=9';
+import {recordedBacking,progression} from './backing.mjs?v=3';
+import {StudioAudio} from './audio.mjs?v=8';
 import {createNoteMap} from './note-map.mjs?v=5';
 import {GUITAR_TOUCHES,guitarVoiceLabel} from './guitar.mjs?v=1';
 import {needsStringNumber,stringMarkerY} from './notation.mjs?v=2';
 import {createClient} from './supabase-client.mjs?v=1';
 import {ACCOUNT_CONFIG} from './account-config.mjs?v=1';
-import {ProfileStore} from './profile-store.mjs?v=5';
-import {cleanData,same} from './profile-data.mjs?v=5';
+import {ProfileStore} from './profile-store.mjs?v=6';
+import {cleanData,same} from './profile-data.mjs?v=6';
 import {createAccountUI} from './accounts.mjs?v=1';
 import {addActiveTime,dayBucket,dayKey,mergeSessions} from './practice-history.mjs?v=1';
 import {createHistoryView} from './history-view.mjs?v=1';
@@ -81,9 +81,12 @@ function syncControls(){
   $('upload-wrap').hidden=settings.backing!=='upload';$('user-track').volume=settings.volume/100;
   const sampled=recordedBacking(settings.backing);
   $('backing-controls').hidden=!sampled;
+  $('rock-layers').hidden=settings.backing!=='electricRock';
+  $('rock-piano').checked=settings.rockPiano;$('rock-violin').checked=settings.rockViolin;
   $('backing-help').textContent=sampled?progression(settings).map(c=>c.name).join(' → ')+' · '+ROOTS[settings.root]+' '+SCALES[settings.scale].name.toLowerCase()+' · one chord per bar':settings.backing==='drone'?'A synthesized tonic and fifth hold the key.':settings.backing==='upload'?'Play along to a file from this device.':'Choose a recorded part to hear a four-bar accompaniment in your selected key and scale.';
   if(settings.backing==='saxTrio')$('backing-help').textContent+=' · Sax fills at the ends of bars 2 and 4.';
   if(settings.backing==='pianoDuo')$('backing-help').textContent+=' · Soft grand-piano chords over plucked upright bass.';
+  if(settings.backing==='electricRock')$('backing-help').textContent+=' · Overdriven rhythm guitar and picked electric bass. Preview includes your selected drummer.';
   updateSoundControls();
   updateRecommendation();
 }
@@ -155,14 +158,23 @@ async function previewBacking(){
   if(running||starting||!audible()||!recordedBacking(settings.backing))return;
   stopPreview();const generation=previewGeneration;
   button.dataset.active='true';button.textContent='Cancel preview';
-  const ready=await prepareBacking();if(generation!==previewGeneration)return;
-  if(!ready){stopPreview();return;}
+  const bandDrums=settings.backing==='electricRock'&&settings.drums!=='off';
+  const [ready,kitReady]=await Promise.all([prepareBacking(),bandDrums?prepareDrums():true]);
+  if(generation!==previewGeneration)return;
+  if(!ready||!kitReady){stopPreview();return;}
   button.textContent='■ Stop preview';
   const begins=audio.context.currentTime+.075,period=secondsPerBeat();let beat=0;
   const schedule=()=>{
     const now=audio.context.currentTime;
     if(!audible()||now>=begins+16*period){stopPreview();return;}
-    while(beat<16&&begins+beat*period<now+.12){if(begins+beat*period>=now-.04)audio.backing.beat(begins+beat*period,beat,settings);beat++;}
+    while(beat<16&&begins+beat*period<now+.12){
+      const time=begins+beat*period;
+      if(time>=now-.04){
+        audio.backing.beat(time,beat,settings);
+        if(bandDrums)audio.drums.beat(time,beat,settings);
+      }
+      beat++;
+    }
   };
   previewTimer=setInterval(schedule,25);schedule();
 }
@@ -519,13 +531,18 @@ $('guitar-volume').oninput=()=>{settings.guitarVolume=Number($('guitar-volume').
 $('headphones').onchange=()=>{settings.headphones=$('headphones').checked;routeAudio();persist();};
 $('goal').onchange=()=>{settings.goal=Number($('goal').value);updateStats();persist();};
 $('volume').oninput=()=>{settings.volume=Number($('volume').value);audio.setVolume(settings.volume);$('user-track').volume=settings.volume/100;persist();};
-$('backing').onchange=()=>{
-  if(starting||!running)pause();
+function changeBacking(){
+  const style=$('backing').value;
+  const startRockDrums=style==='electricRock'&&settings.backing!==style&&settings.drums==='off';
+  if(starting||!running||startRockDrums)pause();
   backingLoad++;backingState='idle';audio.stopBacking();$('user-track').pause();
-  settings.backing=$('backing').value;syncControls();persist();
+  settings.backing=style;settings.rockPiano=$('rock-piano').checked;settings.rockViolin=$('rock-violin').checked;
+  if(startRockDrums)settings.drums='rock';
+  syncControls();persist();
   if(running&&recordedBacking(settings.backing))void prepareBacking();
   else if(running&&position>=0)playUserTrack();
-};
+}
+for(const id of ['backing','rock-piano','rock-violin'])$(id).onchange=changeBacking;
 $('backing-volume').oninput=()=>{settings.backingVolume=Number($('backing-volume').value);audio.backing?.setVolume(settings.backingVolume);$('backing-volume-value').textContent=settings.backingVolume+'%';persist();};
 $('backing-preview').onclick=previewBacking;
 $('drums').onchange=()=>{pause();settings.drums=$('drums').value;updateSoundControls();persist();};
