@@ -4,4 +4,4 @@ The cajón and handclaps come from FreePats World Percussion. Xavimart, Gonzalo 
 
 The numbers in the filenames are the publisher’s percussion keys. Key 50 supplies the low cajón stroke, 48 the tap, 49 the sharp slap and 59 the handclaps. Each stroke cycles through its own takes at their recorded pitch. The twelve Ogg files together use about 91 KiB. The original source URLs and hashes are in `sources.json`. Rebuild with `node tools/prepare-fretboard-instrument.mjs rumba` using Node, curl and FFmpeg.
 
-The guitar accents the “and” of two and slaps the strings on three. The drummer answers with a low cajón hit on the “and” of three and leaves beat one open in the palmas part. [Guitar recordings and rhythm](../rumba-guitar/README.md) · [Studio Flamenco’s rumba lesson](https://www.studioflamenco.com/about2-c18oe)
+The drummer plays a low cajón hit on the “and” of three and leaves beat one open in the palmas part. [Continuous guitar phrases](../rumba-phrases/README.md) · [Individual strokes](../rumba-guitar/README.md) · [Studio Flamenco’s rumba lesson](https://www.studioflamenco.com/about2-c18oe)

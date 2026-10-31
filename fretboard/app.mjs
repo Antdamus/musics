@@ -1,6 +1,6 @@
 import {TUNING,ROOTS,SCALES,DEFAULTS,mod,frequency,octave,spell,noteName,positions,makeScore,scalePCs,sanitizeSettings,pitchMatch,timingGrade,recommendation,masteryFor} from './music.mjs?v=11';
-import {recordedBacking,progression} from './backing.mjs?v=5';
-import {StudioAudio} from './audio.mjs?v=10';
+import {recordedBacking,progression} from './backing.mjs?v=6';
+import {StudioAudio} from './audio.mjs?v=11';
 import {drumBank} from './drums.mjs?v=2';
 import {createNoteMap} from './note-map.mjs?v=5';
 import {GUITAR_TOUCHES,guitarVoiceLabel} from './guitar.mjs?v=1';
@@ -90,7 +90,7 @@ function syncControls(){
   if(settings.backing==='saxTrio')$('backing-help').textContent+=' · Sax fills at the ends of bars 2 and 4.';
   if(settings.backing==='pianoDuo')$('backing-help').textContent+=' · Soft grand-piano chords over plucked upright bass.';
   if(settings.backing==='electricRock')$('backing-help').textContent+=' · Overdriven rhythm guitar and picked electric bass. Preview includes your selected drummer.';
-  if(settings.backing==='rumba')$('backing-help').textContent+=' · Ventilador strum. Listen for the accented upstroke on the “and” of two and the muted strings on three.';
+  if(settings.backing==='rumba')$('backing-help').textContent+=settings.bpm<40?' · Slow practice uses individual nylon strokes.':' · Major and minor chords use continuous four-beat guitar phrases. Suspended chords and open fifths use overlapping strokes.';
   updateSoundControls();
   updateRecommendation();
 }

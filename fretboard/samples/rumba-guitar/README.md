@@ -1,5 +1,7 @@
 # Rumba rhythm guitar
 
+These individual strokes cover practice below 40 BPM, suspended chords and fifth-only chords. The player’s lower strings can keep ringing beneath the lighter treble strokes until the hand mute or chord change. Major and minor chords at higher tempos use [continuous guitar phrases](../rumba-phrases/README.md).
+
 SpeedY recorded open chords on a nylon-string guitar, including separate upward and downward strokes and two takes of the strumming hand stopping the strings. The tap on beat one is leaving.february’s recording of a thumb striking an acoustic guitar body. Both artists released these sounds under CC0. Each entry in `sources.json` links to the original sound and lists the source and packaged file hashes. [SpeedY’s Nylon Guitar Open Chords](https://freesound.org/people/SpeedY/packs/472/) · [Hand mute](https://freesound.org/people/SpeedY/sounds/8506/) · [Guitar body tap](https://freesound.org/people/leaving.february/sounds/674811/) · [CC0 dedication](https://creativecommons.org/publicdomain/zero/1.0/)
 
 Count **1 & 2 & 3 & 4 &**. Play down with a body tap, up, down, **accented up**, **hand stop**, up, down, up. The accented upstroke rings until the hand lands. The last upstroke of bar four leads back into bar one. This is one taught four-beat rumba pattern. [Sergio Ercole’s strumming demonstration](https://www.latinguitarmastery.com/flamenco/rumba-strumming/)

@@ -1,0 +1,182 @@
+{
+  "license": "CC-BY-4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+  "sources": [
+    {
+      "title": "Flamenco Loop 3.wav",
+      "author": "digifishmusic",
+      "page": "https://freesound.org/people/digifishmusic/sounds/41986/",
+      "source": "https://cdn.freesound.org/previews/41/41986_29541-hq.mp3",
+      "sha256": "996b62354f7e545184ab468aa994487cfaad3f0e236b102eb7f22f3641f63b95",
+      "start": 0,
+      "seconds": 1.996,
+      "quality": "minor",
+      "root": 7,
+      "cents": 12
+    },
+    {
+      "title": "Flamenco Loop 6.wav",
+      "author": "digifishmusic",
+      "page": "https://freesound.org/people/digifishmusic/sounds/41989/",
+      "source": "https://cdn.freesound.org/previews/41/41989_29541-hq.mp3",
+      "sha256": "87e80c3a847827c615a4197913a34f0a08ea2b9a2ed54268a83e5d7beaf7720a",
+      "start": 0,
+      "seconds": 1.985,
+      "quality": "major",
+      "root": 8,
+      "cents": 3
+    }
+  ],
+  "samples": [
+    {
+      "file": "minor-3-48.ogg",
+      "id": 41986,
+      "sha256": "ab6fb50b059890e6e8a843b8b156d0aa9bbed4f3db7d7493e5b9166a61f31d36"
+    },
+    {
+      "file": "minor-3-72.ogg",
+      "id": 41986,
+      "sha256": "1b02312e781875070228a3eebe095f7be5e7cacb8359aed3fb137d7c56eb740c"
+    },
+    {
+      "file": "minor-3-100.ogg",
+      "id": 41986,
+      "sha256": "54a11510cb1a37c553ebe1fb72e264df3363edd884dbf2aca782fb2d56db2d1a"
+    },
+    {
+      "file": "minor-3-132.ogg",
+      "id": 41986,
+      "sha256": "04efeec8240437c86348e08d9fc5bf03fd07e40b9d9800517f984a82b8dfcf26"
+    },
+    {
+      "file": "minor-3-172.ogg",
+      "id": 41986,
+      "sha256": "dd8805e58b5a8a517e732c3b4637083bf0dc8d44d043deefd80c0fc34b636b5d"
+    },
+    {
+      "file": "minor-7-48.ogg",
+      "id": 41986,
+      "sha256": "e9c7abbeb03ffc2499fc0e5ca9c56af07f69a3c70fdd41abca02f7048f7f7ff8"
+    },
+    {
+      "file": "minor-7-72.ogg",
+      "id": 41986,
+      "sha256": "d2edd9af9005a3931a943679e6ec7fddcc4d140d08db9bc0684b760e972dc460"
+    },
+    {
+      "file": "minor-7-100.ogg",
+      "id": 41986,
+      "sha256": "d871de3efa6b98a8c3b2492b139cc5619413e1dbe7300e3558297df90d1780c2"
+    },
+    {
+      "file": "minor-7-132.ogg",
+      "id": 41986,
+      "sha256": "5e2108ddb1948737ef302db3f8f13884df92229e2b0beb447acef3b111edbdc7"
+    },
+    {
+      "file": "minor-7-172.ogg",
+      "id": 41986,
+      "sha256": "b2a85b9493014c47ff3c7ac053a488aa5ca5a54000dddbeffffadb55bbed8100"
+    },
+    {
+      "file": "minor-11-48.ogg",
+      "id": 41986,
+      "sha256": "622fd156e32a938ad13860227c595015779d74afff818d943fc53c050f7e9ff0"
+    },
+    {
+      "file": "minor-11-72.ogg",
+      "id": 41986,
+      "sha256": "bb52e24784e276df884af464f80a56ea7116d059ce5927612b0aba65fa4a26b0"
+    },
+    {
+      "file": "minor-11-100.ogg",
+      "id": 41986,
+      "sha256": "b8b3b2724d829dce8f8179c5ff220ae89b2a2ce6b9cce6afa033c2a85a96e6e5"
+    },
+    {
+      "file": "minor-11-132.ogg",
+      "id": 41986,
+      "sha256": "73e5f24897efc9c49497da2610754d9c13c5c17c0bd4738f2b9d7d032766bc2a"
+    },
+    {
+      "file": "minor-11-172.ogg",
+      "id": 41986,
+      "sha256": "d7071d3ac40c656164472811fda6723699f417f292925573cf7842eb52757e44"
+    },
+    {
+      "file": "major-4-48.ogg",
+      "id": 41989,
+      "sha256": "2ee79ce5d9c8be28e57ea0e3f3bba0011789fc107dc5366025f22752b27562ee"
+    },
+    {
+      "file": "major-4-72.ogg",
+      "id": 41989,
+      "sha256": "12c3b9fdf7638e4ea6e648e053a19c181d69482086ef9948b603380136360b8a"
+    },
+    {
+      "file": "major-4-100.ogg",
+      "id": 41989,
+      "sha256": "76c06a8ee6c262dc89027d144d3a98041fd34794fe1e0107e85e394ce69d3870"
+    },
+    {
+      "file": "major-4-132.ogg",
+      "id": 41989,
+      "sha256": "4fe437733dbda512285ac81c9b07f146a0381917079da07aec4318435819e429"
+    },
+    {
+      "file": "major-4-172.ogg",
+      "id": 41989,
+      "sha256": "15bfe4939561283ec6153550cdef62da7d6eb2a72588aa8b7fca37b0339b85cf"
+    },
+    {
+      "file": "major-8-48.ogg",
+      "id": 41989,
+      "sha256": "ef72ef632c2be65ffadaddc567c89112d297416b605c1b880e5271aa59c21c0f"
+    },
+    {
+      "file": "major-8-72.ogg",
+      "id": 41989,
+      "sha256": "fd0d773c73aea2f1f99a3bcb0a191cdd50809be91bb67b56eb0f90fa279b05f6"
+    },
+    {
+      "file": "major-8-100.ogg",
+      "id": 41989,
+      "sha256": "85121ec0d7a58ac488e4d092e1d9767c72d065660f01205e46b08b2604184df0"
+    },
+    {
+      "file": "major-8-132.ogg",
+      "id": 41989,
+      "sha256": "c68014f3d540226d6b5bb094d9f8c23ded3e65869106839b8c2a78200021bf26"
+    },
+    {
+      "file": "major-8-172.ogg",
+      "id": 41989,
+      "sha256": "499d048f8a37f35edeb6dabdf623b691c3f5b4f8e0169db541e99247f66da2f8"
+    },
+    {
+      "file": "major-0-48.ogg",
+      "id": 41989,
+      "sha256": "cd1da998e0a0048db70909326ba76d3234262f2be4f473a352bd369001ef3fce"
+    },
+    {
+      "file": "major-0-72.ogg",
+      "id": 41989,
+      "sha256": "257157d4c183bf7015be87c1a5211b996b738464adb6799e7bc5c653c14d6655"
+    },
+    {
+      "file": "major-0-100.ogg",
+      "id": 41989,
+      "sha256": "7cd12613a9ff535caf44fbe382799e19f67a0d099827f60290103417551f67f8"
+    },
+    {
+      "file": "major-0-132.ogg",
+      "id": 41989,
+      "sha256": "0d382323c8b95a3009ee97f21ca46e101c893e420fac15406fcb7868a5e72d39"
+    },
+    {
+      "file": "major-0-172.ogg",
+      "id": 41989,
+      "sha256": "43e23cb4b7faebe7b1c49f3314f65281da844071d123f1a94700a33f2bfa9f47"
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 import {SCALES,TUNING,mod,spell} from './music.mjs?v=11';
 import {guitarSample} from './guitar.mjs?v=1';
+import {rumbaPhrase,fitRumbaBar} from './rumba-phrases.mjs?v=1';
 
 export const recordedBacking=style=>['groove','nylon','duo','saxTrio','pianoDuo','electricRock','rumba'].includes(style);
 // Scale-degree roots for four-bar vamps. The chord tones come from the scale itself.
@@ -76,10 +77,16 @@ function addRockBar(beats,bar,bars,settings){
 const strumRoots={major:[0,2,4,7,9],minor:[2,4,9],sus4:[2,9],power:[2,9]};
 // Direction, accent and ringing time in beats, counting 1 & 2 & 3 & 4 &.
 const ventilador=[
-  ['down',.94,.46],['brush',.62,.34],['down',.77,.39],['up',1.18,.5],
-  ['mute',1,.5],['brush',.67,.36],['down',.91,.43],['brush',.73,.44]
+  ['down',.94,.83],['brush',.62,.57],['down',.77,.70],['up',1.18,.5],
+  ['mute',1,.5],['brush',.67,.58],['down',.91,.84],['brush',.73,.50]
 ];
-function addRumbaBar(beats,bar,pcs){
+function addRumbaBar(beats,bar,pcs,bpm){
+  const phrase=rumbaPhrase(pcs,bpm);
+  if(phrase){
+    // Each beat can resume the same performance midway after a pause.
+    for(let i=0;i<4;i++)beats[bar*4+i].push({...phrase,phraseBeat:i,offset:0,spread:0,length:4-i,level:1,release:.008});
+    return;
+  }
   const root=pcs[0],third=mod(pcs[1]-root);
   const quality=pcs.length===2?'power':third===3?'minor':third===5?'sus4':'major';
   const distance=native=>mod(root-native+6)-6;
@@ -93,7 +100,7 @@ function addRumbaBar(beats,bar,pcs){
     const roots=powerUp?[0,7]:strumRoots[quality];
     const native=roots.reduce((best,n)=>Math.abs(distance(n))<Math.abs(distance(best))?n:best);
     const file=quality+'-'+native+'-'+(powerUp?'up':stroke)+'.ogg';
-    beat.push({file:'rumba-guitar/'+file,rate:2**(distance(native)/12),offset,length,release:.018,level,spread:0});
+    beat.push({file:'rumba-guitar/'+file,rate:2**(distance(native)/12),offset,length,release:eighth===3?.014:.09,level,spread:0});
   });
 }
 
@@ -101,7 +108,7 @@ export function arrangement(s){
   const bars=progression(s),beats=Array.from({length:16},()=>[]),tonic=36+s.root-(s.root>6?12:0);
   let previousKeys=null;
   bars.forEach(({pcs},bar)=>{
-    if(s.backing==='rumba'){addRumbaBar(beats,bar,pcs);return;}
+    if(s.backing==='rumba'){addRumbaBar(beats,bar,pcs,s.bpm);return;}
     const start=bar*4,root=tonic+mod(pcs[0]-s.root+5)-5;
     const bass=(beat,midi,length,level)=>{
       if(midi<29)midi+=12;
@@ -163,11 +170,11 @@ export function arrangement(s){
 }
 
 function key(s){
-  const options=s.backing==='electricRock'?[!!s.rockPiano,!!s.rockViolin]:s.backing==='rumba'?[!!s.rumbaCadence]:[];
+  const options=s.backing==='electricRock'?[!!s.rockPiano,!!s.rockViolin]:s.backing==='rumba'?[!!s.rumbaCadence,s.bpm]:[];
   return [s.backing,s.root,s.scale,...options].join(':');
 }
 export class RecordedBacking{
-  cache=new Map();pending=new Map();voices=new Set();plan=null;
+  cache=new Map();pending=new Map();voices=new Set();plan=null;phraseUntil=0;
   constructor(context,destination){
     this.context=context;this.bus=context.createGain();
     const compressor=context.createDynamicsCompressor();compressor.threshold.value=-9;compressor.ratio.value=3;compressor.knee.value=8;
@@ -187,7 +194,7 @@ export class RecordedBacking{
           const data=buffer.getChannelData(0),count=Math.min(data.length,Math.round(buffer.sampleRate*.22));
           let energy=0;for(let i=0;i<count;i++)energy+=data[i]*data[i];
           const bass=file.startsWith('bass/')||file.startsWith('rockbass/'),strum=/^rumba-guitar\/.*-(up|down|brush)\.ogg$/.test(file);
-          const targetRms=strum ? .15 : bass ? .14 : file.startsWith('sax/')||file.startsWith('violin/') ? .095 : .105;
+          const targetRms=strum||file.startsWith('rumba-phrases/') ? .15 : bass ? .14 : file.startsWith('sax/')||file.startsWith('violin/') ? .095 : .105;
           const trim=Math.min(bass?1.15:5,Math.max(.35,targetRms/Math.sqrt(energy/count||1)));
           const sample={buffer,trim};
           this.cache.set(file,sample);while(this.cache.size>36)this.cache.delete(this.cache.keys().next().value);
@@ -203,24 +210,36 @@ export class RecordedBacking{
     const beats=arrangement(s),files=[...new Set(beats.flat().map(e=>e.file))];
     const buffers=new Map(await Promise.all(files.map(async f=>[f,await this.load(f)])));
     if(!current())return false;
-    this.plan={id,beats,buffers};return true;
+    const fitted=new Map();
+    for(const event of beats.flat()){
+      const original=buffers.get(event.file);
+      event.sample=original;
+      if(event.phraseBeat===undefined)continue;
+      const take=event.file+'@'+event.rate;
+      if(!fitted.has(take))fitted.set(take,{...original,buffer:fitRumbaBar(this.context,original.buffer,240*event.rate/s.bpm)});
+      event.sample=fitted.get(take);
+    }
+    this.plan={id,beats};this.phraseUntil=0;return true;
   }
   beat(time,beat,s){
     if(beat<0||this.plan?.id!==key(s))return;
     const period=60/s.bpm;
     for(const event of this.plan.beats[beat%16]){
+      if(event.phraseBeat>0&&this.phraseUntil>time+period*.5)continue;
       const src=this.context.createBufferSource(),env=this.context.createGain(),begin=time+event.offset*period+event.spread;
-      const {buffer,trim}=this.plan.buffers.get(event.file),level=event.level*trim;
+      const {buffer,trim}=event.sample,level=event.level*trim,startOffset=(event.phraseBeat||0)*period*event.rate;
       src.buffer=buffer;src.playbackRate.value=event.rate;
-      const end=begin+Math.min(event.length*period,src.buffer.duration/event.rate),release=Math.min(event.release??.13,(end-begin)*.25);
+      const end=begin+Math.min(event.length*period,(buffer.duration-startOffset)/event.rate),release=Math.min(event.release??.13,(end-begin)*.25);
+      if(event.phraseBeat!==undefined)this.phraseUntil=end;
       env.gain.setValueAtTime(0,begin);env.gain.linearRampToValueAtTime(level,begin+.003);
       env.gain.setValueAtTime(level,end-release);env.gain.linearRampToValueAtTime(0,end);
       src.connect(env);env.connect(this.bus);const voice={src,env};this.voices.add(voice);
       src.onended=()=>{this.voices.delete(voice);src.disconnect();env.disconnect();};
-      src.start(begin);src.stop(end+.002);
+      src.start(begin,startOffset);src.stop(end+.002);
     }
   }
   stop(){
+    this.phraseUntil=0;
     const now=this.context.currentTime;
     for(const {src,env} of this.voices){
       env.gain.cancelAndHoldAtTime?.(now);

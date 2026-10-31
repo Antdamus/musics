@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {arrangement,progression} from '../fretboard/backing.mjs';
+import {rumbaPhrase,fitRumbaBar} from '../fretboard/rumba-phrases.mjs';
 import {ROOTS,SCALES,mod,sanitizeSettings,scalePCs,spell} from '../fretboard/music.mjs';
 
 test('rumba offers a descending cadence independently of the exercise scale',()=>{
@@ -29,7 +30,7 @@ test('ventilador uses the displayed harmony, with the upstroke accent on 2-and a
   }
   const tones={power:[0,7],major:[0,4,7],minor:[0,3,7],sus4:[0,5,7]};
   for(const scale of Object.keys(SCALES))for(const root of ROOTS.keys())for(const rumbaCadence of [false,true]){
-    const s={backing:'rumba',scale,root,rumbaCadence},chords=progression(s),plan=arrangement(s);
+    const s={backing:'rumba',scale,root,rumbaCadence,bpm:39},chords=progression(s),plan=arrangement(s);
     assert.equal(plan.length,16);
     for(const [bar,chord] of chords.entries()){
       if(!rumbaCadence)assert.ok(chord.pcs.every(pc=>scalePCs(s).includes(pc)));
@@ -40,7 +41,8 @@ test('ventilador uses the displayed harmony, with the upstroke accent on 2-and a
         if(eighth===4){assert.equal(events.length,1);assert.match(events[0].file,/mute-(mid|low)\.ogg$/);}
         assert.ok(events.length);levels.push(Math.max(...events.map(e=>e.level)));
         for(const e of events){
-          assert.ok(e.length>0&&e.length+e.spread*3<=.50001); // through 180 BPM
+          assert.ok(e.length>0&&eighth/2+e.length<=(eighth<4?2:4));
+          if(eighth===0&&e.file.endsWith('-down.ogg'))assert.ok(e.length>.5);
           assert.ok(files.has(e.file),e.file);
           if(eighth===4||e.file.endsWith('/body.ogg'))continue;
           const [,quality,native,stroke]=e.file.match(/\/(major|minor|sus4|power)-(\d+)-(down|up|brush)\.ogg$/);
@@ -51,6 +53,47 @@ test('ventilador uses the displayed harmony, with the upstroke accent on 2-and a
       }
       assert.equal(levels.indexOf(Math.max(...levels)),3);
     }
+  }
+});
+
+test('performed bars cover all major and minor chords from 40 to 180 BPM with the displayed root',()=>{
+  const base=new URL('../fretboard/samples/rumba-phrases/',import.meta.url);
+  const lib=JSON.parse(readFileSync(new URL('sources.json',base))),files=new Set();
+  assert.equal(lib.license,'CC-BY-4.0');
+  for(const sample of lib.samples){
+    assert.ok(lib.sources.some(s=>s.page.endsWith('/'+sample.id+'/')));
+    assert.equal(createHash('sha256').update(readFileSync(new URL(sample.file,base))).digest('hex'),sample.sha256);
+    files.add(sample.file);
+  }
+  for(let bpm=40;bpm<=180;bpm++)for(let root=0;root<12;root++)for(const third of [3,4]){
+    const pcs=[root,mod(root+third),mod(root+7)];
+    const {file,rate}=rumbaPhrase(pcs,bpm),name=file.split('/')[1];
+    assert.ok(files.has(name));const [quality,native,tempo]=name.split('.')[0].split('-');
+    assert.equal(quality,third===3?'minor':'major');
+    const shift=Math.round(12*Math.log2(rate));assert.ok(Math.abs(shift)<=2);
+    assert.equal(mod(Number(native)+shift),root);
+    assert.ok(Math.abs(Math.log(bpm/rate/Number(tempo)))<.35);
+  }
+  for(const chord of [[0,5,7],[0,7]])assert.equal(rumbaPhrase(chord,108),null);
+  for(const bpm of [1,39])assert.equal(rumbaPhrase([0,4,7],bpm),null);
+});
+
+test('fitting a recorded bar preserves pitch, stereo phase and a continuous signal at the requested duration',()=>{
+  const ctx={createBuffer(ch,length,sampleRate){
+    const data=Array.from({length:ch},()=>new Float32Array(length));return {length,sampleRate,numberOfChannels:ch,getChannelData:i=>data[i]};
+  }};
+  const sr=24000,source=ctx.createBuffer(2,48000,sr);
+  for(let i=0;i<source.length;i++){
+    source.getChannelData(0)[i]=Math.sin(i*2*Math.PI*220/sr);source.getChannelData(1)[i]=-source.getChannelData(0)[i];
+  }
+  for(const seconds of [1.64,2,2.6]){
+    const bar=fitRumbaBar(ctx,source,seconds),left=bar.getChannelData(0),right=bar.getChannelData(1);let crossings=0;
+    assert.equal(bar.length,Math.round(sr*seconds));
+    for(let i=1;i<left.length;i++){
+      assert.equal(left[i]+right[i],0);if(left[i]>0&&left[i-1]<=0)crossings++;
+    }
+    assert.ok(Math.abs(crossings/seconds-220)<1);
+    for(let i=0;i+480<left.length;i+=480)assert.ok(left.subarray(i,i+480).some(x=>x>.9));
   }
 });
 
