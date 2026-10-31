@@ -4,7 +4,13 @@ import {mergeSessions} from './practice-history.mjs?v=1';
 const object=value=>value&&typeof value==='object'&&!Array.isArray(value)?value:{};
 const count=value=>Number.isFinite(value)?Math.max(0,value):0;
 const clone=value=>structuredClone(value);
-export const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+// JSONB may reorder object fields. Compare values, keeping array indices significant.
+export function same(a,b){
+  if(a===b)return true;
+  if(!a||!b||typeof a!=='object'||typeof b!=='object'||Array.isArray(a)!==Array.isArray(b))return false;
+  const keys=Object.keys(a);
+  return keys.length===Object.keys(b).length&&keys.every(key=>Object.hasOwn(b,key)&&same(a[key],b[key]));
+}
 export function cleanData(value={}){
   value=object(value);
   const p=object(value.progress),notes={},positionUse={};

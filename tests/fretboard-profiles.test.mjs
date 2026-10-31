@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {cleanData,mergeData} from '../fretboard/profile-data.mjs';
+import {cleanData,mergeData,same} from '../fretboard/profile-data.mjs';
 import {ProfileStore} from '../fretboard/profile-store.mjs';
 const clone=x=>structuredClone(x);
 const storage=()=>{const values=new Map();return {getItem:k=>values.get(k)||null,setItem:(k,v)=>values.set(k,v)};};
 function practice(base,hits=1){const d=clone(base),n=d.progress.notes[60]||{correct:0,attempts:0,last:0,passes:[]};n.correct+=hits;n.attempts+=hits;n.last+=100;d.progress.notes[60]=n;d.progress.positionUse['2:1']=(d.progress.positionUse['2:1']||0)+hits;return d;}
-function backend(){
+function backend({jsonb=false}={}){
   const rows=new Map(),receipts=new Set();let loseReply=false,offline=false,conflict=false;
   return {
     rows,receipts,set loseReply(v){loseReply=v;},set offline(v){offline=v;},set conflict(v){conflict=v;},
@@ -19,7 +19,8 @@ function backend(){
         if(receipts.has(key))return {data:[clone(existing)]};
         if(conflict){conflict=false;const other=clone(existing);other.revision++;other.data=practice(other.data,3);rows.set(id,other);return {error:{code:'PT409'}};}
         if(existing&&args.expected_revision!==existing.revision)return {error:{code:'PT409'}};
-        const row={user_id:id,username:args.profile_name,data:clone(args.profile_data),revision:(existing?.revision||0)+1};rows.set(id,row);receipts.add(key);
+        const data=jsonb?JSON.parse(JSON.stringify(args.profile_data,(_,value)=>value&&typeof value==='object'&&!Array.isArray(value)?Object.fromEntries(Object.keys(value).sort().reverse().map(key=>[key,value[key]])):value)):clone(args.profile_data);
+        const row={user_id:id,username:args.profile_name,data,revision:(existing?.revision||0)+1};rows.set(id,row);receipts.add(key);
         if(loseReply){loseReply=false;return {error:Error('Reply lost after commit')};}
         return {data:[clone(row)]};
       }};}
@@ -127,4 +128,14 @@ test('guest import after a reset adds history without replacing account history 
 test('unavailable browser storage is reported instead of claiming a saved copy',()=>{
   const store=new ProfileStore({storage:{getItem:()=>null,setItem:()=>{throw Error('Full');}},client:{}});
   store.save(practice(store.viewData));assert.match(store.status,/storage unavailable/);assert.equal(store.data.progress.notes[60].correct,1);
+});
+
+test('database object-key ordering does not make saved session snapshots retry indefinitely',async t=>{
+  const server=backend({jsonb:true}),a=await musician(t,server),data=clone(a.viewData);
+  data.progress.sessions=[{id:'one',at:100,version:1,ms:5123.25,completed:false,notes:[60,72],days:{'2026-10-31':{ms:5123.25,correct:1}}}];
+  a.save(data);assert.equal(await a.sync(),true);assert.equal(a.status,'Synced across devices');
+  assert.equal(server.rows.get('alice').revision,2);assert.equal(await a.sync(),true);assert.equal(server.rows.get('alice').revision,2);
+  const fresh=await musician(t,server);assert.equal(same(fresh.data,a.data),true);
+  assert.equal(same({a:1,b:{x:2,y:3}},{b:{y:3,x:2},a:1}),true);
+  assert.equal(same([60,72],[72,60]),false);assert.equal(same([60],{'0':60}),false);
 });
