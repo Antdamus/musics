@@ -5,15 +5,17 @@ import {GUITAR_TOUCHES,guitarVoiceLabel} from './guitar.mjs?v=1';
 import {needsStringNumber,stringMarkerY} from './notation.mjs?v=2';
 import {createClient} from './supabase-client.mjs?v=1';
 import {ACCOUNT_CONFIG} from './account-config.mjs?v=1';
-import {ProfileStore} from './profile-store.mjs?v=1';
-import {cleanData,same} from './profile-data.mjs?v=1';
+import {ProfileStore} from './profile-store.mjs?v=2';
+import {cleanData,same} from './profile-data.mjs?v=2';
 import {createAccountUI} from './accounts.mjs?v=1';
+import {addActiveTime,dayBucket,dayKey,mergeSessions} from './practice-history.mjs?v=1';
+import {createHistoryView} from './history-view.mjs?v=1';
 const $=id=>document.getElementById(id),audio=new StudioAudio();
 const profiles=new ProfileStore({
   storage:{getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)},
   client:createClient(ACCOUNT_CONFIG.url,ACCOUNT_CONFIG.key,{auth:{storageKey:'fretwise.auth',detectSessionInUrl:true}}),
   onData:applyProfile,canApply:()=>!running&&!starting,
-  beforeSwitch:()=>{pause();disableMic();saveSession();persist();}
+  beforeSwitch:()=>{pause();disableMic();saveSession(true);persist();}
 });
 let settings=profiles.data.settings,progress=structuredClone(profiles.data.progress);
 let score=[],results=[],active=0,running=false,starting=false,finished=false,revealed=false,micOn=false,micPending=false;
@@ -22,7 +24,8 @@ const phoneLayout=matchMedia('(max-width: 600px), (max-width: 1000px) and (max-h
 let practiceFocused=false,practiceScroll=0;
 const scoreLayout=()=>phoneLayout.matches?{bars:1,width:400,start:82,barWidth:306,noteOffset:36,beatWidth:67}: {bars:2,width:830,start:118,barWidth:344,noteOffset:50,beatWidth:285/4};
 let renderedLayout=scoreLayout();
-let position=-4,phaseTime=0,phaseOffset=-4,nextBeat=-4,raf=0,scheduler=0,runStarted=0,practiceMs=0,sessionSaved=false;
+let position=-4,phaseTime=0,phaseOffset=-4,nextBeat=-4,raf=0,scheduler=0,runStarted=0,practiceMs=0;
+let sessionId=null,sessionAt=0,sessionVersion=0,sessionLastMs=0,sessionLastAt=0,sessionDays={},sessionNotes=new Set(),sessionBpms=new Set(),historyView=null;
 let stats={correct:0,wrong:0,missed:0,streak:0,best:0,onTime:0,manual:0},cleanPasses=0,noticeTimeout,waitAdvance=0,trackURL=null;
 let micPitch=null,micSince=0,micOnset=0,micLatched=false,lastRms=0,lastAttack=0;
 let metronomeState='idle',metronomePreviewTimer=0;
@@ -36,12 +39,14 @@ const clockText=ms=>`${String(Math.floor(ms/60000)).padStart(2,'0')}:${String(Ma
 const pitchClassName=pc=>spell(60+pc,settings).name.replace(/-?\d+$/,'');
 function persist(){profiles.save({settings,progress});}
 function applyProfile(data,{switching=false}={}){
-  const changed=!same(settings,data.settings);settings=sanitizeSettings(data.settings);progress=data.progress;
+  const changed=!same(settings,data.settings),reset=progress.resetAt!==data.progress.resetAt;settings=sanitizeSettings(data.settings);progress=data.progress;
+  if(switching||reset){
+    resetSession();cleanPasses=0;historyView?.reset();
+  }
   if(switching){
-    practiceMs=0;sessionSaved=false;cleanPasses=0;stats={correct:0,wrong:0,missed:0,streak:0,best:0,onTime:0,manual:0};
     if(trackURL)URL.revokeObjectURL(trackURL);trackURL=null;$('user-track').removeAttribute('src');$('audio-file').value='';$('audio-name').textContent='Choose your own backing track';
   }
-  syncControls();if(changed||switching)newScore();renderHistory();updateStats();
+  syncControls();if(changed||switching||reset)newScore();renderHistory();updateStats();
 }
 function notice(message){$('notice').textContent=message;$('notice').classList.add('visible');clearTimeout(noticeTimeout);noticeTimeout=setTimeout(()=>$('notice').classList.remove('visible'),5000);}
 function setCue(message,detail=''){$('cue-message').textContent=message;$('cue-detail').textContent=detail;$('practice-cue').textContent=running&&position<0?`Count in · ${Math.ceil(-position)}`:message;}
@@ -303,7 +308,10 @@ async function start(){
   if(generation!==startGeneration)return;
   if(settings.drums!=='off'&&!await prepareDrums()){if(generation===startGeneration)pause();return;}
   if(generation!==startGeneration||document.hidden){if(generation===startGeneration)pause();return;}
-  if(finished)newScore();sessionSaved=false;running=true;starting=false;runStarted=performance.now();phaseTime=runStarted;phaseOffset=position;nextBeat=Math.ceil(position);
+  if(finished)newScore();
+  if(!sessionId){sessionId=crypto.randomUUID();sessionAt=Date.now();}
+  sessionLastAt=Date.now();sessionBpms.add(settings.bpm);
+  running=true;starting=false;runStarted=performance.now();phaseTime=runStarted;phaseOffset=position;nextBeat=Math.ceil(position);
   $('play').innerHTML='Ⅱ <span>Pause</span>';lockSetup(true);updateSoundControls();
   if(settings.backing==='upload'&&audible()&&position>=0)playUserTrack();
   scheduler=setInterval(scheduleAudio,25);scheduleAudio();raf=requestAnimationFrame(tick);
@@ -319,7 +327,7 @@ function scheduleAudio(){
 function pause(){
   startGeneration++;starting=false;stopPreview();
   if(!running){$('play').innerHTML='▶ <span>Play score</span>';updateSoundControls();queueMicrotask(()=>profiles.deliver());return;}
-  position=beatNow();practiceMs+=performance.now()-runStarted;running=false;clearInterval(scheduler);cancelAnimationFrame(raf);clearTimeout(waitAdvance);audio.stopVoices();$('user-track').pause();$('play').innerHTML='▶ <span>Resume</span>';lockSetup(false);updateSoundControls();updateStats();updatePlayhead();queueMicrotask(()=>profiles.deliver());
+  position=beatNow();practiceMs+=performance.now()-runStarted;running=false;clearInterval(scheduler);cancelAnimationFrame(raf);clearTimeout(waitAdvance);audio.stopVoices();$('user-track').pause();$('play').innerHTML='▶ <span>Resume</span>';lockSetup(false);updateSoundControls();updateStats();updatePlayhead();saveSession();queueMicrotask(()=>profiles.deliver());
 }
 function tick(){
   if(!running)return;position=beatNow();
@@ -335,15 +343,16 @@ function tick(){
     }
   }
   updateStats();updatePlayhead();if(settings.goal&&elapsed()>=settings.goal*60000){finishSession();return;}
+  if(elapsed()-sessionLastMs>=5000)saveSession();
   raf=requestAnimationFrame(tick);
 }
 function addAttempt(midi,correct){const n=progress.notes[midi]||{correct:0,attempts:0,passes:[],last:0};n.correct+=correct?1:0;n.attempts++;n.last=Date.now();progress.notes[midi]=n;}
-function markMiss(index){results[index]={correct:false};stats.missed++;stats.streak=0;addAttempt(score[index].midi,false);persist();}
+function markMiss(index){results[index]={correct:false};stats.missed++;stats.streak=0;addAttempt(score[index].midi,false);recordCheck('missed',score[index].midi);persist();}
 function answer(midi,{manual=false,string=null,at=performance.now()}={}){
   if(!running||position<0||finished){notice('Press Play and wait for the count-in.');return;}
   const event=currentEvent();if(!event||results[active])return;
   if(midi!==event.midi||(string!==null&&string!==event.position.string)){
-    stats.wrong++;stats.streak=0;addAttempt(event.midi,false);event.hadError=true;persist();
+    stats.wrong++;stats.streak=0;addAttempt(event.midi,false);recordCheck('wrong',event.midi);event.hadError=true;persist();
     setCue(midi===event.midi?`Right pitch. Try string ${event.position.string}.`:mod(midi)===mod(event.midi)?`That’s ${noteName(midi,settings)} — ${midi>event.midi?'too high':'too low'} by an octave or more.`:`Heard ${noteName(midi,settings)}. Try again.`,settings.hints?`Target: ${noteName(event.midi,settings)} on string ${event.position.string}`:'Follow the highlighted note on the staff.');updateStats();return;
   }
   const offset=settings.mode==='timed'?(phaseOffset+(at-phaseTime)/1000/secondsPerBeat()-event.beat)*secondsPerBeat():null;
@@ -352,6 +361,7 @@ function answer(midi,{manual=false,string=null,at=performance.now()}={}){
   addAttempt(event.midi,true);
   // Rotate assigned locations in all modes; this counts assignments, not verified fingering.
   const key=event.position.string+':'+event.position.fret;progress.positionUse[key]=(progress.positionUse[key]||0)+1;
+  recordCheck('correct',event.midi,{manual,onTime:timing==='On time'});
   persist();
   setCue(manual?'Marked as played ✓':`${noteName(event.midi,settings)} · ${timing.toLowerCase()} ✓`,micOn?'Pitch and octave checked. Use the assigned string.':`String ${event.position.string} · ${manual?'self-check':'fretboard check'}`);
   updateScoreMarks();updateStats();
@@ -385,17 +395,27 @@ function renderHistory(){
   $('total-minutes').textContent=Math.round(progress.sessions.reduce((n,s)=>n+(Number(s.ms)||0),0)/60000);
   $('best-streak').textContent=Math.max(0,...progress.sessions.map(s=>Number(s.best)||0));
   $('history-copy').textContent=progress.sessions.length?`${progress.sessions.length} saved session${progress.sessions.length===1?'':'s'}. Keep the old notes close as you learn new ones.`:'Your first session is the start of something good.';
+  historyView?.render();
 }
-function saveSession(){
-  if(!practiceMs||sessionSaved)return;
-  progress.sessions.push({id:crypto.randomUUID(),at:Date.now(),ms:practiceMs,...stats,bpm:settings.bpm,pool:[...settings.pool],octaves:[...settings.octaves]});progress.sessions=progress.sessions.slice(-365);sessionSaved=true;persist();
+function resetSession(){
+  practiceMs=0;sessionId=null;sessionAt=0;sessionVersion=0;sessionLastMs=0;sessionLastAt=0;sessionDays={};sessionNotes=new Set();sessionBpms=new Set();
+  stats={correct:0,wrong:0,missed:0,streak:0,best:0,onTime:0,manual:0};
+}
+function recordCheck(field,midi,{manual=false,onTime=false}={}){
+  const day=dayBucket(sessionDays,dayKey(new Date()));day[field]++;if(manual)day.manual++;if(onTime)day.onTime++;sessionNotes.add(midi);
+}
+function saveSession(completed=false){
+  const ms=elapsed();if(!sessionId||ms<=0)return;
+  addActiveTime(sessionDays,sessionLastAt,ms-sessionLastMs);sessionLastMs=ms;sessionLastAt=Date.now();
+  const snapshot={id:sessionId,at:sessionAt,updatedAt:Date.now(),version:++sessionVersion,completed,ms,...stats,bpm:settings.bpm,bpms:[...sessionBpms].sort((a,b)=>a-b),notes:[...sessionNotes].sort((a,b)=>a-b),days:structuredClone(sessionDays),pool:[...settings.pool],octaves:[...settings.octaves]};
+  progress.sessions=mergeSessions(progress.sessions,[snapshot]);persist();renderHistory();
 }
 function finishSession(){
   pause();disableMic();const ms=practiceMs;if(!ms){notice('Start a little practice first.');return;}
-  saveSession();void profiles.sync();
+  saveSession(true);void profiles.sync();
   $('summary-copy').textContent=`${clockText(ms)} of practice across ${settings.minFret}–${settings.maxFret} frets. ${stats.manual?'Manual results include your self-checks.':'Pitch results reflect microphone or fretboard checks.'}`;
   $('summary-stats').innerHTML=`<div><strong>${stats.correct}</strong><span>notes played</span></div><div><strong>${stats.best}</strong><span>best streak</span></div><div><strong>${stats.onTime}</strong><span>on-time notes</span></div><div><strong>${stats.missed}</strong><span>unplayed / unmarked</span></div>`;
-  $('summary-dialog').showModal();renderHistory();practiceMs=0;stats={correct:0,wrong:0,missed:0,streak:0,best:0,onTime:0,manual:0};newScore();updateStats();
+  $('summary-dialog').showModal();renderHistory();resetSession();newScore();updateStats();
 }
 function routeAudio(){
   audio.muted=!audible();audio.setVolume(settings.volume);
@@ -488,9 +508,10 @@ $('map-current').onclick=()=>noteMap.open(currentEvent()?mod(currentEvent().midi
 $('map-next').onclick=()=>{const next=recommendation(settings,progress).next;if(next!==null)noteMap.open(next);};
 $('help-open').onclick=()=>{pause();$('help-dialog').showModal();};
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());
-$('reset-progress').onclick=()=>{pause();if(!confirm(profiles.user?'Reset this account’s practice history and note progress on all devices? Your practice settings will stay.':'Reset saved guest practice history and note progress on this device? Your practice settings will stay.'))return;progress={...cleanData().progress,resetAt:Math.max(Date.now(),(progress.resetAt||0)+1),imports:progress.imports||[]};practiceMs=0;sessionSaved=true;stats={correct:0,wrong:0,missed:0,streak:0,best:0,onTime:0,manual:0};cleanPasses=0;newScore();persist();renderHistory();updateStats();updateRecommendation();notice('Saved practice progress reset.');};
+$('reset-progress').onclick=()=>{pause();if(!confirm(profiles.user?'Reset this account’s practice history and note progress on all devices? Your practice settings will stay.':'Reset saved guest practice history and note progress on this device? Your practice settings will stay.'))return;progress={...cleanData().progress,resetAt:Math.max(Date.now(),(progress.resetAt||0)+1),imports:progress.imports||[]};resetSession();cleanPasses=0;newScore();persist();renderHistory();updateStats();updateRecommendation();notice('Saved practice progress reset.');};
 document.addEventListener('keydown',e=>{if(e.repeat||document.querySelector('dialog[open]')||e.target.closest('input,select,textarea,button,[role="button"]'))return;if(e.code==='Space'){e.preventDefault();running?pause():start();}if(e.key==='Enter'&&!micOn){e.preventDefault();if(currentEvent())answer(currentEvent().midi,{manual:true});}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){pause();disableMic();persist();}});
 window.addEventListener('pagehide',()=>{pause();audio.stopMic();if(trackURL)URL.revokeObjectURL(trackURL);persist();});
+historyView=createHistoryView({getSessions:()=>progress.sessions,onOpen:()=>{pause();profiles.deliver();renderHistory();}});
 setupControls();newScore();updateStats();renderHistory();
 createAccountUI(profiles,{pause,notice});

@@ -326,6 +326,38 @@ test('generated backing, local audio selection, session timer and history work t
   await page.getByRole('button',{name:'Back to the fretboard'}).click();await page.locator('#backing').selectOption('upload');await expect(page.locator('#upload-wrap')).toBeVisible();
   await page.locator('#audio-file').setInputFiles({name:'practice.wav',mimeType:'audio/wav',buffer:Buffer.alloc(44)});await expect(page.locator('#audio-name')).toHaveText('practice.wav');
 });
+
+test('practice autosaves, pause excludes idle time, resume updates one session, and reload saves unfinished time',async t=>{
+  const page=await open(t,390);await page.clock.install({time:new Date(2026,9,31,12)});
+  await page.locator('#metronome-sound').selectOption('digital');await page.locator('#mode').selectOption('wait');await page.locator('#goal').selectOption('0');await page.locator('#bpm').fill('180');await page.locator('#bpm').press('Tab');
+  await page.locator('#play').click();await expect(page.locator('#play')).toContainText('Pause');await page.clock.runFor(1450);await page.locator('#got-it').click();await page.clock.runFor(5000);
+  const saved=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('fretwise.v1')).progress.sessions);
+  let sessions=await saved();assert.equal(sessions.length,1);assert.ok(sessions[0].ms>=5000);assert.equal(sessions[0].correct,1);
+  await page.locator('#play').click();const paused=(await saved())[0];await page.clock.runFor(20000);assert.equal((await saved())[0].ms,paused.ms);
+  await page.locator('#play').click();await page.clock.runFor(4000);await page.locator('#practice-close').click();
+  sessions=await saved();assert.equal(sessions.length,1);assert.equal(sessions[0].id,paused.id);assert.ok(Math.abs(sessions[0].ms-paused.ms-4000)<100);
+  await page.locator('#finish').click();await expect(page.locator('#week-sessions')).toHaveText('1');await expect(page.locator('#week-notes')).toHaveText('1');
+  sessions=await saved();assert.equal(sessions.length,1);assert.equal(sessions[0].completed,true);assert.ok(Math.abs(Object.values(sessions[0].days).reduce((n,d)=>n+d.ms,0)-sessions[0].ms)<1);
+  await page.locator('#summary-dialog [data-close]').last().click();await page.locator('#play').click();await page.clock.runFor(2000);await page.reload();
+  await expect(page.locator('#week-sessions')).toHaveText('2');await expect(page.locator('#bpm')).toHaveValue('180');
+  sessions=await saved();assert.equal(sessions.length,2);assert.equal(sessions[1].completed,false);assert.ok(sessions[1].ms>=1900&&sessions[1].ms<3000);
+  await page.locator('#history-open').click();await expect(page.locator('#history-session-list li')).toHaveCount(2);
+});
+
+for(const width of [320,1440])test(`weekly progress shows daily practice and can browse earlier weeks at ${width}px`,async t=>{
+  const page=await open(t,width);await page.clock.install({time:new Date(2026,9,31,12)});
+  await page.addInitScript(()=>{
+    const sessions=[[26,10],[27,20],[30,15],[19,30]].map(([day,minutes],i)=>({id:'history-'+i,at:new Date(2026,9,day,12).getTime(),ms:minutes*60000,correct:minutes,manual:minutes,wrong:0,missed:0,best:5,bpm:60+i*10,pool:[0,2]}));
+    localStorage.setItem('fretwise.v1',JSON.stringify({progress:{sessions}}));
+  });
+  await page.reload();await page.locator('#history-open').click();await expect(page.locator('#week-time')).toHaveText('45m');await expect(page.locator('#week-days')).toHaveText('3 / 7');await expect(page.locator('#week-sessions')).toHaveText('3');await expect(page.locator('#week-notes')).toHaveText('45');
+  await expect(page.locator('#history-days li')).toHaveCount(7);await expect(page.locator('#history-session-list li')).toHaveCount(3);await expect(page.locator('#history-next')).toBeDisabled();
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  await page.locator('#practice-history').screenshot({path:new URL(`test-results/fretwise-history-${width}.png`,root).pathname.replace(/^\/(\w:)/,'$1')});
+  await page.locator('#history-prev').click();await expect(page.locator('#week-time')).toHaveText('30m');await expect(page.locator('#history-week-title')).toHaveText('Last week');await expect(page.locator('#history-session-list li')).toHaveCount(1);
+  await page.locator('#history-prev').click();await expect(page.locator('#history-empty')).toBeVisible();await expect(page.locator('#week-time')).toHaveText('0m');
+  await page.locator('#history-today').click();await expect(page.locator('#week-time')).toHaveText('45m');await expect(page.locator('#history-next')).toBeDisabled();
+});
 test('microphone checks real octave from synthetic audio; a held note cannot answer repeatedly',async t=>{
   const page=await open(t);await page.locator('#mode').selectOption('wait');await page.locator('#bpm').fill('180');await page.locator('#bpm').press('Tab');
   for(const oct of [2,3,5,6])await page.locator(`[data-octave="${oct}"]`).click();

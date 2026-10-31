@@ -1,4 +1,5 @@
 import {sanitizeSettings} from './music.mjs?v=6';
+import {mergeSessions} from './practice-history.mjs?v=1';
 
 const object=value=>value&&typeof value==='object'&&!Array.isArray(value)?value:{};
 const count=value=>Number.isFinite(value)?Math.max(0,value):0;
@@ -29,7 +30,7 @@ export function mergeData(baseValue,localValue,remoteValue){
     return cleanData(result);
   }
   const baseline=b.resetAt===l.resetAt?b:cleanData().progress,p=result.progress;
-  p.sessions=union(l.sessions,r.sessions);p.imports=[...new Set([...l.imports,...r.imports])];
+  p.sessions=mergeSessions(l.sessions,r.sessions);p.imports=[...new Set([...l.imports,...r.imports])];
   for(const pitch of new Set([...Object.keys(l.notes),...Object.keys(r.notes)])){
     const ln=l.notes[pitch]||{},rn=r.notes[pitch]||{},bn=baseline.notes[pitch]||{};
     p.notes[pitch]={correct:count(rn.correct)+Math.max(0,count(ln.correct)-count(bn.correct)),attempts:count(rn.attempts)+Math.max(0,count(ln.attempts)-count(bn.attempts)),last:Math.max(count(ln.last),count(rn.last)),passes:union(ln.passes,rn.passes,30)};

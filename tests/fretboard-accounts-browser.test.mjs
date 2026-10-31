@@ -90,3 +90,17 @@ test('guest import is optional, one-time and separate from the next person signi
   await page.locator('#account-open').click();await expect(page.locator('#account-import')).toBeHidden();
   await page.locator('#profile-name').fill('<img src=x onerror=alert(1)>');await page.locator('#profile-name-form button').click();await expect(page.locator('#account-message')).toHaveText('Username saved.');await page.locator('[aria-label="Close account"]').click();await expect(page.locator('#account-open img')).toHaveCount(0);
 });
+
+test('weekly autosaves sync between devices and a remote reset clears the paused session',async t=>{
+  const backend=mockAccounts(),phone=await pageFor(t,backend),computer=await pageFor(t,backend,1440);
+  await login(phone);await login(computer);await phone.clock.install();
+  await phone.locator('#metronome-sound').selectOption('digital');await phone.locator('#mode').selectOption('wait');await phone.locator('#bpm').fill('180');await phone.locator('#bpm').press('Tab');
+  await phone.locator('#play').click();await expect(phone.locator('#play')).toContainText('Pause');await phone.clock.runFor(1450);await phone.locator('#got-it').click();await phone.clock.runFor(5000);await phone.locator('#practice-close').click();await sync(phone);await sync(computer);
+  await expect(computer.locator('#week-sessions')).toHaveText('1');await expect(computer.locator('#week-notes')).toHaveText('1');await expect(computer.locator('#history-session-list')).toContainText('Saved automatically');
+  const first=structuredClone(backend.rows.get(backend.users.alice.id).data.progress.sessions[0]);assert.ok(first.ms>=6000);
+  computer.once('dialog',dialog=>dialog.accept());await computer.locator('#reset-progress').click();await sync(computer);await sync(phone);
+  await expect(phone.locator('#week-sessions')).toHaveText('0');await expect(phone.locator('#clock')).toHaveText('00:00');
+  await phone.locator('#play').click();await phone.clock.runFor(2000);await phone.locator('#practice-close').click();await sync(phone);await sync(computer);
+  await expect(computer.locator('#week-sessions')).toHaveText('1');await expect(computer.locator('#week-notes')).toHaveText('0');
+  const saved=backend.rows.get(backend.users.alice.id).data.progress.sessions;assert.equal(saved.length,1);assert.notEqual(saved[0].id,first.id);assert.ok(saved[0].ms>=1900&&saved[0].ms<3000);
+});

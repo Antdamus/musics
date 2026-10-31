@@ -62,6 +62,26 @@ test('server revision conflicts refetch and merge without losing either deviceâ€
   await a.sync();assert.equal(a.data.progress.notes[60].correct,5);assert.equal(server.rows.get('alice').data.progress.notes[60].correct,5);
 });
 
+test('offline session checkpoints replace stale cloud copies and retain the other deviceâ€™s session',async t=>{
+  const server=backend(),a=await musician(t,server),b=await musician(t,server);
+  function checkpoint(store,id,version,ms,completed=false){
+    const data=clone(store.viewData);
+    data.progress.sessions=data.progress.sessions.filter(s=>s.id!==id);
+    data.progress.sessions.push({id,at:id==='phone'?100:200,version,updatedAt:version*1000,ms,completed,days:{'2026-10-31':{ms,correct:version}}});
+    store.save(data);
+  }
+  checkpoint(a,'phone',1,5000);await a.sync();await b.sync();
+  server.offline=true;checkpoint(a,'phone',2,10000);assert.equal(await a.sync(),false);
+  checkpoint(a,'phone',3,15000,true);server.offline=false;
+  checkpoint(b,'computer',1,7000,true);await b.sync();await a.sync();await b.sync();
+  for(const data of [a.data,b.data,server.rows.get('alice').data]){
+    const sessions=data.progress.sessions;assert.equal(sessions.length,2);
+    assert.equal(sessions.reduce((sum,s)=>sum+s.ms,0),22000);
+    const phone=sessions.find(s=>s.id==='phone');assert.equal(phone.version,3);assert.equal(phone.completed,true);
+    assert.equal(phone.days['2026-10-31'].ms,15000);
+  }
+});
+
 test('lost save reply survives reload and is retried exactly once using its receipt',async t=>{
   const server=backend(),disk=storage(),a=await musician(t,server,'alice',disk);
   a.save(practice(a.viewData,4));server.loseReply=true;assert.equal(await a.sync(),false);
