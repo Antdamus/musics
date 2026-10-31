@@ -1,4 +1,4 @@
-import {cleanData,mergeData,same,hasPractice} from './profile-data.mjs?v=7';
+import {cleanData,mergeData,same,hasPractice} from './profile-data.mjs?v=8';
 
 export const GUEST_KEY='fretwise.v1';
 const copy=value=>structuredClone(value);

@@ -1,0 +1,339 @@
+{
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "samples": [
+    {
+      "file": "major-0-down.ogg",
+      "id": 8468,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8468/",
+      "source": "https://cdn.freesound.org/previews/8/8468_6479-hq.mp3",
+      "originalSha256": "be3d0a1a2b3f405b66717af235c0805896eb111dbd836c41da455a2614fa520b",
+      "sha256": "6291f8dbc7c20be0dd5593de10907b7e820283b8679f123da5b23b4bb02cff3e"
+    },
+    {
+      "file": "major-0-up.ogg",
+      "id": 8469,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8469/",
+      "source": "https://cdn.freesound.org/previews/8/8469_6479-hq.mp3",
+      "originalSha256": "9f7c5003822fcfd5ac6aacd0b9bb4478e3d9b43757cb8de702db86f530bfa067",
+      "sha256": "567fab77d73923a6c8cc2e11c27a05b29297adac98c9e458949522dc73e2dc61"
+    },
+    {
+      "file": "major-0-brush.ogg",
+      "id": 8471,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8471/",
+      "source": "https://cdn.freesound.org/previews/8/8471_6479-hq.mp3",
+      "originalSha256": "40c58ed62e8536e6ef5939460e5ddb52e2dd8bb2b70a73b2123606dc184c7293",
+      "sha256": "0aa09baf71a3c2e37701353e2616b428e539c67f7f45950135cd6bc8455c8dcb"
+    },
+    {
+      "file": "major-2-down.ogg",
+      "id": 8476,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8476/",
+      "source": "https://cdn.freesound.org/previews/8/8476_6479-hq.mp3",
+      "originalSha256": "e73c02c03aa8ecbe19a0cd55008dfb5b8f6148899ba8370e3841691d7b692123",
+      "sha256": "21e3c2e899f3e9701384a5b039e66eed3d2831d0ac9909c9efd79a53eaaa95c0"
+    },
+    {
+      "file": "major-2-up.ogg",
+      "id": 8477,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8477/",
+      "source": "https://cdn.freesound.org/previews/8/8477_6479-hq.mp3",
+      "originalSha256": "659a67691a5c4de0d39afa3d021cd7fa9fbde8205a32ebecbecf195dcc01f261",
+      "sha256": "5e7a759fede7af526d8788f8de0b7173e53556578615a4d6e3afebed85098cb6"
+    },
+    {
+      "file": "major-2-brush.ogg",
+      "id": 8478,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8478/",
+      "source": "https://cdn.freesound.org/previews/8/8478_6479-hq.mp3",
+      "originalSha256": "a2efb8d0e64699c1c677785e66a1f4b63dacf83121b272b503142bd580704f56",
+      "sha256": "65a73e41eab5e61c448e770a1a988069e7ed222858961943d006bdb035b263be"
+    },
+    {
+      "file": "major-4-down.ogg",
+      "id": 8489,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8489/",
+      "source": "https://cdn.freesound.org/previews/8/8489_6479-hq.mp3",
+      "originalSha256": "cc4029644fd143ccdcc5ba261c7980865270ce3875923319de45e34b0b7c9085",
+      "sha256": "50364b365ab6a047fdbfbdef1826998bb7e3973fb5310b5aba1dceae7d6f082e"
+    },
+    {
+      "file": "major-4-up.ogg",
+      "id": 8490,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8490/",
+      "source": "https://cdn.freesound.org/previews/8/8490_6479-hq.mp3",
+      "originalSha256": "3a67fc83f3a270e0d3748b866ff233c0ae7f9116c21a855af0cce32f4385e8b2",
+      "sha256": "06c42dc7a8c49da4b8655c45321986a42ec288e2accaf48d1d7a616342b2f3f8"
+    },
+    {
+      "file": "major-4-brush.ogg",
+      "id": 8491,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8491/",
+      "source": "https://cdn.freesound.org/previews/8/8491_6479-hq.mp3",
+      "originalSha256": "7c984fa65d11251dc0efd387af6d42bc412c68822cb19ef174a02218086ff673",
+      "sha256": "e1762c983b753bf4fd45b3450908749e0f072f4a08213abb5e0a0dbbbd0743c3"
+    },
+    {
+      "file": "major-7-down.ogg",
+      "id": 8499,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8499/",
+      "source": "https://cdn.freesound.org/previews/8/8499_6479-hq.mp3",
+      "originalSha256": "faed7d95a03f943a3891b04f6ef59d23843d7af583f9be38d5eaaaa58ec3c560",
+      "sha256": "52fe0938ba7f766d527fa78260364fd1f4360d213ed7859857125dd7b5740f5d"
+    },
+    {
+      "file": "major-7-up.ogg",
+      "id": 8500,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8500/",
+      "source": "https://cdn.freesound.org/previews/8/8500_6479-hq.mp3",
+      "originalSha256": "d32e53866f05806c6029f4bb4e00eb95f3f697e44d60e4639076973c0f5d16a5",
+      "sha256": "ae9a87a2d5a4e49533609901e5d490aa216b757468128f70ff97fffe2bdecd82"
+    },
+    {
+      "file": "major-7-brush.ogg",
+      "id": 8502,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8502/",
+      "source": "https://cdn.freesound.org/previews/8/8502_6479-hq.mp3",
+      "originalSha256": "8c4edadd61474992c12f14c9b73b093194f4011b125fc8916b22d2dbd1659a54",
+      "sha256": "db6fee9622d45b50a1d2b74da700989c545053c6f07b84db524f892d47d3b1fc"
+    },
+    {
+      "file": "major-9-down.ogg",
+      "id": 8449,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8449/",
+      "source": "https://cdn.freesound.org/previews/8/8449_6479-hq.mp3",
+      "originalSha256": "793618acbe335af5c80ef85c11a63c6b3d6db1bcd0e3c817da899dd697c9897c",
+      "sha256": "425a543ec22cb0714f8b75c0d2771a508e9a4e8913e7b9dbd52fa358470c1371"
+    },
+    {
+      "file": "major-9-up.ogg",
+      "id": 8450,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8450/",
+      "source": "https://cdn.freesound.org/previews/8/8450_6479-hq.mp3",
+      "originalSha256": "3c9bd1e2f9cc3ed363454ceecf9d69dbf61c3f7e6bdd7ae5d8e1f8727ba27f41",
+      "sha256": "d10d03f850ecec28dc50d49f38d2040b212407038e209f5991b038dd2d43a18b"
+    },
+    {
+      "file": "major-9-brush.ogg",
+      "id": 8451,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8451/",
+      "source": "https://cdn.freesound.org/previews/8/8451_6479-hq.mp3",
+      "originalSha256": "f0d3d4b3b2a93bbcedeecf6e0162f2b77d7f732ac391b599644367359b757303",
+      "sha256": "45f80ca62927d8a5ee7ccf6b9258db280ccef190e90f23dfd1b21a80ce3f4887"
+    },
+    {
+      "file": "minor-2-down.ogg",
+      "id": 8482,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8482/",
+      "source": "https://cdn.freesound.org/previews/8/8482_6479-hq.mp3",
+      "originalSha256": "3db3847aabe32529eadba6930ee0027a0c5873dfc4991fc4ff96a1fb725f2f84",
+      "sha256": "abc6585581fa3d528c19d40eca1f4fd39baded19b127d69309a016d5e2d5ad7d"
+    },
+    {
+      "file": "minor-2-up.ogg",
+      "id": 8483,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8483/",
+      "source": "https://cdn.freesound.org/previews/8/8483_6479-hq.mp3",
+      "originalSha256": "689ee999a31ea6f44e35319befe6f7ffde4421b75304040b13b4dfbd09ac4289",
+      "sha256": "17ede82c33695f79ca7cac00003dca0fc8eb9c3151811ff0ea299708eb8e4bf0"
+    },
+    {
+      "file": "minor-2-brush.ogg",
+      "id": 8484,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8484/",
+      "source": "https://cdn.freesound.org/previews/8/8484_6479-hq.mp3",
+      "originalSha256": "40acc4dbed47b2fbebe45cd124898d964c87193fd6d7c343e82a8d6f135a4d58",
+      "sha256": "68ab9ab93019d6f6707bc25afbaf352e37f926b97cfdbf59a34c8c1e36081611"
+    },
+    {
+      "file": "minor-4-down.ogg",
+      "id": 8492,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8492/",
+      "source": "https://cdn.freesound.org/previews/8/8492_6479-hq.mp3",
+      "originalSha256": "e163e9a7715625acbbc9cf2b2921247f928ad7b62e60cd29531220c07782c419",
+      "sha256": "871fad79a485a1860f6e94bf9bc420d9466266b038698b3a22f591da0e02bbca"
+    },
+    {
+      "file": "minor-4-up.ogg",
+      "id": 8493,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8493/",
+      "source": "https://cdn.freesound.org/previews/8/8493_6479-hq.mp3",
+      "originalSha256": "106b5364cdbed88af0a9e16518ddf10535e6c3da2676fbf2a38cdfa241be8768",
+      "sha256": "430589876b462c8194ab4bba4dfbd2c090f3b34abe025f2303f3a474dfe635fa"
+    },
+    {
+      "file": "minor-4-brush.ogg",
+      "id": 8494,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8494/",
+      "source": "https://cdn.freesound.org/previews/8/8494_6479-hq.mp3",
+      "originalSha256": "39db390f1296d7aa29f9202351305a64ec8690d03d1d4c67c551b207c9d80dff",
+      "sha256": "6e54fd82d137c8c09001ac384df588402b2f8a7699ecbb55d252cdb78f7da32d"
+    },
+    {
+      "file": "minor-9-down.ogg",
+      "id": 8455,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8455/",
+      "source": "https://cdn.freesound.org/previews/8/8455_6479-hq.mp3",
+      "originalSha256": "196fdc99f19287105e59da1b38b014428e2a642fc001f5b6442e0bd7a83644da",
+      "sha256": "a806c2ca37d5273725bceed67028ab7f2fbf2f2530c454704eef27428efdbfad"
+    },
+    {
+      "file": "minor-9-up.ogg",
+      "id": 8456,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8456/",
+      "source": "https://cdn.freesound.org/previews/8/8456_6479-hq.mp3",
+      "originalSha256": "b1bdd10a6a387b8a50d2273492e299584cd7754b6a430c294c54e038d677e235",
+      "sha256": "2521a4cfb3f6c5048a3836c3c2142ee8b5eac1521a848d355cd6b8956cbd62d3"
+    },
+    {
+      "file": "minor-9-brush.ogg",
+      "id": 8457,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8457/",
+      "source": "https://cdn.freesound.org/previews/8/8457_6479-hq.mp3",
+      "originalSha256": "8f04e916ca5c4070bcf349a172dbd93f7ab0cbd66bf84923d0493f9815882353",
+      "sha256": "e6e7e8e3be3ecaa26a35e28071a0589857714f8e7130dfa2f7670b4a6d90e4c2"
+    },
+    {
+      "file": "sus4-2-down.ogg",
+      "id": 8485,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8485/",
+      "source": "https://cdn.freesound.org/previews/8/8485_6479-hq.mp3",
+      "originalSha256": "fc71a679cc688103700aea9618a1caac2fa0695ca25caf2248a8a756174bcbb2",
+      "sha256": "490bfa7be9507cffc2ee7360bc4852a0fa297dae742f40b7ce12eca1d55b43a5"
+    },
+    {
+      "file": "sus4-2-up.ogg",
+      "id": 8486,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8486/",
+      "source": "https://cdn.freesound.org/previews/8/8486_6479-hq.mp3",
+      "originalSha256": "3eaefe559fd6d5ef6eef4be4fa45af34c267f3b586e4f25c7bf03d08bd07c18f",
+      "sha256": "955885082873ee74c6e97705c26b6a5aeccc2c3532fbe372a6b073855765caa2"
+    },
+    {
+      "file": "sus4-2-brush.ogg",
+      "id": 8487,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8487/",
+      "source": "https://cdn.freesound.org/previews/8/8487_6479-hq.mp3",
+      "originalSha256": "e71082de867c4d3af703759f68409aef1f55dce2b1a2c94c3fa10507dc0d72bd",
+      "sha256": "b85784fa666def4de44f77d62bf2b45e66b0cd940bf8dcdc24043b6c9f136f15"
+    },
+    {
+      "file": "sus4-9-down.ogg",
+      "id": 8458,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8458/",
+      "source": "https://cdn.freesound.org/previews/8/8458_6479-hq.mp3",
+      "originalSha256": "16b538aeaf156191b241ed4e5a717d7ca624d9d47a3e52cd2b2aaaec138e0cc3",
+      "sha256": "9e7f182c0541ff3ad426d7aec32f0d146d4fa7947b085607b93e15c765be6bfc"
+    },
+    {
+      "file": "sus4-9-up.ogg",
+      "id": 8459,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8459/",
+      "source": "https://cdn.freesound.org/previews/8/8459_6479-hq.mp3",
+      "originalSha256": "485c7c647e642bd32bc91918b856c78589c7a8f326ab1f5893cd133105891dcb",
+      "sha256": "cc9df08e7ce1584b1b4dcccee217eb86a3fe554e582519dded3742d4f4e86c20"
+    },
+    {
+      "file": "sus4-9-brush.ogg",
+      "id": 8460,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8460/",
+      "source": "https://cdn.freesound.org/previews/8/8460_6479-hq.mp3",
+      "originalSha256": "de5a71657ca6a3c90c0d6946e45e424baeaf45e08985f79852ceebb2c3847fbb",
+      "sha256": "b14676b6f8d8abcdac6dd2c6296e85875ea60f0c4289b45867e841d7857fe2fa"
+    },
+    {
+      "file": "power-2-down.ogg",
+      "id": 8475,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8475/",
+      "source": "https://cdn.freesound.org/previews/8/8475_6479-hq.mp3",
+      "originalSha256": "f58b8f58117bdb2000696951f68b0f4942c4c135d67e1d122729f1bfff3417b6",
+      "sha256": "fb632cabe8babb45acbea84116107640f107d14e54ed373a4fa829589cdf439d"
+    },
+    {
+      "file": "power-9-down.ogg",
+      "id": 8448,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8448/",
+      "source": "https://cdn.freesound.org/previews/8/8448_6479-hq.mp3",
+      "originalSha256": "2548dc967b654d19f3911afda9dd6a011e5fc049079ce1da2a218bc5cb617026",
+      "sha256": "60c2801dae2fcec9c66d8ca84686bf8b2e9baf6c50bbc5dcfd50dccaa4b57df7"
+    },
+    {
+      "file": "power-0-up.ogg",
+      "id": 8464,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8464/",
+      "source": "https://cdn.freesound.org/previews/8/8464_6479-hq.mp3",
+      "originalSha256": "7a12d16776f977c3d636194470edb579087c503486269cceab2e92db4caa80ac",
+      "sha256": "838b10c9bee685c34a3493edcbb6a4c6cb5b91806e8868affab387701a71f09d"
+    },
+    {
+      "file": "power-7-up.ogg",
+      "id": 8498,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8498/",
+      "source": "https://cdn.freesound.org/previews/8/8498_6479-hq.mp3",
+      "originalSha256": "f4459e10af344db9d8906e45e39771c0e0e24b85d11088f7a99221d60b31b454",
+      "sha256": "f5f5992d7b85b0acb26f0823cdaefd306f2fd1d6ed6dbea457fb3684dbfe2971"
+    },
+    {
+      "file": "mute-mid.ogg",
+      "id": 8506,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8506/",
+      "source": "https://cdn.freesound.org/previews/8/8506_6479-hq.mp3",
+      "originalSha256": "7e01e9a9ff087a182e5f1470b7f3caac8e34776e71f43bed93d943e389b470ac",
+      "sha256": "cee412fc1bbe48bff33529339d58579649564c5450908313648221873a542ee3"
+    },
+    {
+      "file": "mute-low.ogg",
+      "id": 8505,
+      "author": "SpeedY",
+      "page": "https://freesound.org/people/SpeedY/sounds/8505/",
+      "source": "https://cdn.freesound.org/previews/8/8505_6479-hq.mp3",
+      "originalSha256": "76a56b00476417a2d4d2de358fa6df0c3a653b362b61ef574278ef993bf4cbc5",
+      "sha256": "5c98297400b00c9134eeff7db8c38247e7fe56a94b93ea357188531629c05fca"
+    },
+    {
+      "file": "body.ogg",
+      "id": 674811,
+      "author": "leaving.february",
+      "page": "https://freesound.org/people/leaving.february/sounds/674811/",
+      "source": "https://cdn.freesound.org/previews/674/674811_14339611-hq.mp3",
+      "originalSha256": "894beb658f6121155f633080e465bfa324192e9a23317af4f7c3b3ffe5a590a1",
+      "sha256": "ae6a7d25524ba59f87d5ad275126299e58252cbdb91ccd1b8f7492954f37657a"
+    }
+  ]
+}

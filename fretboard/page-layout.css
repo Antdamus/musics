@@ -96,8 +96,8 @@ body:not(.practice-focused) .score-card>.answer-actions{padding:12px 22px 0;gap:
 .sound-panel .file-label input{font-size:12px;min-height:44px}
 .sound-tip{font-size:12px;line-height:1.7;color:var(--muted);margin:20px 0 0;padding-top:18px;border-top:1px solid var(--line)}
 .backing-room #backing-help{font-size:12px;color:var(--green)}
-.backing-room #rock-layers{padding:8px 12px 12px;border:1px solid var(--line);border-radius:8px}
-#rock-layers .toggle-label{min-height:44px;margin:0}
+.backing-room :is(#rock-layers,#rumba-harmony){padding:8px 12px 12px;border:1px solid var(--line);border-radius:8px}
+:is(#rock-layers,#rumba-harmony) .toggle-label{min-height:44px;margin:0}
 .backing-room .volume-label{flex-wrap:wrap;margin:14px 0}
 .backing-room .volume-label output{margin-left:auto}
 .backing-room .volume-label input{flex-basis:100%}

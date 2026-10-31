@@ -1,4 +1,4 @@
-import {SCALES,TUNING,mod,spell} from './music.mjs?v=10';
+import {SCALES,TUNING,mod,spell} from './music.mjs?v=11';
 import {guitarSample} from './guitar.mjs?v=1';
 
 export const recordedBacking=style=>['groove','nylon','duo','saxTrio','pianoDuo','electricRock','rumba'].includes(style);
@@ -9,7 +9,11 @@ const rumbaChanges={minor:[0,6,5,4],harmonicMinor:[0,3,5,4],phrygian:[3,2,1,0],p
 export function progression(s){
   const intervals=SCALES[s.scale].intervals;
   let shapes;
-  if(s.scale==='chromatic')shapes=Array.from({length:4},()=>[0,7]); // No implied major/minor third.
+  if(s.backing==='rumba'&&s.rumbaCadence){
+    // In Phrygian practice the selected tonic is where the cadence resolves.
+    const start=['phrygian','phrygianDominant'].includes(s.scale)?5:0;
+    shapes=[[0,3,7],[10,14,17],[8,12,15],[7,11,14]].map(chord=>chord.map(n=>n+start));
+  }else if(s.scale==='chromatic')shapes=Array.from({length:4},()=>[0,7]); // No implied major/minor third.
   else if(s.scale==='pentatonic')shapes=[[0,3,7],[5,10,0],[10,3,5],[0,3,7]];
   else{
     const degrees=(s.backing==='rumba'&&rumbaChanges[s.scale])||changes[s.scale];
@@ -69,24 +73,28 @@ function addRockBar(beats,bar,bars,settings){
   }
 }
 
+const strumRoots={major:[0,2,4,7,9],minor:[2,4,9],sus4:[2,9],power:[2,9]};
+// Direction, accent and ringing time in beats, counting 1 & 2 & 3 & 4 &.
+const ventilador=[
+  ['down',.94,.46],['brush',.62,.34],['down',.77,.39],['up',1.18,.5],
+  ['mute',1,.5],['brush',.67,.36],['down',.91,.43],['brush',.73,.44]
+];
 function addRumbaBar(beats,bar,pcs){
-  const grip=voicing(pcs),root=40+mod(pcs[0]-40);
-  const thumb={midi:root,string:root<45?6:5};
-  const play=(note,beat,offset,length,level,layer,spread=0,maxDuration)=>{
-    const sample=guitarSample({...note,kind:'nylon',layer});
-    beats[bar*4+beat].push({midi:note.midi,file:'guitar/'+sample.file,rate:sample.rate,offset,length,level,spread,maxDuration});
-  };
-  const brush=(beat,offset,up,length,level,gap=.012,maxDuration)=>{
-    const strings=up?grip.slice(1).reverse():grip;
-    strings.forEach((note,i)=>play(note,beat,offset,length,level,i===0&&!up?2:1,i*gap,maxDuration));
-  };
-  play(thumb,0,0,.74,.98,1);
-  brush(0,.5,true,.38,.78);
-  brush(1,0,false,.18,.64,.008,.09);brush(1,.5,true,.42,.84);
-  brush(2,0,false,bar===3?1.6:.47,1.02,.02);
-  if(bar===3)return; // Let the cadence land before the four-bar pattern repeats.
-  brush(2,.5,true,.33,.65);brush(3,0,false,.16,.66,.008,.09);
-  brush(3,.5,true,.39,.8);
+  const root=pcs[0],third=mod(pcs[1]-root);
+  const quality=pcs.length===2?'power':third===3?'minor':third===5?'sus4':'major';
+  const distance=native=>mod(root-native+6)-6;
+  ventilador.forEach(([stroke,level,length],eighth)=>{
+    const beat=beats[bar*4+Math.floor(eighth/2)],offset=(eighth%2)/2;
+    const hit=(file,volume)=>beat.push({file:'rumba-guitar/'+file+'.ogg',rate:1,offset,length:.5,level:volume,spread:0});
+    if(eighth===0)hit('body',.54);
+    if(stroke==='mute'){hit(bar%2?'mute-low':'mute-mid',level);return;}
+    // The fifth-only upstrokes use the three treble strings of C and G grips.
+    const powerUp=quality==='power'&&stroke!=='down';
+    const roots=powerUp?[0,7]:strumRoots[quality];
+    const native=roots.reduce((best,n)=>Math.abs(distance(n))<Math.abs(distance(best))?n:best);
+    const file=quality+'-'+native+'-'+(powerUp?'up':stroke)+'.ogg';
+    beat.push({file:'rumba-guitar/'+file,rate:2**(distance(native)/12),offset,length,release:.018,level,spread:0});
+  });
 }
 
 export function arrangement(s){
@@ -154,7 +162,10 @@ export function arrangement(s){
   return beats;
 }
 
-const key=s=>[s.backing,s.root,s.scale,...(s.backing==='electricRock'?[!!s.rockPiano,!!s.rockViolin]:[])].join(':');
+function key(s){
+  const options=s.backing==='electricRock'?[!!s.rockPiano,!!s.rockViolin]:s.backing==='rumba'?[!!s.rumbaCadence]:[];
+  return [s.backing,s.root,s.scale,...options].join(':');
+}
 export class RecordedBacking{
   cache=new Map();pending=new Map();voices=new Set();plan=null;
   constructor(context,destination){
@@ -175,7 +186,8 @@ export class RecordedBacking{
           // Match attack levels gently so the backing leaves room for the player.
           const data=buffer.getChannelData(0),count=Math.min(data.length,Math.round(buffer.sampleRate*.22));
           let energy=0;for(let i=0;i<count;i++)energy+=data[i]*data[i];
-          const bass=file.startsWith('bass/')||file.startsWith('rockbass/'),targetRms=bass ? .14 : file.startsWith('sax/')||file.startsWith('violin/') ? .095 : .105;
+          const bass=file.startsWith('bass/')||file.startsWith('rockbass/'),strum=/^rumba-guitar\/.*-(up|down|brush)\.ogg$/.test(file);
+          const targetRms=strum ? .15 : bass ? .14 : file.startsWith('sax/')||file.startsWith('violin/') ? .095 : .105;
           const trim=Math.min(bass?1.15:5,Math.max(.35,targetRms/Math.sqrt(energy/count||1)));
           const sample={buffer,trim};
           this.cache.set(file,sample);while(this.cache.size>36)this.cache.delete(this.cache.keys().next().value);
@@ -200,7 +212,7 @@ export class RecordedBacking{
       const src=this.context.createBufferSource(),env=this.context.createGain(),begin=time+event.offset*period+event.spread;
       const {buffer,trim}=this.plan.buffers.get(event.file),level=event.level*trim;
       src.buffer=buffer;src.playbackRate.value=event.rate;
-      const end=begin+Math.min(event.length*period,event.maxDuration??Infinity,src.buffer.duration/event.rate),release=Math.min(.13,(end-begin)*.25);
+      const end=begin+Math.min(event.length*period,src.buffer.duration/event.rate),release=Math.min(event.release??.13,(end-begin)*.25);
       env.gain.setValueAtTime(0,begin);env.gain.linearRampToValueAtTime(level,begin+.003);
       env.gain.setValueAtTime(level,end-release);env.gain.linearRampToValueAtTime(0,end);
       src.connect(env);env.connect(this.bus);const voice={src,env};this.voices.add(voice);

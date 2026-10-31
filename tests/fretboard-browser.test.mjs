@@ -5,7 +5,7 @@ import {test,before,after} from 'node:test';
 import {chromium,expect} from '@playwright/test';
 const root=new URL('../',import.meta.url);let server,browser,origin;
 before(async()=>{
-  server=createServer(async(req,res)=>{const path=decodeURIComponent(new URL(req.url,'http://local').pathname);if(!/^\/fretboard\/(?:[a-z.-]+|samples\/(?:(?:acoustic|metronome|bass|sax|piano|electric|rockbass|violin|rumba)\/[a-zA-Z0-9.-]+|guitar\/(?:steel|nylon)\/[a-zA-Z0-9.-]+))$/.test(path)){res.writeHead(404).end();return;}try{const body=await readFile(new URL('.'+path,root));res.setHeader('Content-Type',path.endsWith('.mjs')?'text/javascript':path.endsWith('.css')?'text/css':path.endsWith('.wav')?'audio/wav':path.endsWith('.ogg')?'audio/ogg':'text/html');res.end(body);}catch{res.writeHead(404).end();}});
+  server=createServer(async(req,res)=>{const path=decodeURIComponent(new URL(req.url,'http://local').pathname);if(!/^\/fretboard\/(?:[a-z.-]+|samples\/(?:(?:acoustic|metronome|bass|sax|piano|electric|rockbass|violin|rumba|rumba-guitar)\/[a-zA-Z0-9.-]+|guitar\/(?:steel|nylon)\/[a-zA-Z0-9.-]+))$/.test(path)){res.writeHead(404).end();return;}try{const body=await readFile(new URL('.'+path,root));res.setHeader('Content-Type',path.endsWith('.mjs')?'text/javascript':path.endsWith('.css')?'text/css':path.endsWith('.wav')?'audio/wav':path.endsWith('.ogg')?'audio/ogg':'text/html');res.end(body);}catch{res.writeHead(404).end();}});
   await new Promise(r=>server.listen(0,'127.0.0.1',r));origin=`http://127.0.0.1:${server.address().port}`;
   browser=await chromium.launch();await mkdir(new URL('test-results/',root),{recursive:true});
 });
@@ -188,7 +188,7 @@ test('1 BPM uses minute-long beats while keeping the faster goal separate',async
   const page=await open(t);await page.clock.install();await page.locator('#bpm').fill('1');await page.locator('#bpm').press('Tab');
   await page.locator('#duration').selectOption('1');await page.locator('#goal').selectOption('0');
   await page.evaluate(async()=>{
-    const {StudioAudio}=await import('/fretboard/audio.mjs?v=9'),beat=StudioAudio.prototype.beat;window.slowBeats=[];
+    const {StudioAudio}=await import('/fretboard/audio.mjs?v=10'),beat=StudioAudio.prototype.beat;window.slowBeats=[];
     StudioAudio.prototype.beat=function(time,n,s){window.slowBeats.push({n,bpm:s.bpm,targetBpm:s.targetBpm});return beat.call(this,time,n,s);};
   });
   await page.locator('#play').click();await page.clock.fastForward(239000);await page.clock.runFor(100);
@@ -376,7 +376,7 @@ for(const [style,instruments] of [
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
 });
 
-test('rumba selects its percussion, previews just the nylon and cajón/palmas banks, and remembers a muted drummer',async t=>{
+test('rumba previews recorded strokes with percussion, switches cadence and remembers a muted drummer',async t=>{
   const page=await open(t,390),files=new Set();
   page.on('request',r=>{if(r.url().includes('/samples/'))files.add(r.url().split('/samples/')[1]);});
   await page.locator('#root').selectOption('4');await page.locator('#scale').selectOption('phrygianDominant');
@@ -386,11 +386,17 @@ test('rumba selects its percussion, previews just the nylon and cajón/palmas ba
   await watchDrums(page);await page.locator('#backing-preview').click();await expect(page.locator('#backing-preview')).toHaveText('■ Stop preview');
   await page.waitForFunction(()=>window.testDrumHits.some(h=>h.piece==='palmas'));
   assert.equal([...files].filter(f=>f.startsWith('rumba/')).length,12);
-  assert.ok([...files].some(f=>f.startsWith('guitar/nylon/')));assert.ok([...files].every(f=>f.startsWith('rumba/')||f.startsWith('guitar/nylon/')));
+  assert.ok([...files].every(f=>f.startsWith('rumba/')||f.startsWith('rumba-guitar/')));
+  for(const stroke of ['minor-9-down','minor-9-up','minor-9-brush','body','mute-mid'])assert.ok(files.has('rumba-guitar/'+stroke+'.ogg'));
   await page.locator('#backing-preview').click();await expect(page.locator('#clock')).toHaveText('00:00');
+  await page.locator('#rumba-cadence').check();await expect(page.locator('#backing-help')).toContainText('Am → G → F → E');
+  await page.locator('#backing-preview').click();await expect(page.locator('#backing-preview')).toHaveText('■ Stop preview');
+  assert.ok(files.has('rumba-guitar/major-7-up.ogg'));
+  await page.locator('#backing-preview').click();
   await page.locator('#drums').selectOption('off');await page.reload();
   await expect(page.locator('#backing')).toHaveValue('rumba');await expect(page.locator('#drums')).toHaveValue('off');
-  await page.locator('#backing').selectOption('electricRock');await expect(page.locator('#drums')).toHaveValue('rock');
+  await expect(page.locator('#rumba-cadence')).toBeChecked();await expect(page.locator('#backing-help')).toContainText('Am → G → F → E');
+  await page.locator('#backing').selectOption('electricRock');await expect(page.locator('#drums')).toHaveValue('rock');await expect(page.locator('#rumba-cadence')).toBeHidden();
 });
 
 test('rock band previews the selected drummer and saves independent piano and violin parts',async t=>{
@@ -415,7 +421,7 @@ test('rock band previews the selected drummer and saves independent piano and vi
 test('recorded backing is silent on count-in and mic mute, rings at the beat, then stops on cancel',async t=>{
   const page=await open(t);
   const {energies,peak}=await page.evaluate(async()=>{
-    const {RecordedBacking}=await import('/fretboard/backing.mjs?v=4'),{StudioAudio}=await import('/fretboard/audio.mjs?v=9');
+    const {RecordedBacking}=await import('/fretboard/backing.mjs?v=5'),{StudioAudio}=await import('/fretboard/audio.mjs?v=10');
     const ctx=new OfflineAudioContext(1,48000*3,48000),audio=new StudioAudio(),part=audio.backing=new RecordedBacking(ctx,ctx.destination);
     const s={bpm:120,scale:'phrygianDominant',root:4,backing:'duo',metronome:false,drums:'off'};
     await part.prepare(s,()=>true);part.setVolume(65);audio.beat(0,-1,s);audio.muted=true;audio.beat(.5,0,s);audio.muted=false;
@@ -433,7 +439,7 @@ test('a failed or cancelled sample download never starts a late accompaniment pr
   await page.locator('#backing-preview').click();await expect(page.locator('#backing-status')).toContainText('could not load');await expect(page.locator('#play')).toBeEnabled();
   await page.unroute('**/samples/bass/*.ogg');let release,arrived;const gate=new Promise(r=>release=r),request=new Promise(r=>arrived=r);
   await page.route('**/samples/bass/*.ogg',async route=>{arrived();await gate;await route.continue();});
-  await page.evaluate(async()=>{const {RecordedBacking}=await import('/fretboard/backing.mjs?v=4');window.lateBeats=0;const old=RecordedBacking.prototype.beat;RecordedBacking.prototype.beat=function(...a){window.lateBeats++;return old.apply(this,a);};});
+  await page.evaluate(async()=>{const {RecordedBacking}=await import('/fretboard/backing.mjs?v=5');window.lateBeats=0;const old=RecordedBacking.prototype.beat;RecordedBacking.prototype.beat=function(...a){window.lateBeats++;return old.apply(this,a);};});
   await page.locator('#backing-preview').click();await request;await page.locator('#backing').selectOption('off');release();await page.unrouteAll({behavior:'wait'});
   await page.locator('#backing').selectOption('groove');await expect(page.locator('#backing-preview')).toHaveText('▶ Preview backing');assert.equal(await page.evaluate(()=>window.lateBeats),0);
   await page.locator('#backing-preview').click();await expect(page.locator('#backing-preview')).toHaveText('■ Stop preview');await page.locator('#backing-preview').click();
@@ -530,7 +536,7 @@ test('canceling playback while the kit loads cannot start the score later',async
 test('sample engine renders actual audio, alternates takes, chokes hats and mutes microphone playback',async t=>{
   const page=await open(t);
   const rendered=await page.evaluate(async()=>{
-    const {AcousticKit}=await import('/fretboard/drums.mjs?v=2'),{StudioAudio}=await import('/fretboard/audio.mjs?v=9');
+    const {AcousticKit}=await import('/fretboard/drums.mjs?v=2'),{StudioAudio}=await import('/fretboard/audio.mjs?v=10');
     const context=new OfflineAudioContext(2,44100*2,44100),kit=new AcousticKit(context,context.destination);await kit.load();
     kit.hit('openhat',.05,.8);const open=[...kit.voices][0];kit.hit('hat',.3,.8);kit.hit('hat',.6,.8);kit.hit('kick',.1,.8);kit.hit('kick',1,.8);
     const kickBuffers=[...kit.voices].filter(v=>v.piece==='kick').map(v=>v.source.buffer);const alternates=kickBuffers[0]!==kickBuffers[1],chokedAt=open.chokedAt;
@@ -563,7 +569,7 @@ test('metronome download failure uses a disclosed digital fallback and preview c
 test('recorded metronome alternates tick and tock, accents beat one and obeys mute/count-in rules',async t=>{
   const page=await open(t);
   const result=await page.evaluate(async()=>{
-    const {PendulumMetronome}=await import('/fretboard/metronome.mjs?v=1'),{StudioAudio}=await import('/fretboard/audio.mjs?v=9');
+    const {PendulumMetronome}=await import('/fretboard/metronome.mjs?v=1'),{StudioAudio}=await import('/fretboard/audio.mjs?v=10');
     const context=new OfflineAudioContext(1,48000*3,48000),m=new PendulumMetronome(context,context.destination);await m.load();
     const settings={metronomeSound:'mechanical',metronomeVolume:75,metronomeAccent:true,metronome:false,drums:'off',backing:'off'};
     for(let n=0;n<4;n++)m.beat(.1+n*.5,n,settings);

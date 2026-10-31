@@ -1,14 +1,14 @@
-import {TUNING,ROOTS,SCALES,DEFAULTS,mod,frequency,octave,spell,noteName,positions,makeScore,scalePCs,sanitizeSettings,pitchMatch,timingGrade,recommendation,masteryFor} from './music.mjs?v=10';
-import {recordedBacking,progression} from './backing.mjs?v=4';
-import {StudioAudio} from './audio.mjs?v=9';
+import {TUNING,ROOTS,SCALES,DEFAULTS,mod,frequency,octave,spell,noteName,positions,makeScore,scalePCs,sanitizeSettings,pitchMatch,timingGrade,recommendation,masteryFor} from './music.mjs?v=11';
+import {recordedBacking,progression} from './backing.mjs?v=5';
+import {StudioAudio} from './audio.mjs?v=10';
 import {drumBank} from './drums.mjs?v=2';
 import {createNoteMap} from './note-map.mjs?v=5';
 import {GUITAR_TOUCHES,guitarVoiceLabel} from './guitar.mjs?v=1';
 import {needsStringNumber,stringMarkerY} from './notation.mjs?v=2';
 import {createClient} from './supabase-client.mjs?v=1';
 import {ACCOUNT_CONFIG} from './account-config.mjs?v=1';
-import {ProfileStore} from './profile-store.mjs?v=7';
-import {cleanData,same} from './profile-data.mjs?v=7';
+import {ProfileStore} from './profile-store.mjs?v=8';
+import {cleanData,same} from './profile-data.mjs?v=8';
 import {createAccountUI} from './accounts.mjs?v=1';
 import {addActiveTime,dayBucket,dayKey,mergeSessions} from './practice-history.mjs?v=1';
 import {createHistoryView} from './history-view.mjs?v=1';
@@ -83,13 +83,14 @@ function syncControls(){
   $('upload-wrap').hidden=settings.backing!=='upload';$('user-track').volume=settings.volume/100;
   const sampled=recordedBacking(settings.backing);
   $('backing-controls').hidden=!sampled;
+  $('rumba-harmony').hidden=settings.backing!=='rumba';$('rumba-cadence').checked=settings.rumbaCadence;
   $('rock-layers').hidden=settings.backing!=='electricRock';
   $('rock-piano').checked=settings.rockPiano;$('rock-violin').checked=settings.rockViolin;
   $('backing-help').textContent=sampled?progression(settings).map(c=>c.name).join(' → ')+' · '+ROOTS[settings.root]+' '+SCALES[settings.scale].name.toLowerCase()+' · one chord per bar':settings.backing==='drone'?'A synthesized tonic and fifth hold the key.':settings.backing==='upload'?'Play along to a file from this device.':'Choose a recorded part to hear a four-bar accompaniment in your selected key and scale.';
   if(settings.backing==='saxTrio')$('backing-help').textContent+=' · Sax fills at the ends of bars 2 and 4.';
   if(settings.backing==='pianoDuo')$('backing-help').textContent+=' · Soft grand-piano chords over plucked upright bass.';
   if(settings.backing==='electricRock')$('backing-help').textContent+=' · Overdriven rhythm guitar and picked electric bass. Preview includes your selected drummer.';
-  if(settings.backing==='rumba')$('backing-help').textContent+=' · Nylon downstrokes and upstrokes. Use Drum groove to adjust or mute the palmas and cajón.';
+  if(settings.backing==='rumba')$('backing-help').textContent+=' · Ventilador strum. Listen for the accented upstroke on the “and” of two and the muted strings on three.';
   updateSoundControls();
   updateRecommendation();
 }
@@ -552,13 +553,13 @@ function changeBacking(){
   }
   if(starting||!running||drums!==settings.drums)pause();
   backingLoad++;backingState='idle';audio.stopBacking();$('user-track').pause();
-  settings.backing=style;settings.rockPiano=$('rock-piano').checked;settings.rockViolin=$('rock-violin').checked;
+  settings.backing=style;settings.rumbaCadence=$('rumba-cadence').checked;settings.rockPiano=$('rock-piano').checked;settings.rockViolin=$('rock-violin').checked;
   settings.drums=drums;
   syncControls();persist();
   if(running&&recordedBacking(settings.backing))void prepareBacking();
   else if(running&&position>=0)playUserTrack();
 }
-for(const id of ['backing','rock-piano','rock-violin'])$(id).onchange=changeBacking;
+for(const id of ['backing','rumba-cadence','rock-piano','rock-violin'])$(id).onchange=changeBacking;
 $('backing-volume').oninput=()=>{settings.backingVolume=Number($('backing-volume').value);audio.backing?.setVolume(settings.backingVolume);$('backing-volume-value').textContent=settings.backingVolume+'%';persist();};
 $('backing-preview').onclick=previewBacking;
 $('drums').onchange=()=>{pause();settings.drums=$('drums').value;updateSoundControls();persist();};

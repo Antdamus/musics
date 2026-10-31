@@ -3,30 +3,55 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {arrangement,progression} from '../fretboard/backing.mjs';
-import {ROOTS,SCALES,sanitizeSettings,scalePCs,spell} from '../fretboard/music.mjs';
+import {ROOTS,SCALES,mod,sanitizeSettings,scalePCs,spell} from '../fretboard/music.mjs';
 
-test('rumba brushes follow the displayed chords in all keys, with short muted strokes and an in-scale cadence',()=>{
+test('rumba offers a descending cadence independently of the exercise scale',()=>{
   const config={backing:'rumba',scale:'phrygianDominant',root:4};
-  assert.equal(sanitizeSettings(config).backing,'rumba');
+  assert.equal(sanitizeSettings(config).rumbaCadence,false);
   assert.deepEqual(progression(config).map(c=>c.name),['Am','Dm','F','E']);
   assert.deepEqual(progression({...config,scale:'phrygian'}).map(c=>c.name),['Am','G','F','Em']);
-  const files=new Set();
-  for(const scale of Object.keys(SCALES))for(const root of ROOTS.keys()){
-    const s={...config,scale,root},chords=progression(s),plan=arrangement(s);
-    for(const [beat,events] of plan.entries()){
-      const chord=chords[Math.floor(beat/4)];
-      for(const e of events){
-        assert.ok(chord.pcs.includes(e.midi%12)&&scalePCs(s).includes(e.midi%12));
-        assert.ok(e.file.startsWith('guitar/nylon/'));files.add(e.file);
+  const classic=sanitizeSettings({...config,rumbaCadence:true,pool:[4]});
+  assert.equal(classic.rumbaCadence,true);assert.deepEqual(classic.pool,[4]);
+  assert.deepEqual(progression(classic).map(c=>c.name),['Am','G','F','E']);
+  assert.deepEqual(progression({...classic,root:6,scale:'minor'}).map(c=>c.name),['F♯m','E','D','C♯']);
+  assert.deepEqual(progression({...classic,backing:'nylon'}),progression({...config,backing:'nylon'}));
+});
+
+test('ventilador uses the displayed harmony, with the upstroke accent on 2-and and the hand stop on 3 in every bar',()=>{
+  const base=new URL('../fretboard/samples/rumba-guitar/',import.meta.url);
+  const library=JSON.parse(readFileSync(new URL('sources.json',base))),files=new Set();
+  assert.equal(library.license,'CC0-1.0');
+  for(const sample of library.samples){
+    const bytes=readFileSync(new URL(sample.file,base));
+    assert.equal(bytes.toString('ascii',0,4),'OggS');
+    assert.equal(createHash('sha256').update(bytes).digest('hex'),sample.sha256);
+    files.add('rumba-guitar/'+sample.file);
+  }
+  const tones={power:[0,7],major:[0,4,7],minor:[0,3,7],sus4:[0,5,7]};
+  for(const scale of Object.keys(SCALES))for(const root of ROOTS.keys())for(const rumbaCadence of [false,true]){
+    const s={backing:'rumba',scale,root,rumbaCadence},chords=progression(s),plan=arrangement(s);
+    assert.equal(plan.length,16);
+    for(const [bar,chord] of chords.entries()){
+      if(!rumbaCadence)assert.ok(chord.pcs.every(pc=>scalePCs(s).includes(pc)));
+      const levels=[];
+      for(let eighth=0;eighth<8;eighth++){
+        const events=plan[bar*4+Math.floor(eighth/2)].filter(e=>e.offset===(eighth%2)/2);
+        if(eighth===0)assert.ok(events.some(e=>e.file==='rumba-guitar/body.ogg'));
+        if(eighth===4){assert.equal(events.length,1);assert.match(events[0].file,/mute-(mid|low)\.ogg$/);}
+        assert.ok(events.length);levels.push(Math.max(...events.map(e=>e.level)));
+        for(const e of events){
+          assert.ok(e.length>0&&e.length+e.spread*3<=.50001); // through 180 BPM
+          assert.ok(files.has(e.file),e.file);
+          if(eighth===4||e.file.endsWith('/body.ogg'))continue;
+          const [,quality,native,stroke]=e.file.match(/\/(major|minor|sus4|power)-(\d+)-(down|up|brush)\.ogg$/);
+          assert.equal(stroke,eighth%2===0?'down':eighth===3||quality==='power'?'up':'brush');
+          const played=mod(Number(native)+Math.round(12*Math.log2(e.rate)));
+          assert.deepEqual(tones[quality].map(n=>mod(played+n)),chord.pcs);
+        }
       }
-      if(beat%4===0){
-        assert.equal(events[0].midi%12,chord.pcs[0]);
-        const up=events.filter(e=>e.offset===.5);assert.ok(up[0].midi>up[1].midi&&up[0].spread<up[1].spread);
-      }
-      if(beat%4===1)assert.ok(events.some(e=>e.maxDuration<=.1));
+      assert.equal(levels.indexOf(Math.max(...levels)),3);
     }
   }
-  for(const file of files)assert.equal(readFileSync(new URL('../fretboard/samples/'+file,import.meta.url)).toString('ascii',0,4),'OggS');
 });
 
 test('electric rock stays in scale, uses recorded pitches and allows each extra band member independently',()=>{
