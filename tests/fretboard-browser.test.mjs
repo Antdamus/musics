@@ -128,6 +128,36 @@ for(const width of [1440,390])test(`real notation and full-neck setup render wit
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   await page.screenshot({path:new URL(`test-results/fretwise-${width}.png`,root).pathname.replace(/^\/(\w:)/,'$1'),fullPage:true});
 });
+for(const width of [1440,1024,820,768,390,320])test(`organized sections stay reachable without covering controls at ${width}px`,async t=>{
+  const page=await open(t,width);await page.setViewportSize({width,height:width<=600?844:1000});
+  const assertFit=async()=>assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'page should not scroll horizontally');
+  await assertFit();
+  const ids=await page.locator('[id]').evaluateAll(nodes=>nodes.map(node=>node.id));assert.equal(new Set(ids).size,ids.length);
+  for(const target of ['practice-setup','sound-studio','practice-history','practice-room']){
+    const link=page.locator(`.section-nav a[href="#${target}"]`);
+    if(width>600){await link.focus();await link.press('Enter');}else await link.click();
+    await expect(page.locator(`#${target}`)).toBeFocused();
+    const box=await page.locator(`#${target}`).boundingBox(),nav=await page.locator('.section-nav').boundingBox();
+    assert.ok(box.y>=nav.y+nav.height-1&&box.y<page.viewportSize().height-180,`section heading outside reading area: ${target}, ${JSON.stringify({box,nav})}`);
+  }
+  const play=await page.locator('#play').boundingBox(),sheet=await page.locator('#sheet').boundingBox();
+  assert.ok(play.y+play.height<=sheet.y,'playback controls should be available above the music');
+  await page.locator('#goal').selectOption('10');await page.locator('#goal').scrollIntoViewIfNeeded();
+  await expect(page.locator('#goal-label')).toContainText('10-minute');
+  await page.locator('.section-nav a[href="#sound-studio"]').click();
+  await page.locator('#drums').selectOption('pop');await expect(page.locator('#drum-controls')).toBeVisible();
+  await page.locator('#backing').selectOption('upload');await expect(page.locator('#audio-file')).toBeVisible();await assertFit();
+  await page.locator('.section-nav a[href="#practice-setup"]').click();await page.locator('.range-details summary').click();await assertFit();
+  await page.locator('.section-nav a[href="#practice-room"]').click();
+  if([1440,390].includes(width))await page.screenshot({path:new URL(`test-results/fretwise-layout-${width}.png`,root).pathname.replace(/^\/(\w:)/,'$1')});
+  await page.locator('#practice-open').click();await expect(page.locator('.section-nav')).toBeHidden();await expect(page.locator('#sound-studio')).toBeHidden();
+  await page.keyboard.press('Escape');await expect(page.locator('#practice-room #got-it')).toBeVisible();await assertFit();
+  if(width===1440){
+    await page.emulateMedia({media:'print'});await expect(page.locator('#sheet')).toBeVisible();
+    for(const selector of ['.section-nav','#sound-studio','.answer-actions','.transport'])await expect(page.locator(selector)).toBeHidden();
+  }
+});
+
 test('tempo, range, scale, note palette and hidden-note reading persist',async t=>{
   const page=await open(t);await page.locator('#bpm').fill('90');await page.locator('#bpm').press('Tab');
   await page.locator('#scale').selectOption('minor');await page.locator('#add-note').click();
