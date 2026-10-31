@@ -1,16 +1,20 @@
-import {SCALES,TUNING,mod,spell} from './music.mjs?v=9';
+import {SCALES,TUNING,mod,spell} from './music.mjs?v=10';
 import {guitarSample} from './guitar.mjs?v=1';
 
-export const recordedBacking=style=>['groove','nylon','duo','saxTrio','pianoDuo','electricRock'].includes(style);
+export const recordedBacking=style=>['groove','nylon','duo','saxTrio','pianoDuo','electricRock','rumba'].includes(style);
 // Scale-degree roots for four-bar vamps. The chord tones come from the scale itself.
 const changes={major:[0,3,4,0],minor:[0,3,6,0],harmonicMinor:[0,3,4,0],dorian:[0,3,6,0],
   phrygian:[0,1,6,0],phrygianDominant:[0,1,6,0],mixolydian:[0,6,3,0]};
+const rumbaChanges={minor:[0,6,5,4],harmonicMinor:[0,3,5,4],phrygian:[3,2,1,0],phrygianDominant:[3,6,1,0]};
 export function progression(s){
   const intervals=SCALES[s.scale].intervals;
   let shapes;
   if(s.scale==='chromatic')shapes=Array.from({length:4},()=>[0,7]); // No implied major/minor third.
   else if(s.scale==='pentatonic')shapes=[[0,3,7],[5,10,0],[10,3,5],[0,3,7]];
-  else shapes=changes[s.scale].map(degree=>[0,2,4].map(n=>intervals[(degree+n)%7]));
+  else{
+    const degrees=(s.backing==='rumba'&&rumbaChanges[s.scale])||changes[s.scale];
+    shapes=degrees.map(degree=>[0,2,4].map(n=>intervals[(degree+n)%7]));
+  }
   return shapes.map(shape=>{
     const pcs=shape.map(n=>mod(s.root+n)),third=mod(pcs[1]-pcs[0]);
     const suffix=shape.length===2?'5':third===5?'sus4':third===3?'m':'';
@@ -65,10 +69,31 @@ function addRockBar(beats,bar,bars,settings){
   }
 }
 
+function addRumbaBar(beats,bar,pcs){
+  const grip=voicing(pcs),root=40+mod(pcs[0]-40);
+  const thumb={midi:root,string:root<45?6:5};
+  const play=(note,beat,offset,length,level,layer,spread=0,maxDuration)=>{
+    const sample=guitarSample({...note,kind:'nylon',layer});
+    beats[bar*4+beat].push({midi:note.midi,file:'guitar/'+sample.file,rate:sample.rate,offset,length,level,spread,maxDuration});
+  };
+  const brush=(beat,offset,up,length,level,gap=.012,maxDuration)=>{
+    const strings=up?grip.slice(1).reverse():grip;
+    strings.forEach((note,i)=>play(note,beat,offset,length,level,i===0&&!up?2:1,i*gap,maxDuration));
+  };
+  play(thumb,0,0,.74,.98,1);
+  brush(0,.5,true,.38,.78);
+  brush(1,0,false,.18,.64,.008,.09);brush(1,.5,true,.42,.84);
+  brush(2,0,false,bar===3?1.6:.47,1.02,.02);
+  if(bar===3)return; // Let the cadence land before the four-bar pattern repeats.
+  brush(2,.5,true,.33,.65);brush(3,0,false,.16,.66,.008,.09);
+  brush(3,.5,true,.39,.8);
+}
+
 export function arrangement(s){
   const bars=progression(s),beats=Array.from({length:16},()=>[]),tonic=36+s.root-(s.root>6?12:0);
   let previousKeys=null;
   bars.forEach(({pcs},bar)=>{
+    if(s.backing==='rumba'){addRumbaBar(beats,bar,pcs);return;}
     const start=bar*4,root=tonic+mod(pcs[0]-s.root+5)-5;
     const bass=(beat,midi,length,level)=>{
       if(midi<29)midi+=12;
@@ -175,7 +200,7 @@ export class RecordedBacking{
       const src=this.context.createBufferSource(),env=this.context.createGain(),begin=time+event.offset*period+event.spread;
       const {buffer,trim}=this.plan.buffers.get(event.file),level=event.level*trim;
       src.buffer=buffer;src.playbackRate.value=event.rate;
-      const end=begin+Math.min(event.length*period,src.buffer.duration/event.rate),release=Math.min(.13,(end-begin)*.25);
+      const end=begin+Math.min(event.length*period,event.maxDuration??Infinity,src.buffer.duration/event.rate),release=Math.min(.13,(end-begin)*.25);
       env.gain.setValueAtTime(0,begin);env.gain.linearRampToValueAtTime(level,begin+.003);
       env.gain.setValueAtTime(level,end-release);env.gain.linearRampToValueAtTime(0,end);
       src.connect(env);env.connect(this.bus);const voice={src,env};this.voices.add(voice);

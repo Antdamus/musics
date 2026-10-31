@@ -1,13 +1,14 @@
-import {TUNING,ROOTS,SCALES,DEFAULTS,mod,frequency,octave,spell,noteName,positions,makeScore,scalePCs,sanitizeSettings,pitchMatch,timingGrade,recommendation,masteryFor} from './music.mjs?v=9';
-import {recordedBacking,progression} from './backing.mjs?v=3';
-import {StudioAudio} from './audio.mjs?v=8';
+import {TUNING,ROOTS,SCALES,DEFAULTS,mod,frequency,octave,spell,noteName,positions,makeScore,scalePCs,sanitizeSettings,pitchMatch,timingGrade,recommendation,masteryFor} from './music.mjs?v=10';
+import {recordedBacking,progression} from './backing.mjs?v=4';
+import {StudioAudio} from './audio.mjs?v=9';
+import {drumBank} from './drums.mjs?v=2';
 import {createNoteMap} from './note-map.mjs?v=5';
 import {GUITAR_TOUCHES,guitarVoiceLabel} from './guitar.mjs?v=1';
 import {needsStringNumber,stringMarkerY} from './notation.mjs?v=2';
 import {createClient} from './supabase-client.mjs?v=1';
 import {ACCOUNT_CONFIG} from './account-config.mjs?v=1';
-import {ProfileStore} from './profile-store.mjs?v=6';
-import {cleanData,same} from './profile-data.mjs?v=6';
+import {ProfileStore} from './profile-store.mjs?v=7';
+import {cleanData,same} from './profile-data.mjs?v=7';
 import {createAccountUI} from './accounts.mjs?v=1';
 import {addActiveTime,dayBucket,dayKey,mergeSessions} from './practice-history.mjs?v=1';
 import {createHistoryView} from './history-view.mjs?v=1';
@@ -31,7 +32,8 @@ let stats={correct:0,wrong:0,missed:0,streak:0,best:0,onTime:0,manual:0},cleanPa
 let micPitch=null,micSince=0,micOnset=0,micLatched=false,lastRms=0,lastAttack=0;
 let metronomeState='idle',metronomePreviewTimer=0;
 let backingLoad=0,backingState='idle';
-let startGeneration=0,drumState='idle',previewTimer=0,previewGeneration=0;
+let startGeneration=0,previewTimer=0,previewGeneration=0;
+const drumStates={};
 let guitarStatus='Recordings load when you press Hear.',guitarRequest=0;
 const secondsPerBeat=()=>60/settings.bpm;
 const audible=()=>!micOn||settings.headphones;
@@ -87,6 +89,7 @@ function syncControls(){
   if(settings.backing==='saxTrio')$('backing-help').textContent+=' · Sax fills at the ends of bars 2 and 4.';
   if(settings.backing==='pianoDuo')$('backing-help').textContent+=' · Soft grand-piano chords over plucked upright bass.';
   if(settings.backing==='electricRock')$('backing-help').textContent+=' · Overdriven rhythm guitar and picked electric bass. Preview includes your selected drummer.';
+  if(settings.backing==='rumba')$('backing-help').textContent+=' · Nylon downstrokes and upstrokes. Use Drum groove to adjust or mute the palmas and cajón.';
   updateSoundControls();
   updateRecommendation();
 }
@@ -100,19 +103,28 @@ function updateSoundControls(){
   $('guitar-volume').value=settings.guitarVolume;$('guitar-volume-value').textContent=`${settings.guitarVolume}%`;
   $('guitar-status').textContent=audible()?guitarStatus:'Muted while listening. Enable headphones to hear the guitar.';
   $('hear').disabled=!audible()||!currentEvent();
+  const rumba=settings.drums==='rumba',drumState=drumStates[drumBank(settings.drums)];
   $('drum-controls').hidden=settings.drums==='off';
+  $('kit-badge').textContent=rumba?'PALMAS & CAJÓN':'ACOUSTIC KIT';
+  $('drum-description').textContent=rumba?'Recorded handclaps, low cajón hits, taps and slaps. Follows your score in 4/4.':'Real kick, snare, hi-hats, three toms, ride & crash. Always at your score’s tempo.';
+  $('drum-fill-label').textContent=rumba?'Cajón fill every 4 bars':'Tom fills every 4 bars';
+  $('drum-source').textContent=rumba?'FreePats World Percussion':'Karoryfer';
+  $('drum-source').href=rumba?'https://freepats.zenvoid.org/Percussion/world-and-rare-percussion.html':'https://shop.karoryfer.com/pages/free-big-rusty-drums';
+  $('drum-license').href='samples/'+drumBank(settings.drums)+'/LICENSE.txt';
   $('drum-volume-value').textContent=`${settings.drumVolume}%`;
   $('drum-retry').hidden=drumState!=='error'||settings.drums==='off';
-  $('drum-status').textContent=settings.drums==='off'?'Recorded acoustic drums, ready when you are.':drumState==='loading'?'Loading 24 real drum recordings (18 MB)…':drumState==='error'?'Kit download failed. Retry, or switch drums off to practice.':!audible()?'Muted while listening. Enable headphones above to hear drums.':drumState==='ready'?`Acoustic kit ready · follows ${settings.bpm} BPM · 4/4`:'Loads when you press Play or Preview groove.';
+  const loadingText=rumba?'Loading 12 cajón and handclap recordings…':'Loading 24 real drum recordings (18 MB)…';
+  $('drum-status').textContent=settings.drums==='off'?'Recorded acoustic drums, ready when you are.':drumState==='loading'?loadingText:drumState==='error'?'Kit download failed. Retry, or switch drums off to practice.':!audible()?'Muted while listening. Enable headphones above to hear drums.':drumState==='ready'?`${rumba?'Rumba percussion':'Acoustic kit'} ready · follows ${settings.bpm} BPM · 4/4`:'Loads when you press Play or Preview groove.';
   $('drum-preview').disabled=running||starting||!audible();
   $('metronome-preview').disabled=running||starting||!audible();
   $('metronome-volume-value').textContent=`${settings.metronomeVolume}%`;
   $('metronome-status').textContent=!audible()?'Muted while listening. Enable headphones to hear the metronome.':settings.metronomeSound==='digital'?'Electronic click · same tempo as your score.':metronomeState==='loading'?'Loading the recorded tick and tock…':metronomeState==='error'?'Recording unavailable; using a digital click. Press Preview to retry.':'Actual pendulum metronome recordings · alternating tick-tock.';
 }
 async function prepareDrums(){
-  drumState='loading';updateSoundControls();
-  try{await audio.loadDrums();audio.setVolume(settings.volume);drumState='ready';updateSoundControls();return true;}
-  catch(error){drumState='error';updateSoundControls();notice(error.message);return false;}
+  const style=settings.drums,bank=drumBank(style);
+  drumStates[bank]='loading';updateSoundControls();
+  try{await audio.loadDrums(style);audio.setVolume(settings.volume);drumStates[bank]='ready';updateSoundControls();return true;}
+  catch(error){drumStates[bank]='error';updateSoundControls();if(settings.drums===style)notice(error.message);return false;}
 }
 async function prepareMetronome(){
   if(settings.metronomeSound==='digital')return;
@@ -158,7 +170,7 @@ async function previewBacking(){
   if(running||starting||!audible()||!recordedBacking(settings.backing))return;
   stopPreview();const generation=previewGeneration;
   button.dataset.active='true';button.textContent='Cancel preview';
-  const bandDrums=settings.backing==='electricRock'&&settings.drums!=='off';
+  const bandDrums=['electricRock','rumba'].includes(settings.backing)&&settings.drums!=='off';
   const [ready,kitReady]=await Promise.all([prepareBacking(),bandDrums?prepareDrums():true]);
   if(generation!==previewGeneration)return;
   if(!ready||!kitReady){stopPreview();return;}
@@ -533,11 +545,15 @@ $('goal').onchange=()=>{settings.goal=Number($('goal').value);updateStats();pers
 $('volume').oninput=()=>{settings.volume=Number($('volume').value);audio.setVolume(settings.volume);$('user-track').volume=settings.volume/100;persist();};
 function changeBacking(){
   const style=$('backing').value;
-  const startRockDrums=style==='electricRock'&&settings.backing!==style&&settings.drums==='off';
-  if(starting||!running||startRockDrums)pause();
+  let drums=settings.drums;
+  if(style!==settings.backing){
+    if(style==='rumba')drums='rumba';
+    if(style==='electricRock'&&(drums==='off'||(settings.backing==='rumba'&&drums==='rumba')))drums='rock';
+  }
+  if(starting||!running||drums!==settings.drums)pause();
   backingLoad++;backingState='idle';audio.stopBacking();$('user-track').pause();
   settings.backing=style;settings.rockPiano=$('rock-piano').checked;settings.rockViolin=$('rock-violin').checked;
-  if(startRockDrums)settings.drums='rock';
+  settings.drums=drums;
   syncControls();persist();
   if(running&&recordedBacking(settings.backing))void prepareBacking();
   else if(running&&position>=0)playUserTrack();

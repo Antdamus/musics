@@ -1,0 +1,116 @@
+{
+  "library": "FreePats World Percussion · Flamenco cajón and handclaps",
+  "license": "CC0-1.0",
+  "revision": "e54eb2912a0d6d4444ab205d52f778e27da0fc96",
+  "mapping": "https://raw.githubusercontent.com/freepats/world-percussion/e54eb2912a0d6d4444ab205d52f778e27da0fc96/WorldPercussion%2020200905.sfz",
+  "samples": [
+    {
+      "midi": 48,
+      "take": 1,
+      "file": "48-1.ogg",
+      "bytes": 8102,
+      "sha256": "289490528821ce4030565bc89b25d0e03164cfa8b256cbaf087942f88606d083",
+      "source": "https://raw.githubusercontent.com/freepats/world-percussion/e54eb2912a0d6d4444ab205d52f778e27da0fc96/samples/CajonFlamenco/101.flac",
+      "originalSha256": "c3fc40f9952aee1dbf9ca9e4ca2e716481df5a45cb97c08942363264d84a72fe"
+    },
+    {
+      "midi": 48,
+      "take": 2,
+      "file": "48-2.ogg",
+      "bytes": 7834,
+      "sha256": "8d271f1ce6057bb4f4b62beb6a872a08fcf7119e0cc07835e08a8c108929f227",
+      "source": "https://raw.githubusercontent.com/freepats/world-percussion/e54eb2912a0d6d4444ab205d52f778e27da0fc96/samples/CajonFlamenco/102.flac",
+      "originalSha256": "a89cfe7e67b5e5dff834e9dd1f726731efec393c992fd0bd1836baa1e4091029"
+    },
+    {
+      "midi": 48,
+      "take": 3,
+      "file": "48-3.ogg",
+      "bytes": 8062,
+      "sha256": "82f4bf9fc695f07fbd2510b7099c358bdfc25c3a52a4080e3044f1e9bc21b235",
+      "source": "https://raw.githubusercontent.com/freepats/world-percussion/e54eb2912a0d6d4444ab205d52f778e27da0fc96/samples/CajonFlamenco/216.flac",
+      "originalSha256": "1b09da0d7a7b6958a475080de3fdca7d5e5e004fc5684cf3c566573fb185ef93"
+    },
+    {
+      "midi": 49,
+      "take": 1,
+      "file": "49-1.ogg",
+      "bytes": 7467,
+      "sha256": "700aa18f270b1b275a640e7330870725dcca74fff4f345458bbbcf84ea33207b",
+      "source": "https://raw.githubusercontent.com/freepats/world-percussion/e54eb2912a0d6d4444ab205d52f778e27da0fc96/samples/CajonFlamenco/217.flac",
+      "originalSha256": "00bb55717050d68e2bda28dd5613c4a4af429565ecc3c026980789dcac48e1c9"
+    },
+    {
+      "midi": 49,
+      "take": 2,
+      "file": "49-2.ogg",
+      "bytes": 7539,
+      "sha256": "d5a3ed79b0e469ac62f81ad7224c8d9ecdc5299f07ac85ffbfc57e5779260d92",
+      "source": "https://raw.githubusercontent.com/freepats/world-percussion/e54eb2912a0d6d4444ab205d52f778e27da0fc96/samples/CajonFlamenco/218.flac",
+      "originalSha256": "4796a2fa9976f358383e8857303f190289e4a2bdaff92b9643609fff2247d3aa"
+    },
+    {
+      "midi": 50,
+      "take": 1,
+      "file": "50-1.ogg",
+      "bytes": 7821,
+      "sha256": "51a022a2fdc8a082603d374a13ce5e26e052c09dce47a832588b92c5eddbb01d",
+      "source": "https://raw.githubusercontent.com/freepats/world-percussion/e54eb2912a0d6d4444ab205d52f778e27da0fc96/samples/CajonFlamenco/106.flac",
+      "originalSha256": "f7abf7a573392f4d29c6de1f35f583b3e9a56047d26c8811e2ac6dc8bdc0cbff"
+    },
+    {
+      "midi": 50,
+      "take": 2,
+      "file": "50-2.ogg",
+      "bytes": 7801,
+      "sha256": "6b3013703a16d3e35e088cc2cd59eec14ceb00dd1ca9a7096f94d0adc02cc0a3",
+      "source": "https://raw.githubusercontent.com/freepats/world-percussion/e54eb2912a0d6d4444ab205d52f778e27da0fc96/samples/CajonFlamenco/107.flac",
+      "originalSha256": "19c7960b568fa6faa65e699d310c67d67a1b7053aad4a5d3358bf07a77f08b72"
+    },
+    {
+      "midi": 50,
+      "take": 3,
+      "file": "50-3.ogg",
+      "bytes": 8313,
+      "sha256": "fe45a405fe33338a8c1043115c5069db0c0cfec242021bf5c08dbe4f136ff5e5",
+      "source": "https://raw.githubusercontent.com/freepats/world-percussion/e54eb2912a0d6d4444ab205d52f778e27da0fc96/samples/CajonFlamenco/109.flac",
+      "originalSha256": "84016c437d6e3e1d87891e62fa04e44d3d02d113c1987b67cb6b0d513c42055e"
+    },
+    {
+      "midi": 59,
+      "take": 1,
+      "file": "59-1.ogg",
+      "bytes": 7830,
+      "sha256": "363a5fe50735be4bb49a9193f2bd37e4e470b235fe3195d9348ae5c65f3f1031",
+      "source": "https://raw.githubusercontent.com/freepats/world-percussion/e54eb2912a0d6d4444ab205d52f778e27da0fc96/samples/HandClap/01_02.flac",
+      "originalSha256": "7250c9c9cadadbd77550ae1067b3966a914b1c8c19d64b520b9a04040f20fb7d"
+    },
+    {
+      "midi": 59,
+      "take": 2,
+      "file": "59-2.ogg",
+      "bytes": 7233,
+      "sha256": "ca5ec5724f4c61daad71718f0690d214394294b804acaedb55fc5c9e6e9aaa7a",
+      "source": "https://raw.githubusercontent.com/freepats/world-percussion/e54eb2912a0d6d4444ab205d52f778e27da0fc96/samples/HandClap/01_03.flac",
+      "originalSha256": "1439af84cdd2418a2c90f39337b05558f11ec2751b29e3d4391f273dfb034341"
+    },
+    {
+      "midi": 59,
+      "take": 3,
+      "file": "59-3.ogg",
+      "bytes": 7623,
+      "sha256": "413119317b768931df309491cff3218204fc35fc5753258e9525b92db931e361",
+      "source": "https://raw.githubusercontent.com/freepats/world-percussion/e54eb2912a0d6d4444ab205d52f778e27da0fc96/samples/HandClap/01_05.flac",
+      "originalSha256": "369243d3a42d6bbbc9d370aca0365f590270aa0a2bdaef58b2280f3f71aaafb5"
+    },
+    {
+      "midi": 59,
+      "take": 4,
+      "file": "59-4.ogg",
+      "bytes": 7232,
+      "sha256": "aff3ea0ee4e3a33612627176a46dbda92c0438a9f7e2e8954778b0b25874d002",
+      "source": "https://raw.githubusercontent.com/freepats/world-percussion/e54eb2912a0d6d4444ab205d52f778e27da0fc96/samples/HandClap/01_06.flac",
+      "originalSha256": "4f50c13699ee7d141dc89669ddf845ff9c5c5bc2c7eb06a4449eda390377070a"
+    }
+  ]
+}

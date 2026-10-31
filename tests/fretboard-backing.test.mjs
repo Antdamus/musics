@@ -5,6 +5,30 @@ import {createHash} from 'node:crypto';
 import {arrangement,progression} from '../fretboard/backing.mjs';
 import {ROOTS,SCALES,sanitizeSettings,scalePCs,spell} from '../fretboard/music.mjs';
 
+test('rumba brushes follow the displayed chords in all keys, with short muted strokes and an in-scale cadence',()=>{
+  const config={backing:'rumba',scale:'phrygianDominant',root:4};
+  assert.equal(sanitizeSettings(config).backing,'rumba');
+  assert.deepEqual(progression(config).map(c=>c.name),['Am','Dm','F','E']);
+  assert.deepEqual(progression({...config,scale:'phrygian'}).map(c=>c.name),['Am','G','F','Em']);
+  const files=new Set();
+  for(const scale of Object.keys(SCALES))for(const root of ROOTS.keys()){
+    const s={...config,scale,root},chords=progression(s),plan=arrangement(s);
+    for(const [beat,events] of plan.entries()){
+      const chord=chords[Math.floor(beat/4)];
+      for(const e of events){
+        assert.ok(chord.pcs.includes(e.midi%12)&&scalePCs(s).includes(e.midi%12));
+        assert.ok(e.file.startsWith('guitar/nylon/'));files.add(e.file);
+      }
+      if(beat%4===0){
+        assert.equal(events[0].midi%12,chord.pcs[0]);
+        const up=events.filter(e=>e.offset===.5);assert.ok(up[0].midi>up[1].midi&&up[0].spread<up[1].spread);
+      }
+      if(beat%4===1)assert.ok(events.some(e=>e.maxDuration<=.1));
+    }
+  }
+  for(const file of files)assert.equal(readFileSync(new URL('../fretboard/samples/'+file,import.meta.url)).toString('ascii',0,4),'OggS');
+});
+
 test('electric rock stays in scale, uses recorded pitches and allows each extra band member independently',()=>{
   const base=new URL('../fretboard/samples/',import.meta.url),recordings=new Map();
   for(const instrument of ['electric','rockbass','piano','violin']){

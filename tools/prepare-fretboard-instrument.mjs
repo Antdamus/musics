@@ -10,7 +10,8 @@ const libraries={
   piano:{name:'Versilian Community Sample Library · Steinway B',repo:'sgossner/VCSL',revision:'c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e',tail:8},
   electric:{name:'FreePats Electric Guitar FSBS Dist1',repo:'freepats/electric-guitar-FSBS-dist1',revision:'bbae17f0ad16f5edd7ec22178d181f3e3f6696fa',map:'EGuitarFSBS-dist1 bridge 20220911.sfz',licenseFile:'LICENSE.txt',tail:4},
   rockbass:{name:'Karoryfer Black And Blue Basses · Baby Blue',repo:'sfzinstruments/karoryfer.black-and-blue-basses',revision:'6e7d674cdb41be7a54dbccb15472401ad01099b9',map:'Programs/maps/babyblue_reg_f_map.sfz',licenseFile:'license',tail:4},
-  violin:{name:'Versilian Chamber Orchestra 2 CE · Solo Violin',repo:'sgossner/VSCO-2-CE',revision:'440300901dfe9275fd84e0b7763af1f8443ae62e',tail:6}
+  violin:{name:'Versilian Chamber Orchestra 2 CE · Solo Violin',repo:'sgossner/VSCO-2-CE',revision:'440300901dfe9275fd84e0b7763af1f8443ae62e',tail:6},
+  rumba:{name:'FreePats World Percussion · Flamenco cajón and handclaps',repo:'freepats/world-percussion',revision:'e54eb2912a0d6d4444ab205d52f778e27da0fc96',map:'WorldPercussion 20200905.sfz',licenseFile:'LICENSE.txt'}
 };
 if(!Object.hasOwn(libraries,instrument))throw Error('Choose an instrument: '+Object.keys(libraries).join(', '));
 const library=libraries[instrument],base='https://raw.githubusercontent.com/'+library.repo+'/'+library.revision+'/';
@@ -49,6 +50,11 @@ if(instrument==='sax'){
 }else if(instrument==='violin'){
   for(const [midi,note] of [[67,'G4'],[69,'A4'],[72,'C5'],[76,'E5'],[79,'G5']])
     regions.push({midi,take:1,source:'Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_'+note+'_p.wav'});
+}else if(instrument==='rumba'){
+  // These MIDI keys name unpitched articulations in the publisher's percussion map.
+  for(const [midi,folder,hits] of [[48,'CajonFlamenco',['101','102','216']],[49,'CajonFlamenco',['217','218']],[50,'CajonFlamenco',['106','107','109']],[59,'HandClap',['01_02','01_03','01_05','01_06']]]){
+    hits.forEach((hit,i)=>regions.push({midi,take:i+1,source:'samples/'+folder+'/'+hit+'.flac'}));
+  }
 }
 const samples=[];
 async function prepare({midi,take,source}){

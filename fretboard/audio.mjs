@@ -1,12 +1,12 @@
-import {frequency,detectPitch} from './music.mjs?v=9';
-import {RecordedBacking,recordedBacking} from './backing.mjs?v=3';
-import {AcousticKit} from './drums.mjs?v=1';
+import {frequency,detectPitch} from './music.mjs?v=10';
+import {RecordedBacking,recordedBacking} from './backing.mjs?v=4';
+import {AcousticKit} from './drums.mjs?v=2';
 import {PendulumMetronome} from './metronome.mjs?v=1';
 import {SampledGuitar} from './guitar.mjs?v=1';
 export class StudioAudio {
   context=null;voices=new Set();stream=null;analyser=null;micTimer=null;micGeneration=0;muted=false;guitarGeneration=0;
   async init(){if(!this.context){const C=window.AudioContext||window.webkitAudioContext;if(!C)throw Error('Audio is not supported in this browser.');this.context=new C();this.master=this.context.createGain();this.master.gain.value=.35;this.master.connect(this.context.destination);this.drums=new AcousticKit(this.context,this.master);this.metronome=new PendulumMetronome(this.context,this.master);this.guitar=new SampledGuitar(this.context,this.master);this.backing=new RecordedBacking(this.context,this.master);}await this.context.resume();return this.context;}
-  async loadDrums(){await this.init();await this.drums.load();}
+  async loadDrums(style){await this.init();await this.drums.load(style);}
   async loadMetronome(){await this.init();await this.metronome.load();}
   stopGuitar(){this.guitarGeneration++;this.guitar?.stop();}
   async playGuitar(position,settings,isCurrent=()=>true){

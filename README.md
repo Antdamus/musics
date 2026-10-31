@@ -8,6 +8,8 @@ For a backing band, select a key and note family in **Notes & goals**, then open
 
 Choose **Electric rock band** for overdriven rhythm guitar, picked electric bass and drums. Add **grand piano** or **solo violin** independently. **Preview backing** plays the band with your selected drummer. Choosing Electric rock band starts Straight rock if drums were off. Use **Drum groove** to change or mute the kit.
 
+Choose **Rumba flamenca** for nylon-string rhythm guitar with recorded palmas (handclaps) and flamenco cajón. **Preview backing** plays the full groove. Use **Drum level** for a quieter percussion part, or select **Drums off** for guitar alone. In E Phrygian dominant the four bars play Am → Dm → F → E.
+
 This is the dedicated source repository for the **Music learning** project. The complete app, recordings, licenses, tests, and sample preparation tools were imported from the Fretwise work through `Antdamus/Invsto` commit `cb47a1f200917cc630bedb7b64469fd440004d79`.
 
 ## Run locally
