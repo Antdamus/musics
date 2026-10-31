@@ -106,7 +106,7 @@ export function sanitizeSettings(value={}){
   }
   s.pool=s.pool.filter(pc=>scalePCs(s).includes(pc));if(!s.pool.length)s.pool=[s.root];
   num('minFret',0,24);num('maxFret',0,24);s.minFret=Math.round(s.minFret);s.maxFret=Math.max(s.minFret,Math.round(s.maxFret));
-  num('bpm',35,180);num('targetBpm',35,180);num('volume',0,70);num('goal',0,60);num('drumVolume',0,100);num('metronomeVolume',0,100);num('guitarVolume',0,100);
+  num('bpm',1,180);num('targetBpm',1,180);num('volume',0,70);num('goal',0,60);num('drumVolume',0,100);num('metronomeVolume',0,100);num('guitarVolume',0,100);
   if(['steel','nylon'].includes(value.guitarSound))s.guitarSound=value.guitarSound;
   if([1,2,3].includes(value.guitarTouch))s.guitarTouch=value.guitarTouch;
   if([1,2,4].includes(value.duration))s.duration=value.duration;

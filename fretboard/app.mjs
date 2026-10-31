@@ -1,4 +1,4 @@
-import {TUNING,ROOTS,SCALES,DEFAULTS,mod,frequency,octave,spell,noteName,positions,makeScore,scalePCs,sanitizeSettings,pitchMatch,timingGrade,recommendation,masteryFor} from './music.mjs?v=5';
+import {TUNING,ROOTS,SCALES,DEFAULTS,mod,frequency,octave,spell,noteName,positions,makeScore,scalePCs,sanitizeSettings,pitchMatch,timingGrade,recommendation,masteryFor} from './music.mjs?v=6';
 import {StudioAudio} from './audio.mjs?v=5';
 import {createNoteMap} from './note-map.mjs?v=4';
 import {GUITAR_TOUCHES,guitarVoiceLabel} from './guitar.mjs?v=1';

@@ -59,4 +59,7 @@ test('recommendations grow from learned pitches while keeping weak octaves in pr
 test('settings stay inside guitar and tempo bounds and recover from stale data',()=>{
   const s=sanitizeSettings({root:999,scale:'unknown',bpm:900,maxFret:99,minFret:-12,strings:[],pool:[99],octaves:[8]});
   assert.equal(s.bpm,180);assert.equal(s.maxFret,24);assert.equal(s.minFret,0);assert.equal(s.root,11);assert.ok(s.pool.length);assert.equal(s.strings.length,6);
+  for(const bpm of [1,5,12,34]){const slow=sanitizeSettings({bpm,targetBpm:100});assert.equal(slow.bpm,bpm);assert.equal(slow.targetBpm,100);}
+  const lowGoal=sanitizeSettings({bpm:60,targetBpm:1});assert.equal(lowGoal.bpm,60);assert.equal(lowGoal.targetBpm,1);
+  const floor=sanitizeSettings({bpm:0,targetBpm:-5});assert.equal(floor.bpm,1);assert.equal(floor.targetBpm,1);
 });

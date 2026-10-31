@@ -135,6 +135,42 @@ test('tempo, range, scale, note palette and hidden-note reading persist',async t
   await page.locator('#hints').uncheck();assert.ok((await page.locator('.note-hint').allTextContents()).every(x=>!x));
   await page.reload();await expect(page.locator('#bpm')).toHaveValue('90');await expect(page.locator('#scale')).toHaveValue('minor');await expect(page.locator('#hints')).not.toBeChecked();
 });
+for(const width of [1440,390])test(`playback and goal tempos stay separate below 35 BPM at ${width}px`,async t=>{
+  const page=await open(t,width);
+  await expect(page.getByRole('spinbutton',{name:'Playback tempo in beats per minute',exact:true})).toBeVisible();
+  await expect(page.getByRole('spinbutton',{name:'Target tempo goal',exact:true})).toBeVisible();
+  await expect(page.locator('#playback-tempo-help')).toContainText('How fast the score');
+  await expect(page.locator('#target-tempo-help')).toContainText('does not change playback');
+  await page.locator('#bpm').fill('12');await page.locator('#bpm').press('Tab');await expect(page.locator('#target-bpm')).toHaveValue('100');
+  await page.locator('#target-bpm').fill('90');await page.locator('#target-bpm').press('Tab');await expect(page.locator('#bpm')).toHaveValue('12');
+  await page.locator('#mastery-help').scrollIntoViewIfNeeded();await expect(page.locator('#mastery-help')).toContainText('90 BPM');
+  await page.locator('#target-bpm').fill('1');await page.locator('#target-bpm').press('Tab');await expect(page.locator('#bpm')).toHaveValue('12');
+  await page.locator('#target-bpm').fill('90');await page.locator('#target-bpm').press('Tab');
+  await page.locator('#bpm').fill('1');await page.locator('#bpm').press('Tab');await page.locator('#bpm-down').click();await expect(page.locator('#bpm')).toHaveValue('1');
+  await page.locator('#bpm-up').click();await expect(page.locator('#bpm')).toHaveValue('6');await expect(page.locator('#target-bpm')).toHaveValue('90');
+  await page.locator('#bpm').fill('0');await page.locator('#bpm').press('Tab');await expect(page.locator('#bpm')).toHaveValue('1');
+  await page.reload();await expect(page.locator('#bpm')).toHaveValue('1');await expect(page.locator('#target-bpm')).toHaveValue('90');
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  for(const [selector,name] of [['.transport','playback'],['.mastery-box','goal']])await page.locator(selector).screenshot({path:new URL(`test-results/fretwise-tempo-${name}-${width}.png`,root).pathname.replace(/^\/(\w:)/,'$1')});
+});
+
+test('1 BPM uses minute-long beats while keeping the faster goal separate',async t=>{
+  const page=await open(t);await page.clock.install();await page.locator('#bpm').fill('1');await page.locator('#bpm').press('Tab');
+  await page.locator('#duration').selectOption('1');await page.locator('#goal').selectOption('0');
+  await page.evaluate(async()=>{
+    const {StudioAudio}=await import('/fretboard/audio.mjs?v=5'),beat=StudioAudio.prototype.beat;window.slowBeats=[];
+    StudioAudio.prototype.beat=function(time,n,s){window.slowBeats.push({n,bpm:s.bpm,targetBpm:s.targetBpm});return beat.call(this,time,n,s);};
+  });
+  await page.locator('#play').click();await page.clock.fastForward(239000);await page.clock.runFor(100);
+  await expect(page.locator('#cue-label')).toHaveText('COUNT IN');await expect(page.locator('#current-pitch')).toHaveText('1');
+  await page.clock.runFor(1200);await expect(page.locator('#cue-label')).toHaveText('NOW · SOUNDING PITCH');
+  await expect(page.locator('.sheet-note.current')).toHaveAttribute('data-note-index','0');
+  await page.clock.fastForward(59000);await page.clock.runFor(100);await expect(page.locator('.sheet-note.current')).toHaveAttribute('data-note-index','0');
+  await page.clock.runFor(1000);await expect(page.locator('.sheet-note.current')).toHaveAttribute('data-note-index','1');
+  const beats=await page.evaluate(()=>window.slowBeats);assert.ok(beats.some(beat=>beat.n===0));assert.ok(beats.every(beat=>beat.bpm===1&&beat.targetBpm===100));
+  await page.locator('#play').click();
+});
+
 test('timed score counts in, advances, pauses, resumes and completes without loop',async t=>{
   const page=await open(t);await page.clock.install();await page.locator('#bpm').fill('120');await page.locator('#bpm').press('Tab');await page.locator('#loop').uncheck();
   await page.locator('#play').click();await page.clock.runFor(2100);await expect(page.locator('#cue-label')).toHaveText('NOW · SOUNDING PITCH');
